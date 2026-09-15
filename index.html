@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Checklist de inspeção técnica</title>
+<title>Nova visita</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --green-900:#0F6E56;
@@ -15,8 +15,6 @@
     --green-100:#e3f2ec;
     --green-50:#f5f5f5;
     --red-700:#b3352f;
-    --red-100:#fbe4e2;
-    --red-50:#fdf2f1;
     --ink-900:#181b19;
     --ink-700:#4d534f;
     --ink-500:#7c8480;
@@ -49,491 +47,131 @@
     background:var(--paper);
     display:flex;
     flex-direction:column;
+    align-items:center;
+    justify-content:center;
     position:relative;
     overflow:hidden;
   }
 
-  /* ---------- header ---------- */
-  .header{
-    background:var(--card);
-    color:var(--ink-900);
-    padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px;
-    flex-shrink:0;
-    border-bottom:1px solid var(--line);
-  }
-  .header-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-  .back{ display:flex; align-items:center; gap:4px; font-size:13px; font-weight:600; color:var(--ink-700); }
-  .status{ display:flex; align-items:center; gap:5px; background:var(--green-50); padding:3px 9px 3px 7px; border-radius:100px; font-size:11px; font-weight:600; color:var(--green-800); }
-  .dot{ width:5px; height:5px; border-radius:50%; background:var(--green-600); }
-  .header-meta{ font-size:11px; color:var(--ink-500); margin:0 0 1px; font-weight:500; }
-  .header-client{ font-family:'Playfair Display',serif; font-size:16px; font-weight:600; margin:0 0 -10px; letter-spacing:-0.1px; color:var(--ink-900); }
-
-  .progress-row{ display:flex; align-items:center; justify-content:flex-end; margin-bottom:6px; }
-  .progress-label{ font-size:11.5px; font-weight:600; color:var(--ink-500); }
-  .progress-track{ width:100%; height:5px; border-radius:100px; background:var(--line); overflow:hidden; }
-  .progress-fill{ height:100%; border-radius:100px; background:var(--green-600); transition:width .35s ease; }
-
-  /* ---------- body (scroll area) ---------- */
-  .body{ flex:1; overflow-y:auto; padding:16px 16px 24px; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; scroll-snap-type:y proximity; }
-
-  /* ---------- cabeçalho de tópico/categoria ---------- */
-  .category-header{
+  /* ---------- botão central "Nova Visita" ---------- */
+  .new-visit-btn{
     display:flex; align-items:center; gap:8px;
-    font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--ink-900);
-    margin:36px 2px 16px;
-    padding-top:22px;
-    border-top:1px solid var(--line);
-    scroll-margin-top:16px;
+    border:none; border-radius:100px;
+    background:var(--green-700); color:#fff;
+    font-size:15px; font-weight:700;
+    padding:16px 28px;
   }
-  .category-header:first-child{ margin-top:26px; padding-top:0; border-top:none; }
-  .category-dot{ width:6px; height:6px; border-radius:50%; background:var(--green-600); flex-shrink:0; }
-  .category-count{ margin-left:auto; font-size:11.5px; font-weight:600; color:var(--ink-500); }
+  .new-visit-btn:active{ background:var(--green-800); }
 
-  /* ---------- question card ---------- */
-  .q-card{ background:var(--card); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); margin-bottom:20px; padding:16px; scroll-margin-top:14px; scroll-snap-align:start; transition:box-shadow .2s ease; }
-  .q-card.answered{ box-shadow:0 1px 2px rgba(24,27,25,0.05), 0 1px 1px rgba(24,27,25,0.03); }
-  .q-text{ font-size:14.5px; font-weight:500; line-height:1.5; margin:0 0 14px; color:var(--ink-900); }
-  .q-text b{ font-weight:700; }
-
-  .answer-row{ display:flex; gap:8px; margin-bottom:14px; }
-  .answer-btn{
-    flex:1; border:none; border-radius:var(--radius-sm); background:#EFEFEF; color:var(--ink-500);
-    font-size:13px; font-weight:700; padding:12px 6px; text-align:center; transition:background .15s ease, color .15s ease;
+  /* ---------- overlay + bottom sheet do modal ---------- */
+  .sheet-overlay{
+    position:absolute; inset:0; background:rgba(0,0,0,0.25);
+    display:flex; align-items:flex-end; justify-content:center;
+    padding:8px; z-index:30;
   }
-  .answer-btn:active{ opacity:.85; }
-  .answer-btn.selected.ans-c{ background:var(--green-600); color:#fff; }
-  .answer-btn.selected.ans-nc{ background:var(--red-700); color:#fff; }
-  .answer-btn.selected.ans-na{ background:var(--ink-900); color:#fff; }
-
-  .qa-divider{ border-top:1px solid var(--line); margin-bottom:14px; }
-
-  .qa-actions{ display:flex; align-items:center; gap:8px; }
-  .qa-btn{
-    display:flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:var(--radius-sm);
-    background:#fff; color:var(--ink-700); padding:9px 13px; font-size:12.5px; font-weight:700;
+  .sheet-panel{
+    background:var(--card); width:100%;
+    border-radius:24px; padding:20px;
+    box-shadow:0 -6px 28px rgba(0,0,0,0.18);
+    animation:sheet-up .22s ease-out;
   }
-  .qa-btn:active:not(:disabled){ border-color:var(--green-600); }
-  .qa-btn:disabled{ color:var(--ink-300); border-color:#eee; cursor:not-allowed; }
-  .qa-btn.active{ border-color:var(--green-600); background:var(--green-50); color:var(--green-800); }
-  .qa-btn .qa-pencil{ color:var(--green-700); margin-left:2px; display:flex; align-items:center; }
-  .qa-btn.plan-toggle-btn.active{ border-color:var(--green-600); background:var(--green-600); color:#fff; }
-  .qa-btn.plan-toggle-btn.active .qa-pencil{ color:#fff; }
-
-  /* ---------- painel de fotos ---------- */
-  .photo-panel{ margin-top:14px; }
-  .photo-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .photo-add-tile{
-    width:56px; height:56px; border-radius:10px; border:1.5px dashed var(--green-600); background:transparent;
-    color:var(--green-700); display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  }
-  .photo-add-tile:active{ background:var(--green-50); }
-  .photo-thumb{ width:56px; height:56px; border-radius:10px; position:relative; overflow:hidden; background:linear-gradient(135deg, #cfd8d3, #9fb0a8); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.85); flex-shrink:0; }
-  .photo-thumb .remove-photo{ position:absolute; top:3px; right:3px; width:18px; height:18px; border-radius:50%; background:rgba(15,20,18,0.75); border:none; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
-
-  /* ---------- painel de comentário ---------- */
-  .comment-panel{ margin-top:14px; }
-  .comment-label{ font-size:13px; font-weight:600; color:var(--ink-900); margin:0 0 8px; }
-  .field-wrap{ position:relative; }
-  textarea.comment-input{
-    width:100%; min-height:110px; resize:vertical; border:1px solid var(--line); border-radius:var(--radius-md);
-    padding:14px 16px 50px; font-family:'Open Sans',sans-serif; font-size:14px; line-height:1.5; color:var(--ink-900);
-    background:#fff;
-  }
-  textarea.comment-input::placeholder{ color:var(--ink-500); }
-  textarea.comment-input:focus{ outline:none; border-color:var(--green-600); background:var(--green-50); }
-  .field-actions-row{ position:absolute; left:10px; right:10px; bottom:10px; display:flex; justify-content:flex-end; }
-  .comment-mic-btn{
-    width:36px; height:36px; border-radius:50%; border:none; background:#EFEFEF; color:var(--ink-700);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 1px 2px rgba(24,27,25,0.08);
-  }
-  .comment-mic-btn.recording{ background:var(--green-600); color:#fff; animation:pulse 1.1s ease-in-out infinite; }
-  @keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(29,158,117,.35); } 50%{ box-shadow:0 0 0 7px rgba(29,158,117,0); } }
-  .listening{ font-size:12px; color:var(--green-600); margin:8px 2px 0; display:flex; align-items:center; gap:5px; }
-  .listening span.wave{ width:5px; height:5px; border-radius:50%; background:var(--green-600); animation:blink 1s infinite ease-in-out; }
-  @keyframes blink{ 0%,100%{ opacity:.3; } 50%{ opacity:1; } }
-
-  .comment-actions-row{ display:flex; gap:10px; margin-top:12px; }
-  .comment-actions-row button{ flex:1; padding:12px; border-radius:var(--radius-sm); font-size:13.5px; font-weight:700; }
-  .comment-clear-btn, .photo-cancel-btn{ border:1px solid var(--line); background:#fff; color:var(--ink-700); }
-  .comment-save-btn, .photo-save-btn{ border:none; background:var(--green-600); color:#fff; }
-  .comment-save-btn:disabled, .photo-save-btn:disabled{ background:var(--ink-300); cursor:not-allowed; }
-
-  /* ---------- gerar plano de ação (botão com toque de IA) ---------- */
-  .plan-generate-link{
-    position:relative; display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
-    border:1px solid transparent; border-radius:var(--radius-sm);
-    background:
-      linear-gradient(#fff, #fff) padding-box,
-      linear-gradient(120deg, var(--green-600), var(--green-100), var(--green-600)) border-box;
-    background-size: 100% 100%, 220% 220%;
-    color:var(--green-700); font-size:13.5px; font-weight:700; padding:13px 16px; margin-top:14px;
-    animation: ai-border-shift 4s ease-in-out infinite;
-  }
-  .plan-generate-link:active{
-    background:
-      linear-gradient(var(--green-50), var(--green-50)) padding-box,
-      linear-gradient(120deg, var(--green-600), var(--green-100), var(--green-600)) border-box;
-  }
-  @keyframes ai-border-shift{
-    0%, 100%{ background-position: 0 0, 0% 50%; }
-    50%{ background-position: 0 0, 100% 50%; }
-  }
-  .plan-generate-link .ai-sparkle{
-    display:flex; flex-shrink:0; color:var(--green-600);
-    animation: ai-sparkle-pulse 1.8s ease-in-out infinite;
-  }
-  @keyframes ai-sparkle-pulse{
-    0%, 100%{ transform:scale(1) rotate(0deg); opacity:1; }
-    50%{ transform:scale(1.2) rotate(12deg); opacity:.7; }
-  }
-
-  /* ---------- resumo do plano confirmado ---------- */
-  .plan-summary{ display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius-md); padding:12px 14px; margin-top:14px; }
-  .plan-summary-icon{ width:36px; height:36px; border-radius:10px; background:var(--green-700); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .plan-summary-text{ flex:1; min-width:0; }
-  .plan-summary-title{ font-size:13.5px; font-weight:700; color:var(--ink-900); margin:0; }
-  .plan-summary-desc{ font-size:12px; color:var(--ink-500); font-style:italic; margin:2px 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .plan-edit-link{ border:none; background:transparent; color:var(--green-700); font-size:13px; font-weight:700; padding:4px; flex-shrink:0; }
-
-  .empty-hint{ text-align:center; color:var(--ink-500); font-size:13px; padding:40px 20px; line-height:1.6; }
-
-  /* ---------- footer ---------- */
-  .footer{ flex-shrink:0; padding:12px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); background:var(--paper); border-top:1px solid var(--line); }
-  .review-btn{ width:100%; padding:15px; border:none; border-radius:12px; background:var(--green-900); color:#fff; font-size:15px; font-weight:700; }
-  .review-btn:disabled{ background:var(--ink-300); color:#fff; cursor:not-allowed; }
-
-  /* ---------- tela de revisão do checklist ---------- */
-  .review-overlay{ position:absolute; inset:0; z-index:20; background:var(--paper); display:flex; flex-direction:column; }
-  .review-header{ background:var(--green-900); padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px; flex-shrink:0; }
-  .review-header-top{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-  .review-back{ display:flex; align-items:center; gap:4px; border:none; background:transparent; color:rgba(255,255,255,0.85); font-size:13px; font-weight:600; padding:4px 4px 4px 0; }
-  .review-title{ font-family:'Playfair Display',serif; font-size:17px; font-weight:600; color:#fff; margin:0; }
-  .review-stats{ display:flex; gap:8px; flex-wrap:nowrap; margin-top:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
-  .review-stats::-webkit-scrollbar{ display:none; }
-  .review-stat{ background:rgba(255,255,255,0.16); color:#fff; font-size:11px; font-weight:600; padding:4px 9px; border-radius:100px; flex-shrink:0; white-space:nowrap; }
-  .review-body{ flex:1; min-height:0; overflow-y:auto; padding:16px; -webkit-overflow-scrolling:touch; }
-
-  .review-unanswered-banner{ display:flex; align-items:center; gap:12px; background:var(--card); color:var(--ink-900); border-radius:var(--radius-md); padding:14px; margin-bottom:24px; box-shadow:var(--shadow-card); }
-  .review-unanswered-banner .banner-icon{ width:34px; height:34px; border-radius:50%; background:var(--green-50); color:var(--green-700); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .review-unanswered-banner .banner-text{ flex:1; min-width:0; }
-  .review-unanswered-banner .banner-title{ font-size:13.5px; font-weight:400; color:var(--ink-900); margin:0 0 2px; line-height:1.4; }
-  .review-unanswered-banner .banner-link{ border:none; background:transparent; color:var(--green-700); font-weight:700; font-size:12.5px; padding:0; text-decoration:underline; }
-
-  .review-card{ background:var(--card); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); padding:18px 18px; margin-bottom:18px; cursor:pointer; transition:box-shadow .15s ease; }
-  .review-card:active{ box-shadow:none; }
-  .review-card.review-card-unanswered{ box-shadow:none; background:#eef0ee; }
-  .review-card.review-card-unanswered .review-q-text{ color:var(--ink-500); }
-  .review-card-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-  .review-q-text{ font-size:13.5px; font-weight:500; line-height:1.5; color:var(--ink-900); margin:0; flex:1; min-width:0; }
-  .review-q-text b{ font-weight:700; }
-  .review-q-text.clamp{
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-  }
-  .review-badge{ font-size:11px; font-weight:700; padding:4px 10px; border-radius:100px; flex-shrink:0; white-space:nowrap; }
-  .review-badge-c{ background:var(--green-600); color:#fff; }
-  .review-badge-nc{ background:var(--red-700); color:#fff; }
-  .review-badge-na{ background:var(--ink-900); color:#fff; }
-  .review-badge-none{ background:var(--ink-300); color:#fff; }
-  .review-photo-row{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
-  .review-photo-thumb{ width:44px; height:44px; border-radius:8px; background-size:cover; background-position:center; flex-shrink:0; }
-  .review-comment-text{ font-size:12.5px; color:var(--ink-700); font-style:italic; margin:10px 0 0; line-height:1.5; }
-  .review-plan-missing{ margin-top:10px; padding:10px 12px; background:var(--green-50); border-radius:var(--radius-sm); font-size:12.5px; color:var(--ink-700); }
-
-  .review-footer{ padding:12px 16px calc(env(safe-area-inset-bottom, 0px) + 14px); border-top:1px solid var(--line); background:var(--card); flex-shrink:0; }
-  .review-generate-btn{ width:100%; padding:15px; border:none; border-radius:12px; background:var(--green-700); color:#fff; font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px; }
-
-  /* ---------- loading do plano de ação / relatório ---------- */
-  .plan-loading{ display:flex; align-items:center; gap:9px; margin-top:14px; padding:14px 16px; background:#fff; border:1px solid var(--line); border-radius:var(--radius-md); }
-  .plan-loading .spinner{ width:15px; height:15px; flex-shrink:0; border-radius:50%; border:2px solid var(--green-100); border-top-color:var(--green-600); animation:spin .8s linear infinite; }
-  .plan-loading .sparkle{ display:flex; flex-shrink:0; color:var(--green-600); }
-  .plan-loading span{ font-size:13.5px; font-weight:600; color:var(--green-800); }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-
-  /* ---------- bottom sheet do plano de ação (reaproveitado) ---------- */
-  .sheet-overlay{ position:absolute; inset:0; background:rgba(10,20,15,0.45); display:flex; align-items:flex-end; z-index:30; }
-  .sheet-panel{ background:var(--card); width:100%; max-height:86%; border-radius:20px 20px 0 0; display:flex; flex-direction:column; box-shadow:0 -6px 28px rgba(0,0,0,0.18); animation:sheet-up .22s ease-out; overflow:hidden; }
   @keyframes sheet-up{ from{ transform:translateY(28px); opacity:.5; } to{ transform:translateY(0); opacity:1; } }
-  .sheet-handle{ width:36px; height:4px; background:rgba(255,255,255,0.4); border-radius:2px; margin:0 auto 12px; flex-shrink:0; }
-  .sheet-header{ display:flex; flex-direction:column; padding:10px 16px 16px; background:var(--green-900); flex-shrink:0; }
-  .sheet-header-row{ display:flex; align-items:flex-start; justify-content:space-between; }
-  .sheet-header-actions{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
-  .sheet-title-wrap{ display:flex; align-items:center; gap:10px; min-width:0; }
-  .sheet-title-col{ min-width:0; }
-  .sheet-title{ font-family:'Playfair Display',serif; font-weight:600; font-size:16px; color:#fff; margin:0; }
-  .sheet-icon-box{ display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0; }
-  .sheet-q-sub{ font-size:12px; color:rgba(255,255,255,0.78); margin:4px 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .sheet-close{ border:none; background:rgba(255,255,255,0.18); color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .sheet-close:active{ background:rgba(255,255,255,0.3); }
-  .sheet-delete-btn{ border:none; background:var(--red-50); color:var(--red-700); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .sheet-delete-btn:active{ background:var(--red-100); }
-  .sheet-steps{ display:flex; align-items:center; padding:14px 16px 4px; flex-shrink:0; }
-  .sheet-back-row{ padding:10px 16px 0; flex-shrink:0; }
-  .step-content{ animation: step-fade-in .28s ease; }
-  @keyframes step-fade-in{
-    from{ opacity:0; transform:translateX(10px); }
-    to{ opacity:1; transform:translateX(0); }
+
+  .sheet-top-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:6px; }
+  .sheet-title{ font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--ink-900); margin:0; }
+  .sheet-subtitle{ font-size:13px; color:var(--ink-500); margin:6px 0 24px; }
+  .sheet-close{ border:none; background:var(--green-50); color:var(--ink-700); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .sheet-close:active{ background:var(--green-100); }
+
+  /* ---------- opções (checklist / visita técnica) ---------- */
+  .option-list{ display:flex; flex-direction:column; gap:16px; margin-bottom:24px; }
+  .option-card{
+    display:flex; align-items:flex-start; gap:12px;
+    width:100%; text-align:left;
+    border:1.5px solid var(--line); border-radius:16px;
+    background:#fff; padding:16px;
+    transition:background-color .18s ease, border-color .18s ease;
   }
-  .step-circle{
-    width:20px; height:20px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
-    border:2px solid var(--line); background:#fff; color:transparent; transition:all .2s ease;
+  .option-card:active{ border-color:var(--green-600); }
+  .option-card.selected{ border-color:var(--green-600); background:#EAF2EF; }
+
+  .option-icon{
+    width:36px; height:36px; border-radius:10px; flex-shrink:0;
+    background:var(--green-700); color:#fff;
+    display:flex; align-items:center; justify-content:center;
   }
-  .step-circle.current{ border-color:var(--green-600); }
-  .step-circle.current::after{ content:''; width:8px; height:8px; border-radius:50%; background:var(--green-600); }
-  .step-circle.done{ border-color:var(--green-600); background:var(--green-600); color:#fff; }
-  .step-connector{ flex:1; height:2px; background:var(--line); margin:0 4px; }
-  .step-connector.done{ background:var(--green-600); }
-  .sheet-body{ padding:16px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
-  .sheet-footer{ padding:12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px); border-top:1px solid var(--line); flex-shrink:0; background:var(--card); }
+  .option-text{ flex:1; min-width:0; }
+  .option-title{ font-size:14.5px; font-weight:700; color:var(--ink-900); margin:0; }
+  .option-tag{ font-size:12px; font-weight:700; color:var(--green-700); margin:2px 0 4px; }
+  .option-desc{ font-size:12.5px; color:var(--ink-500); line-height:1.45; margin:0; }
 
-  .sheet-loading{ display:flex; flex-direction:column; align-items:center; gap:14px; padding:36px 20px 24px; text-align:center; }
-  .sheet-loading .spinner-lg{ width:28px; height:28px; border-radius:50%; border:3px solid var(--green-100); border-top-color:var(--green-600); animation:spin .8s linear infinite; }
-  .sheet-loading p{ font-size:13.5px; color:var(--ink-700); margin:0; line-height:1.5; }
-  .report-loading{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center; }
-  .report-loading .spinner-lg{ width:28px; height:28px; border-radius:50%; border:3px solid var(--green-100); border-top-color:var(--green-600); animation:spin .8s linear infinite; }
-  .report-loading p{ font-size:13.5px; color:var(--ink-700); margin:0; }
-
-  .plan-field{ margin-bottom:16px; }
-  .plan-label{ display:block; font-size:12.5px; font-weight:600; color:var(--ink-700); margin-bottom:6px; }
-  .plan-field-label-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
-  .plan-field-label-row .plan-label{ margin-bottom:0; }
-  .plan-ai-badge{ display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:600; color:var(--green-700); background:var(--green-50); padding:5px 11px; border-radius:100px; white-space:nowrap; flex-shrink:0; }
-  .plan-ai-badge svg{ flex-shrink:0; }
-  .plan-ai-badge.edited{ color:var(--ink-500); background:#EFEFEF; }
-  textarea.plan-input{ width:100%; min-height:96px; resize:vertical; border:1px solid var(--line); border-radius:var(--radius-md); padding:12px 14px; font-family:'Open Sans',sans-serif; font-size:14px; line-height:1.6; color:var(--ink-900); background:#fff; transition:background .15s ease, border-color .15s ease; }
-  textarea.plan-input.ai-suggested{ background:var(--green-50); }
-  textarea.plan-input:focus{ outline:none; border-color:var(--green-600); }
-  .plan-restore{ display:inline-flex; align-items:center; gap:5px; border:none; background:transparent; color:var(--green-700); font-size:12.5px; font-weight:700; padding:0; margin:-8px 0 16px; }
-  .plan-dates{ display:flex; flex-direction:column; gap:12px; margin-bottom:2px; }
-  .plan-date-field{ width:100%; }
-  .date-input-wrap{ position:relative; width:100%; }
-  input.date-input{ width:100%; box-sizing:border-box; height:44px; border:1px solid var(--line); border-radius:var(--radius-sm); padding:0 40px 0 12px; background:#fff; font-family:'Open Sans',sans-serif; font-size:14px; color:var(--ink-900); }
-  input.date-input::placeholder{ color:var(--ink-500); }
-  input.date-input:focus{ outline:none; border-color:var(--green-600); }
-  .date-input-wrap svg{ position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--ink-500); pointer-events:none; }
-  .plan-warning{ font-size:12px; color:var(--red-700); margin:10px 0 0; }
-  .plan-btn{ width:100%; padding:12px; border-radius:var(--radius-sm); font-size:13.5px; font-weight:700; border:1px solid var(--line); background:#fff; color:var(--ink-700); }
-  .plan-btn.plan-confirm{ border:none; background:var(--green-600); color:#fff; }
-  .plan-btn:disabled{ opacity:.45; cursor:not-allowed; }
-  .plan-actions-row{ display:flex; align-items:center; gap:10px; }
-  .plan-actions-row .plan-btn{ width:auto; flex:1; }
-  .plan-actions-row .step-back-link{ flex:0 0 auto; }
-  .plan-btn.plan-delete{ display:flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--red-700); color:var(--red-700); background:transparent; }
-  .plan-btn.plan-delete:active{ background:transparent; }
-  .step-back-link{ display:flex; align-items:center; gap:4px; border:none; background:transparent; color:var(--ink-700); font-size:13px; font-weight:600; padding:11px 4px; flex-shrink:0; }
-
-  /* ---------- modal genérico ---------- */
-  .modal-overlay{ position:absolute; inset:0; background:rgba(10,20,15,0.45); display:flex; align-items:center; justify-content:center; padding:20px; z-index:45; }
-  .modal-card{ background:var(--card); border-radius:var(--radius-lg); padding:20px; width:100%; max-width:320px; }
-  .modal-title{ font-family:'Playfair Display',serif; font-size:16px; font-weight:700; margin:0 0 8px; }
-  .modal-text{ font-size:13.5px; color:var(--ink-700); line-height:1.5; margin:0 0 18px; }
-  .modal-actions{ display:flex; gap:10px; }
-  .modal-actions button{ flex:1; padding:11px; border-radius:var(--radius-sm); font-size:13.5px; font-weight:700; border:1px solid var(--line); background:#fff; color:var(--ink-700); }
-  .modal-actions .btn-danger{ border:none; background:var(--red-700); color:#fff; }
-
-  /* ---------- modal de itens pendentes (bottom sheet, mesmo padrão do sheet de plano de ação) ---------- */
-  .pending-overlay{ position:absolute; inset:0; background:rgba(10,20,15,0.45); display:flex; align-items:flex-end; justify-content:center; z-index:50; }
-  .pending-card{ background:var(--card); width:100%; border-radius:22px 22px 0 0; padding:20px; box-shadow:0 -6px 28px rgba(0,0,0,0.18); animation:sheet-up .22s ease-out; }
-  .pending-list-wrap{ max-height:180px; overflow-y:auto; margin:0 0 16px; border:1px solid var(--line); border-radius:var(--radius-sm); -webkit-overflow-scrolling:touch; }
-  .pending-list-item{ padding:10px 12px; border-bottom:1px solid var(--line); font-size:12.5px; line-height:1.45; color:var(--ink-700); }
-  .pending-list-item:last-child{ border-bottom:none; }
-  .pending-list-item b{ color:var(--ink-900); font-weight:700; }
-  .pending-actions{ display:flex; flex-direction:column; gap:8px; }
-  .pending-actions button{ width:100%; padding:13px; border-radius:var(--radius-sm); font-size:13.5px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; }
-  .pending-fill-btn{ border:1px solid var(--line); background:transparent; color:var(--ink-700); }
-  .pending-na-btn{ border:none; background:var(--green-700); color:#fff; }
-
-
-  /* =====================================================================
-     PRÉVIA DO RELATÓRIO — preenchida dinamicamente a partir de "questions"
-     ===================================================================== */
-  /* IMPORTANTE: #report-root é uma div permanente no HTML (existe mesmo vazia).
-     Por isso o estilo de "tela cheia" fica numa CLASSE (.report-shell) que só existe
-     quando o JS injeta o conteúdo — se estilizássemos o #report-root diretamente,
-     ele cobriria a tela com um fundo sólido mesmo estando vazio (foi exatamente
-     esse bug que deixava a tela em branco). */
-  #report-root .report-shell{ position:absolute; inset:0; z-index:30; background:#eeeeec; display:flex; flex-direction:column; }
-  #report-root .report-topbar{
-    flex-shrink:0; background:#0F6E56;
-    padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px;
+  .option-radio{
+    width:20px; height:20px; border-radius:50%; flex-shrink:0; margin-top:1px;
+    border:2px solid var(--ink-300); display:flex; align-items:center; justify-content:center;
+    transition:border-color .15s ease;
   }
-  #report-root .report-topbar-top{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-  #report-root .report-back{ display:flex; align-items:center; gap:4px; border:none; background:transparent; color:rgba(255,255,255,0.85); font-size:13px; font-weight:600; padding:4px 4px 4px 0; }
-  #report-root .report-topbar-title{ font-family:'Playfair Display',serif; font-size:17px; font-weight:600; color:#fff; margin:0; }
-  /* min-height:0 é essencial aqui: sem isso, um filho flex:1 com overflow-y:auto não
-     rola de verdade — ele simplesmente cresce além da tela, empurrando a barra de
-     baixo (e a seção de assinaturas) para fora da área visível. Foi esse o bug que
-     fazia a prévia "sumir" com checklists grandes. */
-  #report-root .report-pages{ flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:20px 12px 100px; display:flex; flex-direction:column; align-items:center; gap:20px; }
-  #report-root .report-bottombar{
-    flex-shrink:0; padding:12px 16px calc(env(safe-area-inset-bottom, 0px) + 14px); background:#fff; border-top:1px solid #e4e6e2;
-    display:flex; gap:10px;
+  .option-card.selected .option-radio,
+  .template-card.selected .option-radio{ border-color:var(--green-600); }
+  .option-radio::after{
+    content:''; width:10px; height:10px; border-radius:50%; background:var(--green-600);
+    transform:scale(0); transition:transform .15s ease;
   }
-  #report-root .report-bottombar button{ flex:1; padding:14px; border-radius:12px; font-size:14px; font-weight:700; border:none; display:flex; align-items:center; justify-content:center; gap:8px; }
-  #report-root .report-finalize-btn{ background:var(--green-700); color:#fff; }
+  .option-card.selected .option-radio::after,
+  .template-card.selected .option-radio::after{ transform:scale(1); }
 
-  #report-root .r-page{
-    width:100%; max-width:400px; background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.10);
-    padding:22px 18px; position:relative;
+  /* ---------- ações do modal ---------- */
+  .sheet-actions{ display:flex; gap:12px; }
+  .sheet-actions button{ flex:1; padding:13px; border-radius:var(--radius-sm); font-size:14px; font-weight:700; }
+  .btn-cancel{ border:1px solid var(--line); background:#fff; color:var(--ink-700); }
+  .btn-continue{ border:none; background:#0f6e562c; color:#7aa294; cursor:not-allowed; transition:background .15s ease, color .15s ease; }
+  .btn-continue.enabled{ background:var(--green-900); color:#fff; cursor:pointer; }
+
+  /* ---------- etapa 2: escolha de modelo (só para Checklist) ---------- */
+  .sheet-back-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .step-back-link{ display:flex; align-items:center; gap:4px; border:none; background:transparent; color:var(--ink-700); font-size:13px; font-weight:600; padding:2px 2px 2px 0; }
+  .sheet-title-block .sheet-subtitle{ margin-top:6px; }
+
+  .template-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:16px; max-height:48vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .template-card{
+    display:flex; align-items:flex-start; gap:12px;
+    width:100%; text-align:left; border:none;
+    border:1.5px solid var(--line); border-radius:16px; background:#fff; padding:14px;
+    transition:background-color .18s ease, border-color .18s ease;
   }
-  #report-root .r-num{ font-family:'Open Sans',sans-serif; font-weight:800; font-variant-numeric:lining-nums tabular-nums; }
+  .template-card:active{ border-color:var(--green-600); }
+  .template-card.selected{ border-color:var(--green-600); background:#EAF2EF; }
+  .template-icon{ width:34px; height:34px; border-radius:9px; flex-shrink:0; background:var(--green-700); color:#fff; display:flex; align-items:center; justify-content:center; }
+  .template-text{ flex:1; min-width:0; }
+  .template-title{ font-size:13.5px; font-weight:700; color:var(--ink-900); margin:0 0 5px; }
+  .template-tag{ display:inline-block; font-size:10px; font-weight:700; padding:2.5px 8px; border-radius:100px; margin:0 0 8px; white-space:nowrap; }
+  .template-tag.tag-padrao{ background:#1D9E75; color:#fff; }
+  .template-tag.tag-meus{ background:#000; color:#fff; }
+  .template-desc{ font-size:12px; color:var(--ink-500); line-height:1.45; margin:0; }
 
-  #report-root .r-topband{ display:flex; align-items:center; justify-content:space-between; }
-  #report-root .r-consult-name{ font-size:11.5px; font-weight:700; color:#181b19; margin:0; }
-  #report-root .r-consult-sub{ font-size:10px; color:#7c8480; margin:2px 0 0; }
-  #report-root .r-brand{ display:flex; align-items:center; gap:6px; }
-  #report-root .r-brand-word{ font-family:'Playfair Display',serif; font-weight:700; font-size:14px; color:#181b19; }
+  .new-template-card{ display:flex; align-items:center; gap:12px; border:1.5px dashed var(--ink-300); border-radius:16px; background:transparent; padding:14px; width:100%; text-align:left; }
+  .new-template-card:active{ background:var(--green-50); }
+  .new-template-icon{ width:34px; height:34px; border-radius:9px; flex-shrink:0; border:1.5px dashed var(--ink-300); color:var(--ink-500); display:flex; align-items:center; justify-content:center; }
+  .new-template-text{ flex:1; min-width:0; }
+  .new-template-title-row{ display:flex; align-items:center; gap:6px; margin:0 0 3px; }
+  .new-template-title{ font-size:13.5px; font-weight:700; color:var(--ink-700); margin:0; }
+  .new-template-desc{ font-size:12px; color:var(--ink-500); line-height:1.4; margin:0; }
 
-  #report-root .r-eyebrow{ font-size:10.5px; font-weight:700; letter-spacing:1px; color:#1D9E75; margin:24px 0 10px; }
-  #report-root .r-title{ font-family:'Playfair Display',serif; font-size:21px; font-weight:600; line-height:1.24; margin:0 0 22px; color:#181b19; }
-
-  #report-root .r-meta-grid{ display:flex; flex-wrap:wrap; gap:16px 28px; margin-bottom:22px; }
-  #report-root .r-meta-item .k{ font-size:10px; color:#7c8480; font-weight:600; margin:0 0 3px; }
-  #report-root .r-meta-item .v{ font-size:12px; font-weight:700; color:#181b19; margin:0; }
-
-  #report-root .r-summary{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
-  #report-root .r-summary-card{ flex:1; min-width:68px; border:1px solid #e4e6e2; border-radius:12px; padding:14px 6px; text-align:center; }
-  #report-root .r-summary-card .num{ font-size:20px; margin:0 0 3px; display:block; }
-  #report-root .r-summary-card .lbl{ font-size:9.5px; color:#7c8480; font-weight:600; }
-  #report-root .r-summary-card.tot .num{ color:#181b19; }
-  #report-root .r-summary-card.ok .num{ color:#1D9E75; }
-  #report-root .r-summary-card.nc .num{ color:#c0392b; }
-  #report-root .r-summary-card.pct{ background:#0F6E56; border-color:#0F6E56; }
-  #report-root .r-summary-card.pct .num{ color:#fff; }
-  #report-root .r-summary-card.pct .lbl{ color:rgba(255,255,255,0.75); }
-
-  #report-root .r-chart-box{ border:1px solid #e4e6e2; border-radius:12px; padding:16px; margin-bottom:14px; }
-  #report-root .r-chart-box h4{ font-size:11px; letter-spacing:.2px; color:#181b19; font-weight:700; margin:0 0 14px; }
-  #report-root .r-pie-row{ display:flex; flex-direction:column; align-items:center; gap:14px; }
-  #report-root .r-pie-legend{ display:flex; flex-wrap:wrap; justify-content:center; gap:7px 14px; }
-  #report-root .r-pie-legend-item{ display:flex; align-items:center; gap:6px; font-size:10.5px; color:#4d534f; font-weight:600; white-space:nowrap; }
-  #report-root .r-pie-legend-item .dot{ width:8px; height:8px; border-radius:2px; flex-shrink:0; }
-  #report-root .r-pie-legend-item b{ color:#181b19; font-weight:800; margin-left:2px; }
-
-  #report-root .r-bar-list{ display:flex; flex-direction:column; gap:11px; }
-  #report-root .r-bar-row{ display:flex; flex-direction:column; gap:5px; }
-  #report-root .r-bar-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
-  #report-root .r-bar-head .cat-label{ font-size:11px; font-weight:600; color:#181b19; line-height:1.25; margin:0; }
-  #report-root .r-bar-head .bar-pct{ font-size:11px; font-weight:800; color:#181b19; flex-shrink:0; }
-  #report-root .r-bar-track{ width:100%; height:6px; border-radius:3px; background:#e4e6e2; overflow:hidden; }
-  #report-root .r-bar-fill{ height:100%; border-radius:3px; background:#1D9E75; }
-
-  #report-root .r-footer{ margin-top:20px; padding-top:14px; border-top:1px solid #e4e6e2; display:flex; flex-direction:column; gap:4px; }
-  #report-root .r-footer-tag{ font-size:9px; color:#7c8480; letter-spacing:.3px; }
-  #report-root .r-footer-tag b{ color:#181b19; font-weight:700; }
-
-  #report-root .r-section-title{ font-family:'Playfair Display',serif; font-size:16px; font-weight:600; margin:0 0 18px; color:#181b19; }
-  #report-root .r-category-title{ font-family:'Playfair Display',serif; font-size:13px; font-weight:600; color:#181b19; margin:26px 0 14px; display:flex; align-items:center; gap:8px; }
-  #report-root .r-category-title:first-of-type{ margin-top:0; }
-  #report-root .r-category-title::after{ content:''; flex:1; height:1px; background:#e4e6e2; }
-
-  #report-root .r-intro{ font-size:12px; color:#4d534f; line-height:1.6; margin:0 0 20px; }
-
-  #report-root .r-item{ padding:18px 0 4px; }
-  #report-root .r-item + .r-item{ border-top:1px solid #e4e6e2; padding-top:18px; }
-  #report-root .r-item-text{ font-size:12px; line-height:1.55; margin:0; color:#181b19; font-weight:500; }
-  #report-root .r-nc-label{ font-size:9.5px; font-weight:700; color:#c0392b; text-transform:uppercase; letter-spacing:.4px; margin:0 0 5px; }
-  #report-root .r-item-comment{ font-size:11px; font-style:italic; color:#4d534f; margin:12px 0 0; padding-left:10px; border-left:2px solid #e4e6e2; }
-  #report-root .r-item-photos{ display:flex; gap:7px; margin-top:12px; flex-wrap:wrap; }
-  #report-root .r-item-photos .ph{ width:52px; height:52px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e4e6e2; flex-shrink:0; }
-
-  #report-root .r-plan-box{ margin-top:14px; padding-top:14px; border-top:1px solid #e4e6e2; display:flex; gap:10px; }
-  #report-root .r-plan-rail{ width:3px; border-radius:2px; background:#1D9E75; flex-shrink:0; }
-  #report-root .r-plan-content{ flex:1; min-width:0; }
-  #report-root .r-plan-label{ font-size:9.5px; font-weight:700; color:#0F6E56; text-transform:uppercase; letter-spacing:.4px; margin:0 0 9px; }
-  #report-root .r-plan-row{ font-size:11px; margin-bottom:8px; line-height:1.5; color:#4d534f; }
-  #report-root .r-plan-row:last-child{ margin-bottom:0; }
-  #report-root .r-plan-row .lbl{ font-weight:700; color:#181b19; }
-  #report-root .r-plan-dates-row{ display:flex; gap:22px; margin-top:11px; flex-wrap:wrap; }
-
-  #report-root .r-check-legend{ display:flex; gap:16px; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid #e4e6e2; flex-wrap:wrap; }
-  #report-root .r-check-legend-item{ display:flex; align-items:center; gap:6px; font-size:10px; color:#4d534f; font-weight:600; }
-  #report-root .r-check-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid #e4e6e2; }
-  #report-root .r-check-row:last-child{ border-bottom:none; }
-  #report-root .r-check-row-text{ font-size:11px; line-height:1.5; color:#181b19; margin:0; flex:1; }
-  #report-root .r-check-status{ width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  #report-root .r-check-status.ok{ background:#1D9E75; }
-  #report-root .r-check-status.nc{ background:#c0392b; }
-  #report-root .r-check-status.na{ background:#7c8480; }
-  #report-root .r-check-status.legend-size{ width:14px; height:14px; }
-
-  #report-root .r-sig-block{ margin-top:16px; }
-  #report-root .r-sig-block + .r-sig-block{ margin-top:22px; padding-top:18px; border-top:1px solid #e4e6e2; }
-  #report-root .r-sig-heading{ font-size:11px; font-weight:700; color:#181b19; margin:0 0 10px; }
-  #report-root .r-sig-preview{ font-family:'Playfair Display',serif; font-style:italic; font-size:17px; color:#181b19; border-bottom:1px solid #c7ccc8; padding-bottom:5px; margin-bottom:8px; min-height:22px; }
-  /* linha em branco reservada pra assinatura feita fora do app (ClickSign, gov.br etc.) —
-     diferente da assinatura da consultora, aqui NÃO renderizamos o nome como se já estivesse assinado */
-  #report-root .r-sig-blank-line{ height:36px; border-bottom:1px solid #c7ccc8; margin-bottom:8px; }
-  #report-root .r-sig-printed-name{ font-size:12.5px; font-weight:700; color:#181b19; margin:0 0 10px; }
-  #report-root .r-sig-printed-name.placeholder{ color:#7c8480; font-weight:600; font-style:italic; }
-  #report-root .r-sig-input{ width:100%; border:1px solid #e4e6e2; border-radius:9px; padding:10px 12px; font-family:'Open Sans',sans-serif; font-size:13px; color:#181b19; margin-bottom:6px; }
-  #report-root .r-sig-input:focus{ outline:none; border-color:#1D9E75; }
-  #report-root .r-sig-role{ font-size:10px; color:#7c8480; margin:0; }
-  #report-root .r-sig-toggle-row{ display:flex; gap:8px; margin-bottom:12px; }
-  #report-root .r-sig-toggle-btn{ flex:1; border:1px solid #e4e6e2; border-radius:9px; background:#fff; color:#4d534f; font-size:12px; font-weight:700; padding:9px; }
-  #report-root .r-sig-toggle-btn.selected{ border-color:#0F6E56; background:#0F6E56; color:#fff; }
-
-  #report-root .r-empty-attention{ text-align:center; color:#7c8480; font-size:12.5px; padding:30px 10px; line-height:1.6; }
-
-  /* card de assinaturas — visualmente é só mais um "cartão" na rolagem, igual às páginas do relatório */
-  #report-root .report-sig-card{ width:100%; max-width:400px; background:#fff; border-radius:16px; padding:20px 18px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
-  #report-root .report-sig-card-title{ font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:#181b19; margin:0 0 4px; }
-  #report-root .report-sig-card-sub{ font-size:11.5px; color:#7c8480; margin:0 0 18px; line-height:1.5; }
-
-  /* ---- tela "visita finalizada" ---- */
-  #finalized-root .finalized-shell{
-    position:absolute; inset:0; z-index:55; background:#fff;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    padding:32px 28px calc(env(safe-area-inset-bottom, 0px) + 24px); text-align:center;
-  }
-  #finalized-root .finalized-icon{ width:72px; height:72px; border-radius:50%; background:var(--green-50); color:var(--green-700); display:flex; align-items:center; justify-content:center; margin-bottom:22px; }
-  #finalized-root .finalized-title{ font-family:'Playfair Display',serif; font-size:21px; font-weight:600; color:var(--ink-900); margin:0 0 10px; }
-  #finalized-root .finalized-text{ font-size:13.5px; color:var(--ink-700); line-height:1.6; margin:0 0 32px; max-width:300px; }
-  #finalized-root .finalized-actions{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:320px; }
-  #finalized-root .finalized-actions button{ width:100%; padding:15px; border-radius:12px; font-size:14.5px; font-weight:700; }
-  #finalized-root .finalized-share-btn{ background:var(--green-900); color:#fff; border:none; }
-  #finalized-root .pending-fill-btn{ display:flex; align-items:center; justify-content:center; gap:6px; }
-
+  .wip-notice{ display:flex; align-items:flex-start; gap:8px; background:var(--green-50); color:var(--green-800); border-radius:var(--radius-sm); padding:10px 12px; margin:10px 0 0; font-size:12px; line-height:1.5; animation:sheet-up .18s ease-out; }
+  .wip-notice svg{ flex-shrink:0; margin-top:1px; }
 </style>
 </head>
 <body>
 
 <div class="app">
-  <div class="header">
-    <div class="header-top">
-      <div class="back" id="icon-back"></div>
-      <div class="status"><span class="dot"></span> Online</div>
-    </div>
-    <div>
-      <p class="header-meta" id="header-meta">Checklist padrão de limpeza</p>
-      <p class="header-client">Padaria Central</p>
-    </div>
-    <div class="progress-row">
-      <span class="progress-label" id="progress-label">0 de 0 itens</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-  </div>
+  <button class="new-visit-btn" id="new-visit-btn">
+    <span id="icon-plus"></span> Nova Visita
+  </button>
 
-  <div class="body" id="questions-container"></div>
-
-  <div class="footer">
-    <button class="review-btn" id="review-btn" disabled>Revisar checklist</button>
-  </div>
-
-  <div id="modal-root"></div>
   <div id="sheet-root"></div>
-  <div id="review-root"></div>
-  <div id="pending-modal-root"></div>
-  <div id="report-root"></div>
-  <div id="finalize-confirm-root"></div>
-  <div id="finalized-root"></div>
-  <input type="file" id="photo-file-input" accept="image/*" multiple style="display:none">
 </div>
 
 <script>
-/* ---------- Hugeicons (stroke-rounded, free core set) ---------- */
+/* ---------- Hugeicons (stroke-rounded) ---------- */
 function hi(paths, s){
   const inner = paths.map(([tag, attrs]) => {
     const a = Object.entries(attrs)
@@ -546,1741 +184,328 @@ function hi(paths, s){
 }
 
 const ICON = {
-  arrowLeft:  (s=18) => hi([["path",{d:"M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
-  chevronRight:(s=16)=> hi([["path",{d:"M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
-  pencil:     (s=14) => hi([
-    ["path",{d:"M15.2141 5.98239L16.6158 4.58063C17.39 3.80646 18.6452 3.80646 19.4194 4.58063C20.1935 5.3548 20.1935 6.60998 19.4194 7.38415L18.0176 8.78591M15.2141 5.98239L6.98023 14.2163C5.93493 15.2616 5.41226 15.7842 5.05637 16.4211C4.70047 17.058 4.3424 18.5619 4 20C5.43809 19.6576 6.94199 19.2995 7.57889 18.9436C8.21579 18.5877 8.73844 18.0651 9.78375 17.0198L18.0176 8.78591M15.2141 5.98239L18.0176 8.78591",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M11 20H17",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}]
+  plus:  (s=16) => hi([["path",{d:"M12 4V20M20 12H4",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
+  close: (s=16) => hi([["path",{d:"M18 6L6.00081 17.9992M17.9992 18L6 6.00085",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
+  arrowLeft: (s=14) => hi([["path",{d:"M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
+  info: (s=15) => hi([
+    ["path",{d:"M12 8.5V12.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}],
+    ["path",{d:"M11.9944 16H12.0034",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"2"}],
+    ["path",{d:"M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}]
   ], s),
-  trash:      (s=16) => hi([
-    ["path",{d:"M19.5 5.5L18.8803 15.5251C18.7219 18.0864 18.6428 19.3671 18.0008 20.2879C17.6833 20.7431 17.2747 21.1273 16.8007 21.416C15.8421 22 14.559 22 11.9927 22C9.42312 22 8.1383 22 7.17905 21.4149C6.7048 21.1257 6.296 20.7408 5.97868 20.2848C5.33688 19.3626 5.25945 18.0801 5.10461 15.5152L4.5 5.5",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M3 5.5H21M16.0557 5.5L15.3731 4.09173C14.9196 3.15626 14.6928 2.68852 14.3017 2.39681C14.215 2.3321 14.1231 2.27454 14.027 2.2247C13.5939 2 13.0741 2 12.0345 2C10.9688 2 10.436 2 9.99568 2.23412C9.8981 2.28601 9.80498 2.3459 9.71729 2.41317C9.32164 2.7167 9.10063 3.20155 8.65861 4.17126L8.05292 5.5",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M9.5 16.5L9.5 10.5",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M14.5 16.5L14.5 10.5",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}]
+
+  /* document-validation-stroke-rounded — usado no card "Checklist" */
+  checklist: (s=20) => hi([
+    ["path",{d:"M14.9805 7.01556C14.9805 7.01556 15.4805 7.51556 15.9805 8.51556C15.9805 8.51556 17.5687 6.01556 18.9805 5.51556",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}],
+    ["path",{d:"M9.99491 2.02134C7.49644 1.91556 5.56618 2.20338 5.56618 2.20338C4.34733 2.29053 2.01152 2.97385 2.01154 6.96454C2.01156 10.9213 1.9857 15.7993 2.01154 17.7439C2.01154 18.932 2.74716 21.7033 5.29332 21.8518C8.38816 22.0324 13.9628 22.0708 16.5205 21.8518C17.2052 21.8132 19.4847 21.2757 19.7732 18.7956C20.0721 16.2263 20.0126 14.4407 20.0126 14.0157",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}],
+    ["path",{d:"M21.9999 7.01556C21.9999 9.77698 19.7592 12.0156 16.9951 12.0156C14.231 12.0156 11.9903 9.77698 11.9903 7.01556C11.9903 4.25414 14.231 2.01556 16.9951 2.01556C19.7592 2.01556 21.9999 4.25414 21.9999 7.01556Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}],
+    ["path",{d:"M6.98053 13.0156H10.9805",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}],
+    ["path",{d:"M6.98053 17.0156H14.9805",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}]
   ], s),
-  mic:        (s=16) => hi([
-    ["path",{d:"M7 6.5C7 4.01472 9.01472 2 11.5 2C13.9853 2 16 4.01472 16 6.5V11.5C16 13.9853 13.9853 16 11.5 16C9.01472 16 7 13.9853 7 11.5V6.5Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M11.5 19H11.0828C7.57267 19 4.57706 16.4623 4 13M11.5 19H11.9172C15.4273 19 18.4229 16.4623 19 13M11.5 19V22",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]
-  ], s),
-  camera:     (s=17) => hi([
-    ["path",{d:"M12.6974 3.5H11.303C10.5884 3.5 10.2311 3.5 9.91067 3.612C9.71499 3.68039 9.53113 3.77879 9.36568 3.90367C9.09474 4.10816 8.89655 4.40544 8.50018 5C8.29717 5.30453 7.99794 5.75337 7.87867 5.87871C7.58314 6.18927 7.19563 6.39666 6.77329 6.47029C6.60284 6.5 6.41985 6.5 6.05387 6.5C5.07379 6.5 4.58376 6.5 4.18307 6.61342C3.18074 6.89716 2.39734 7.68055 2.1136 8.68289C2.00018 9.08357 2.00018 9.57361 2.00018 10.5537V14.5C2.00018 17.3284 2.00018 18.7426 2.87886 19.6213C3.75754 20.5 5.17176 20.5 8.00018 20.5H16.0002C18.8286 20.5 20.2428 20.5 21.1215 19.6213C22.0002 18.7426 22.0002 17.3284 22.0002 14.5V10.5537C22.0002 9.57361 22.0002 9.08357 21.8868 8.68289C21.603 7.68055 20.8196 6.89716 19.8173 6.61342C19.4166 6.5 18.9266 6.5 17.9465 6.5C17.5805 6.5 17.3975 6.5 17.2271 6.47029C16.8047 6.39666 16.4172 6.18927 16.1217 5.87871C16.0024 5.75336 15.7032 5.30451 15.5002 5C15.1038 4.40544 14.9056 4.10816 14.6347 3.90367C14.4692 3.77879 14.2854 3.68039 14.0897 3.612C13.7693 3.5 13.412 3.5 12.6974 3.5Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M16.0002 13C16.0002 15.2091 14.2093 17 12.0002 17C9.79104 17 8.00018 15.2091 8.00018 13C8.00018 10.7909 9.79104 9 12.0002 9C14.2093 9 16.0002 10.7909 16.0002 13Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]
-  ], s),
-  plus:       (s=16) => hi([["path",{d:"M12 4V20M20 12H4",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
-  x:          (s=11) => hi([["path",{d:"M18 6L6.00081 17.9992M17.9992 18L6 6.00085",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}]], s),
-  close:      (s=16) => hi([["path",{d:"M18 6L6.00081 17.9992M17.9992 18L6 6.00085",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
-  check:      (s=12) => hi([["path",{d:"M5 13L9 17L19 7",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"2"}]], s),
-  commentAdd: (s=16) => hi([
-    ["path",{d:"M12 20.5C16.9706 20.5 21 16.9706 21 12.5C21 8.02944 16.9706 4.5 12 4.5C7.02944 4.5 3 8.02944 3 12.5C3 13.6588 3.20661 14.7683 3.5799 15.7791C3.65975 15.9925 3.68521 16.2196 3.6367 16.4383L3.03935 19.1213C2.94975 19.5252 3.31366 19.8834 3.71751 19.7861L6.24847 19.1783C6.51902 19.1141 6.79916 19.1424 7.05005 19.2571C8.5539 19.9469 10.2404 20.5 12 20.5Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M12 9V16",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M8.5 12.5H15.5",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}]
-  ], s),
-  planIcon:   (s=16) => hi([
-    ["path",{d:"M19 12.001V10.6578C19 9.84033 19 9.43158 18.8478 9.06404C18.6955 8.69649 18.4065 8.40746 17.8284 7.8294L13.0919 3.09286C12.593 2.59397 12.3436 2.34453 12.0345 2.19672C11.9702 2.16598 11.9044 2.1387 11.8372 2.11499C11.5141 2.00098 11.1614 2.00098 10.4558 2.00098C7.21082 2.00098 5.58831 2.00098 4.48933 2.88705C4.26731 3.06606 4.06508 3.26829 3.88607 3.49031C3 4.58928 3 6.2118 3 9.45682V14.001C3 17.7722 3 19.6578 4.17157 20.8294C5.34315 22.001 7.22876 22.001 11 22.001H13.0345M12 2.50098V3.00098C12 5.8294 12 7.24362 12.8787 8.1223C13.7574 9.00098 15.1716 9.00098 18 9.00098H18.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M17.5 15.001L17.7579 15.698C18.0961 16.612 18.2652 17.069 18.5986 17.4024C18.932 17.7357 19.389 17.9048 20.303 18.2431L21 18.501L20.303 18.7589C19.389 19.0971 18.932 19.2662 18.5986 19.5996C18.2652 19.933 18.0961 20.39 17.7579 21.3039L17.5 22.001L17.2421 21.3039C16.9039 20.39 16.7348 19.933 16.4014 19.5996C16.068 19.2662 15.611 19.0971 14.697 18.7589L14 18.501L14.697 18.2431C15.611 17.9048 16.068 17.7357 16.4014 17.4024C16.7348 17.069 16.9039 16.612 17.2421 15.698L17.5 15.001Z",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"1.5"}]
-  ], s),
-  sparkles:   (s=13) => hi([
-    ["path",{d:"M15 2L15.5387 4.39157C15.9957 6.42015 17.5798 8.00431 19.6084 8.46127L22 9L19.6084 9.53873C17.5798 9.99569 15.9957 11.5798 15.5387 13.6084L15 16L14.4613 13.6084C14.0043 11.5798 12.4202 9.99569 10.3916 9.53873L8 9L10.3916 8.46127C12.4201 8.00431 14.0043 6.42015 14.4613 4.39158L15 2Z",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M7 12L7.38481 13.7083C7.71121 15.1572 8.84275 16.2888 10.2917 16.6152L12 17L10.2917 17.3848C8.84275 17.7112 7.71121 18.8427 7.38481 20.2917L7 22L6.61519 20.2917C6.28879 18.8427 5.15725 17.7112 3.70827 17.3848L2 17L3.70827 16.6152C5.15725 16.2888 6.28879 15.1573 6.61519 13.7083L7 12Z",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"1.5"}]
-  ], s),
-  calendar:   (s=18) => hi([
-    ["path",{d:"M16 2V6M8 2V6",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M13 4H11C7.22876 4 5.34315 4 4.17157 5.17157C3 6.34315 3 8.22876 3 12V14C3 17.7712 3 19.6569 4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284C21 19.6569 21 17.7712 21 14V12C21 8.22876 21 6.34315 19.8284 5.17157C18.6569 4 16.7712 4 13 4Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M3 10H21",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]
-  ], s),
-  alert:      (s=18) => hi([
-    ["path",{d:"M12 8V13",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}],
-    ["path",{d:"M11.9959 16H12.0049",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"2"}],
-    ["path",{d:"M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}]
-  ], s),
-  download:   (s=15) => hi([
-    ["path",{d:"M12 3V16M12 16L16 11.625M12 16L8 11.625",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}],
-    ["path",{d:"M21 15C21 18.7712 21 20.6569 19.8284 21.8284C18.6569 23 16.7712 23 13 23H11C7.22876 23 5.34315 23 4.17157 21.8284C3 20.6569 3 18.7712 3 15",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}]
-  ], s),
-  ok24:       () => `<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  nc24:       () => `<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 5L19 19M19 5L5 19" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>`,
-  na24:       () => `<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 12H19" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>`,
-  checkBig:   (s=32) => hi([["path",{d:"M5 13L9 17L19 7",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"2.4"}]], s),
-  /* task-done-01-stroke-rounded (Hugeicons) — nota/documento com check, usado na tela "visita finalizada" */
-  noteCheck:  (s=32) => hi([
-    ["path",{d:"M8 3H13.6C15.8402 3 16.9603 3 17.816 3.43597C18.5686 3.81947 19.1805 4.43139 19.564 5.18404C20 6.03969 20 7.15979 20 9.4V16.6C20 18.8402 20 19.9603 19.564 20.816C19.1805 21.5686 18.5686 22.1805 17.816 22.564C16.9603 23 15.8402 23 13.6 23H10.4C8.15979 23 7.03969 23 6.18404 22.564C5.43139 22.1805 4.81947 21.5686 4.43597 20.816C4 19.9603 4 18.8402 4 16.6V9",stroke:"currentColor",strokeWidth:"1.7",strokeLinecap:"round",strokeLinejoin:"round"}],
-    ["path",{d:"M9 12.8L11.3 15L16 10",stroke:"currentColor",strokeWidth:"1.7",strokeLinecap:"round",strokeLinejoin:"round"}]
-  ], s),
-  mail:       (s=18) => hi([
-    ["path",{d:"M2 7.5L10.1649 13.7154C11.2971 14.5795 12.7029 14.5795 13.8351 13.7154L22 7.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.6"}],
-    ["path",{d:"M2 17V7C2 5.34315 3.34315 4 5 4H19C20.6569 4 22 5.34315 22 7V17C22 18.6569 20.6569 20 19 20H5C3.34315 20 2 18.6569 2 17Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.6"}]
-  ], s),
-  chat:       (s=18) => hi([
-    ["path",{d:"M8 12H8.01M12 12H12.01M16 12H16.01",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"2.2"}],
-    ["path",{d:"M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C10.4607 21 9.01175 20.6136 7.74469 19.9325L3 21L4.39187 17.0817C3.51156 15.6194 3 13.8747 3 12Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.6"}]
-  ], s),
-  link:       (s=18) => hi([
-    ["path",{d:"M9 15L15 9",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.6"}],
-    ["path",{d:"M10.5 6.5L11.6716 5.32843C13.2337 3.76633 15.7663 3.76633 17.3284 5.32843C18.8905 6.89052 18.8905 9.42314 17.3284 10.9852L16.1568 12.1568M13.5 17.5L12.3284 18.6716C10.7663 20.2337 8.23367 20.2337 6.67157 18.6716C5.10948 17.1095 5.10948 14.5769 6.67157 13.0148L7.84315 11.8432",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.6"}]
+
+  /* task-edit-01-stroke-rounded — usado no card "Visita técnica" */
+  freeform: (s=20) => hi([
+    ["path",{d:"M13.5 2H8.5C7.67157 2 7 2.67157 7 3.5C7 4.32843 7.67157 5 8.5 5H13.5C14.3284 5 15 4.32843 15 3.5C15 2.67157 14.3284 2 13.5 2Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}],
+    ["path",{d:"M7 15H10.4286M7 11H15",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}],
+    ["path",{d:"M19 11.9995L19 9.48263C19 6.65424 19 5.24004 18.1213 4.36137C17.48 3.72007 16.5535 3.54681 15 3.5M11 21.9995L9 21.9995C6.17158 21.9995 4.75737 21.9995 3.87869 21.1208C3.00001 20.2421 3.00001 18.8279 3 15.9995L3.00001 9.48269C3.00001 6.65425 3 5.24004 3.87868 4.36136C4.51997 3.72007 5.44651 3.54681 6.9999 3.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}],
+    ["path",{d:"M15.7367 21.6527L14 22L14.3473 20.2633C14.4179 19.9106 14.5913 19.5866 14.8456 19.3323L18.9111 15.2668C19.2668 14.9111 19.8437 14.9111 20.1995 15.2668L20.7332 15.8005C21.0889 16.1563 21.0889 16.7332 20.7332 17.0889L16.6677 21.1544C16.4134 21.4087 16.0894 21.5821 15.7367 21.6527Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.7"}]
   ], s)
 };
-document.getElementById('icon-back').innerHTML = ICON.arrowLeft(15) + '<span>Voltar</span>';
-document.getElementById('icon-back').style.cursor = 'pointer';
-document.getElementById('icon-back').onclick = () => { window.location.href = 'index.html'; };
 
-/* ---------- modelo de checklist aplicado na tela anterior (index.html) ---------- */
-(function applyActiveTemplateToHeader(){
-  try{
-    const raw = localStorage.getItem('checklistTemplateAtivo');
-    if (!raw) return;
-    const template = JSON.parse(raw);
-    if (template && template.name){
-      document.getElementById('header-meta').textContent = template.name;
-    }
-  }catch(e){ /* localStorage indisponivel ou dado invalido, mantem o texto padrão */ }
-})();
+document.getElementById('icon-plus').innerHTML = ICON.plus(16);
 
-/* ---------- dados de exemplo ----------
-   Cada item tem uma "category" (tópico) para agrupar as perguntas na tela. */
-const QUESTIONS_SEED = [
-  { category:'Higiene e Segurança', text:"As instalações, os equipamentos, os móveis e os utensílios são mantidos em condições higiênico-sanitárias apropriadas?" },
-  { category:'Higiene e Segurança', text:"As operações de higienização são realizadas por funcionários comprovadamente capacitados e com freqüência que garanta a manutenção dessas condições e minimize o risco de contaminação do alimento?" },
-  { category:'Higiene e Segurança', text:"O descarte dos resíduos atende ao disposto em legislação específica?" },
-  { category:'Higiene e Segurança', text:"Os funcionários utilizam uniformes adequados, limpos e em bom estado de conservação?" },
-  { category:'Higiene e Segurança', text:"Existe controle de pragas e vetores atualizado e em conformidade com a legislação vigente?" },
-  { category:'Armazenamento e Controle', text:"Os produtos são armazenados obedecendo ao distanciamento mínimo necessário para garantir adequada ventilação, limpeza e circulação?" },
-  { category:'Armazenamento e Controle', text:"Os equipamentos e utensílios utilizados para pesagem, medição e controle de temperatura são calibrados periodicamente?" },
-  { category:'Armazenamento e Controle', text:"As matérias-primas e ingredientes são armazenados seguindo o critério de validade (FIFO/FEFO)?" }
-];
-
-/* ---------- state ---------- */
-let questions = QUESTIONS_SEED.map((item, i) => newQuestion(i + 1, item.category, item.text));
-let deletePlanTarget = null;   // questionId | null
-let activePlanSheet = null;    // questionId | null
-let lastUsedEndDate = '';      // última data de conclusão confirmada — usada para pré-preencher o próximo plano de ação
-let planSheetStep = 'text';    // 'text' | 'dates'
-let planTextWarning = false;
-let reviewOpen = false;
-
-// ---- novo estado do fluxo de geração de relatório ----
-let pendingModalOpen = false;   // modal de itens pendentes ao clicar "Gerar relatório"
-let reportGenerating = false;   // loading rápido antes de mostrar a prévia
-let reportPreviewOpen = false;  // tela de prévia do relatório
-let reportSignature = {
-  consultantName: 'Rayane Araújo', // pré-preenchido; editável
-  includeClient: false,            // toggle "assinatura do cliente"
-  clientName: ''
+/* ---------- destinos: ajuste os arquivos aqui se os nomes forem outros ---------- */
+const DESTINATIONS = {
+  checklist: 'checklist.html',
+  visita: 'visita-tecnica.html'
 };
 
-// ---- fluxo de finalização da visita ----
-let finalizeConfirmOpen = false; // bottom sheet de confirmação "Finalizar visita?"
-let visitFinalized = false;      // tela de sucesso após finalizar
-let finalizedReportUrl = null;   // URL (blob) do relatório estático gerado ao finalizar a visita
+/* ---------- modelos de checklist disponíveis ----------
+   "padrao" = modelo padrão do sistema. "meus" = modelo criado pelo próprio usuário.
+   Ajuste/puxe essa lista de onde fizer sentido quando integrar com o backend. */
+const TEMPLATES = [
+  { id:'padrao-limpeza',    tag:'padrao', name:'Checklist Padrão de Limpeza', desc:'Modelo padrão do sistema para avaliação de limpeza e organização das áreas de produção.' },
+  { id:'padrao-auditoria',  tag:'padrao', name:'Checklist Padrão de Auditoria de Qualidade', desc:'Modelo padrão do sistema para verificação dos requisitos de qualidade e conformidade sanitária.' },
+  { id:'meu-5s',            tag:'meus',   name:'Checklist Auditoria 5S', desc:'Modelo criado por você para avaliação dos princípios de organização 5S.' },
+  { id:'meu-acaiteria',     tag:'meus',   name:'Checklist Diagnóstico Açaiteria', desc:'Modelo criado por você para diagnóstico completo de unidades de açaiteria.' }
+];
+const TEMPLATE_TAG_LABEL = { padrao:'Aptta', meus:'Meus' };
 
-function newQuestion(number, category, text){
-  return {
-    id: number,
-    number,
-    category,
-    text,
-    answer: null,          // null | 'C' | 'NC' | 'NA'
-    showPhotos: false,
-    showComment: false,
-    photos: [],
-    photoDraft: [],
-    commentDraft: '',
-    commentSaved: '',
-    recording: false,
-    planState: 'none',     // 'none' | 'generating' | 'editing' | 'confirmed'
-    plan: null,
-    planMissingFieldsWarning: false
-  };
-}
+/* chave usada pelo checklist.html para saber qual modelo foi aplicado */
+const ACTIVE_TEMPLATE_KEY = 'checklistTemplateAtivo';
 
-function findQuestion(id){ return questions.find(q => q.id == id); }
+/* ---------- persistencia do estado do modal ---------- */
+const STORAGE_KEY = 'novaVisitaModalState';
 
-/* ---------- agrupamento por tópico/categoria ---------- */
-function groupQuestionsByCategory(qs){
-  const groups = [];
-  let current = null;
-  qs.forEach(q => {
-    if (!current || current.category !== q.category){
-      current = { category: q.category, items: [] };
-      groups.push(current);
-    }
-    current.items.push(q);
-  });
-  return groups;
-}
-
-// usado no checklist e na revisão: só o nome do tópico, sem bolinha verde nem contador
-function categoryHeaderMarkup(group){
-  return `<div class="category-header">${escapeHtml(group.category)}</div>`;
-}
-
-function pad2(n){ return String(n).padStart(2,'0'); }
-function todayDisplay(){ const d = new Date(); return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`; }
-function nowDisplay(){ const d = new Date(); return `${todayDisplay()} às ${pad2(d.getHours())}:${pad2(d.getMinutes())}`; }
-
-function maskDateInput(raw){
-  const digits = (raw || '').replace(/\D/g, '').slice(0, 8);
-  const day = digits.slice(0, 2), month = digits.slice(2, 4), year = digits.slice(4, 8);
-  let out = day;
-  if (digits.length > 2) out += '/' + month;
-  if (digits.length > 4) out += '/' + year;
-  return out;
-}
-function parseDisplayDate(str){
-  const m = /^(\d{2})\/(\d{2})\/(\d{2}|\d{4})$/.exec((str || '').trim());
-  if (!m) return null;
-  const day = Number(m[1]), month = Number(m[2]) - 1;
-  const year = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
-  const date = new Date(year, month, day);
-  if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return null;
-  return date;
-}
-
-function generateAISuggestion(){
-  return {
-    whatToFix: 'Reorganizar o armazenamento seguindo o padrão FIFO, separando itens por validade.',
-    howToFix: 'Treinar a equipe e reetiquetar as prateleiras com data de validade visível.'
-  };
-}
-
-/* ---------- captura/seleção de foto real ---------- */
-let pendingPhotoQuestionId = null;
-
-function openPhotoPicker(qId, resetDraft){
-  const q = findQuestion(qId);
-  if (!q) return;
-  if (resetDraft) q.photoDraft = q.photos.slice();
-  pendingPhotoQuestionId = qId;
-  const input = document.getElementById('photo-file-input');
-  input.value = '';
-  input.click();
-}
-
-function readFileAsDataUrl(file){
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-document.getElementById('photo-file-input').addEventListener('change', (e) => {
-  const q = findQuestion(pendingPhotoQuestionId);
-  const files = Array.from(e.target.files || []);
-  if (!q || files.length === 0) return;
-
-  Promise.all(files.map(readFileAsDataUrl)).then(dataUrls => {
-    q.photoDraft = (q.photoDraft || []).concat(dataUrls);
-    q.showPhotos = true;
-    render();
-  });
-});
-
-function startPlanGeneration(q){
-  q.planState = 'generating';
-  activePlanSheet = q.id;
-  planSheetStep = 'text';
-  planTextWarning = false;
-  render();
-  setTimeout(() => {
-    const suggestion = generateAISuggestion();
-    q.plan = {
-      whatToFix: suggestion.whatToFix,
-      howToFix: suggestion.howToFix,
-      aiWhatToFix: suggestion.whatToFix,
-      aiHowToFix: suggestion.howToFix,
-      savedWhatToFix: suggestion.whatToFix,
-      savedHowToFix: suggestion.howToFix,
-      startDate: todayDisplay(),
-      endDate: lastUsedEndDate,
-      savedStartDate: todayDisplay(),
-      savedEndDate: lastUsedEndDate,
-      dateError: false
-    };
-    q.planState = 'editing';
-    render();
-  }, 900);
-}
-
-/* ---------- render ---------- */
-function render(){
-  renderProgress();
-  renderQuestions();
-  renderModal();
-  renderPlanSheet();
-  renderReview();
-  renderPendingModal();
-  renderReportPreview();
-  renderFinalizeConfirm();
-  renderVisitFinalized();
-
-  const answeredCount = questions.filter(q => q.answer !== null).length;
-  document.getElementById('review-btn').disabled = questions.length === 0 || answeredCount < 1;
-  document.getElementById('review-btn').onclick = () => { reviewOpen = true; renderReview(); };
-}
-
-function renderProgress(){
-  const total = questions.length;
-  const answered = questions.filter(q => q.answer !== null).length;
-  const pct = total === 0 ? 0 : Math.round((answered / total) * 100);
-  document.getElementById('progress-label').textContent = `${answered} de ${total} itens`;
-  document.getElementById('progress-fill').style.width = pct + '%';
-}
-
-function renderQuestions(){
-  const el = document.getElementById('questions-container');
-
-  if (questions.length === 0){
-    el.innerHTML = `<div class="empty-hint">Nenhum item de checklist carregado.</div>`;
-    return;
-  }
-
-  const groups = groupQuestionsByCategory(questions);
-  el.innerHTML = groups.map(group => `
-    ${categoryHeaderMarkup(group)}
-    ${group.items.map(q => renderQuestionCard(q)).join('')}
-  `).join('');
-  bindQuestionEvents();
-}
-
-function renderQuestionCard(q){
-  const answered = q.answer !== null;
-
-  return `
-    <div class="q-card ${answered ? 'answered' : ''}" id="q-${q.id}">
-      <p class="q-text"><b>${q.number}.</b> ${escapeHtml(q.text)}</p>
-
-      <div class="answer-row">
-        <button class="answer-btn ans-c ${q.answer === 'C' ? 'selected' : ''}" data-q="${q.id}" data-val="C">C</button>
-        <button class="answer-btn ans-nc ${q.answer === 'NC' ? 'selected' : ''}" data-q="${q.id}" data-val="NC">N/C</button>
-        <button class="answer-btn ans-na ${q.answer === 'NA' ? 'selected' : ''}" data-q="${q.id}" data-val="NA">N/A</button>
-      </div>
-
-      <div class="qa-divider"></div>
-
-      <div class="qa-actions">
-        <button class="qa-btn photo-toggle-btn ${q.showPhotos ? 'active' : ''}" data-q="${q.id}" ${answered ? '' : 'disabled'}>
-          ${ICON.camera(16)} <span>(${q.photos.length})</span>${q.photos.length ? `<span class="qa-pencil">${ICON.pencil(16)}</span>` : ''}
-        </button>
-        <button class="qa-btn comment-toggle-btn ${q.showComment ? 'active' : ''}" data-q="${q.id}" ${answered ? '' : 'disabled'}>
-          ${ICON.commentAdd(16)} <span>(${q.commentSaved ? 1 : 0})</span>${q.commentSaved ? `<span class="qa-pencil">${ICON.pencil(16)}</span>` : ''}
-        </button>
-        ${q.planState === 'confirmed' && q.plan ? `
-          <button class="qa-btn plan-toggle-btn active" data-q="${q.id}" data-action="open-plan-sheet" aria-label="Editar plano de ação">
-            ${ICON.planIcon(16)} <span class="qa-pencil">${ICON.pencil(16)}</span>
-          </button>
-        ` : ''}
-      </div>
-
-      ${q.showPhotos ? renderPhotoPanel(q) : ''}
-      ${q.showComment ? renderCommentPanel(q) : ''}
-
-      ${renderPlanoArea(q)}
-    </div>
-  `;
-}
-
-function renderPhotoPanel(q){
-  return `
-    <div class="photo-panel">
-      <div class="photo-row">
-        ${q.photoDraft.map((src, i) => `
-          <div class="photo-thumb" style="background-image:url('${src}');background-size:cover;background-position:center;">
-            <button class="remove-photo" data-q="${q.id}" data-idx="${i}">${ICON.x(11)}</button>
-          </div>
-        `).join('')}
-        <button class="photo-add-tile" data-q="${q.id}" aria-label="Adicionar foto">${ICON.plus(18)}</button>
-      </div>
-      <div class="comment-actions-row">
-        <button class="photo-cancel-btn" data-q="${q.id}">Cancelar</button>
-        <button class="photo-save-btn" data-q="${q.id}">Salvar fotos</button>
-      </div>
-    </div>
-  `;
-}
-
-function renderCommentPanel(q){
-  const value = q.commentDraft;
-  return `
-    <div class="comment-panel">
-      <p class="comment-label">Comentário</p>
-      <div class="field-wrap">
-        <textarea class="comment-input" placeholder="Descreva o que você observou..." data-q="${q.id}">${escapeHtml(value)}</textarea>
-        <div class="field-actions-row">
-          <button class="comment-mic-btn ${q.recording ? 'recording' : ''}" data-q="${q.id}" aria-label="Ditar comentário">${ICON.mic(17)}</button>
-        </div>
-      </div>
-      ${q.recording ? `<div class="listening"><span class="wave"></span> Ouvindo...</div>` : ''}
-      <div class="comment-actions-row">
-        <button class="comment-clear-btn" data-q="${q.id}">Excluir</button>
-        <button class="comment-save-btn" data-q="${q.id}" ${value.trim() ? '' : 'disabled'}>Salvar comentário</button>
-      </div>
-    </div>
-  `;
-}
-
-function renderPlanoArea(q){
-  if (q.planState === 'generating'){
-    return `
-      <div class="plan-loading">
-        <div class="spinner"></div>
-        <div class="sparkle">${ICON.sparkles(13)}</div>
-        <span>Gerando sugestão de plano de ação...</span>
-      </div>
-    `;
-  }
-
-  if (q.planState === 'confirmed' && q.plan){
-    return '';
-  }
-
-  if (q.answer === 'NC' && q.planState === 'none'){
-    return `
-      <button class="plan-generate-link" data-q="${q.id}" data-action="generate-plan">
-        <span class="ai-sparkle">${ICON.sparkles(15)}</span> Gerar plano de ação com IA
-      </button>
-    `;
-  }
-
-  if (q.planState === 'editing' && q.plan){
-    if (q.answer === 'NC'){
-      return `
-        <button class="plan-generate-link" data-q="${q.id}" data-action="open-plan-sheet">
-          <span class="ai-sparkle">${ICON.sparkles(15)}</span> Continuar plano de ação
-        </button>
-      `;
-    }
-  }
-
-  return '';
-}
-
-function renderDateField(qId, plan, field){
-  const value = field === 'start' ? plan.startDate : plan.endDate;
-  const label = field === 'start' ? 'Data de Início' : 'Data de conclusão';
-  return `
-    <div class="plan-date-field">
-      <label class="plan-label">${label}</label>
-      <div class="date-input-wrap">
-        <input type="text" inputmode="numeric" class="date-input" placeholder="dd/mm/aaaa" maxlength="10"
-          value="${escapeHtml(value)}" data-q="${qId}" data-field="${field}" />
-        ${ICON.calendar(17)}
-      </div>
-      ${field === 'end' ? `<p class="plan-warning" id="date-error-${qId}" style="display:${plan.dateError ? 'block' : 'none'};">A data de conclusão não pode ser anterior à data de início.</p>` : ''}
-    </div>
-  `;
-}
-
-function planHasUnsavedChanges(plan){
-  return plan.whatToFix !== plan.savedWhatToFix ||
-         plan.howToFix !== plan.savedHowToFix ||
-         plan.startDate !== plan.savedStartDate ||
-         plan.endDate !== plan.savedEndDate;
-}
-
-function updateSaveButtonState(q){
-  if (!q.plan || q.planState !== 'confirmed') return;
-  const btn = document.getElementById(`save-${q.id}`);
-  if (!btn) return;
-  btn.disabled = !planHasUnsavedChanges(q.plan);
-}
-
-function renderPlanSheet(){
-  const root = document.getElementById('sheet-root');
-  if (!activePlanSheet){ root.innerHTML = ''; return; }
-
-  const q = findQuestion(activePlanSheet);
-  if (!q){ activePlanSheet = null; root.innerHTML = ''; return; }
-
-  const isReady = q.planState !== 'generating' && q.plan;
-  const isEditingConfirmed = q.planState === 'confirmed';
-
-  let backRowHtml = '';
-  let bodyHtml;
-  let footerHtml = '';
-
-  if (!isReady){
-    bodyHtml = `
-      <div class="sheet-loading">
-        <div class="spinner-lg"></div>
-        <p>Gerando sugestão de plano de ação com base na sua resposta...</p>
-      </div>
-    `;
-  } else {
-    const plan = q.plan;
-    const onTextStep = planSheetStep === 'text';
-
-    if (!onTextStep){
-      backRowHtml = `
-        <div class="sheet-back-row">
-          <button class="step-back-link" data-action="prev-step" data-q="${q.id}">${ICON.arrowLeft(14)} Voltar</button>
-        </div>
-      `;
-    }
-
-    if (onTextStep){
-      const whatChanged = plan.whatToFix !== plan.aiWhatToFix;
-      const howChanged = plan.howToFix !== plan.aiHowToFix;
-      const changedFromAI = whatChanged || howChanged;
-      bodyHtml = `
-        <div class="step-content" key="text">
-          <div class="plan-field">
-            <div class="plan-field-label-row">
-              <label class="plan-label">O que deve ser corrigido</label>
-              <span class="plan-ai-badge ${whatChanged ? 'edited' : ''}">${ICON.sparkles(11)} ${whatChanged ? 'Editado por você' : 'Sugestão da IA'}</span>
-            </div>
-            <textarea class="plan-input plan-what ${whatChanged ? '' : 'ai-suggested'}" data-q="${q.id}">${escapeHtml(plan.whatToFix)}</textarea>
-          </div>
-          <div class="plan-field">
-            <div class="plan-field-label-row">
-              <label class="plan-label">Como será corrigido</label>
-              <span class="plan-ai-badge ${howChanged ? 'edited' : ''}">${ICON.sparkles(11)} ${howChanged ? 'Editado por você' : 'Sugestão da IA'}</span>
-            </div>
-            <textarea class="plan-input plan-how ${howChanged ? '' : 'ai-suggested'}" data-q="${q.id}">${escapeHtml(plan.howToFix)}</textarea>
-          </div>
-          <button class="plan-restore" id="restore-${q.id}" style="display:${changedFromAI ? 'inline-flex' : 'none'};" data-q="${q.id}">${ICON.arrowLeft(12)} Restaurar sugestão da IA</button>
-          ${planTextWarning ? `<p class="plan-warning">Preencha os dois campos antes de continuar.</p>` : ''}
-        </div>
-      `;
-      footerHtml = `
-        <div class="sheet-footer plan-actions-row">
-          ${isEditingConfirmed
-            ? `<button class="plan-btn plan-delete" data-action="delete-plan" data-q="${q.id}">${ICON.trash(14)} Excluir plano</button>`
-            : `<button class="plan-btn" data-action="cancel-plan" data-q="${q.id}">Cancelar</button>`}
-          <button class="plan-btn plan-confirm" data-action="next-step" data-q="${q.id}">Avançar</button>
-        </div>
-      `;
+function saveState(){
+  try{
+    if (sheetOpen){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ open: true, step: sheetStep, selectedType, selectedTemplate }));
     } else {
-      bodyHtml = `
-        <div class="step-content" key="dates">
-          <div class="plan-dates">
-            ${renderDateField(q.id, plan, 'start')}
-            ${renderDateField(q.id, plan, 'end')}
-          </div>
-          ${q.planMissingFieldsWarning ? `<p class="plan-warning">Preencha todos os campos antes de salvar.</p>` : ''}
-        </div>
-      `;
-
-      if (isEditingConfirmed){
-        const changed = planHasUnsavedChanges(q.plan);
-        footerHtml = `
-          <div class="sheet-footer plan-actions-row">
-            <button class="plan-btn plan-delete" data-action="delete-plan" data-q="${q.id}">${ICON.trash(14)} Excluir plano</button>
-            <button class="plan-btn plan-confirm" id="save-${q.id}" data-action="confirm-plan" ${changed ? '' : 'disabled'} data-q="${q.id}">Salvar alterações</button>
-          </div>
-        `;
-      } else {
-        footerHtml = `
-          <div class="sheet-footer">
-            <button class="plan-btn plan-confirm" data-action="confirm-plan" data-q="${q.id}">Confirmar plano de ação</button>
-          </div>
-        `;
-      }
+      localStorage.removeItem(STORAGE_KEY);
     }
-  }
+  }catch(e){ /* localStorage indisponivel, ignora */ }
+}
 
-  root.innerHTML = `
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+
+/* ---------- state ---------- */
+let sheetOpen = false;
+let sheetStep = 'type';   // 'type' | 'template' -- 'template' só existe quando selectedType === 'checklist'
+let selectedType = null;  // 'checklist' | 'visita' | null
+let selectedTemplate = null; // id do modelo de checklist selecionado na etapa 2
+let showTemplateWipNotice = false;
+
+/* ---------- markup: etapa 1 (tipo de visita) ---------- */
+function buildStepTypeMarkup(){
+  return `
+    <div class="sheet-top-row">
+      <div>
+        <p class="sheet-title">Escolha o tipo de visita</p>
+        <p class="sheet-subtitle">Selecione como você deseja realizar a avaliação</p>
+      </div>
+      <button class="sheet-close" id="sheet-close-btn" aria-label="Fechar">${ICON.close(16)}</button>
+    </div>
+
+    <div class="option-list">
+      <button class="option-card" data-type="checklist">
+        <div class="option-icon">${ICON.checklist(18)}</div>
+        <div class="option-text">
+          <p class="option-title">Checklist</p>
+          <p class="option-tag">Avaliação guiada</p>
+          <p class="option-desc">Responda aos itens definidos para garantir que todos os pontos sejam verificados.</p>
+        </div>
+        <div class="option-radio"></div>
+      </button>
+
+      <button class="option-card" data-type="visita">
+        <div class="option-icon">${ICON.freeform(18)}</div>
+        <div class="option-text">
+          <p class="option-title">Visita técnica</p>
+          <p class="option-tag">Você define o que registrar</p>
+          <p class="option-desc">Registre observações, fotos e informações relevantes conforme a visita.</p>
+        </div>
+        <div class="option-radio"></div>
+      </button>
+    </div>
+
+    <div class="sheet-actions">
+      <button class="btn-cancel" id="cancel-btn">Cancelar</button>
+      <button class="btn-continue" id="continue-btn" disabled>Continuar</button>
+    </div>
+  `;
+}
+
+/* ---------- markup: etapa 2 (modelo de checklist) ---------- */
+function templateCardMarkup(t){
+  return `
+    <button class="template-card" data-template="${t.id}">
+      <div class="template-text">
+        <p class="template-title">${t.name}</p>
+        <span class="template-tag tag-${t.tag}">${TEMPLATE_TAG_LABEL[t.tag]}</span>
+        <p class="template-desc">${t.desc}</p>
+      </div>
+      <div class="option-radio"></div>
+    </button>
+  `;
+}
+
+function buildStepTemplateMarkup(){
+  return `
+    <div class="sheet-back-row">
+      <button class="step-back-link" id="template-back-btn">${ICON.arrowLeft(14)} Voltar</button>
+      <button class="sheet-close" id="sheet-close-btn" aria-label="Fechar">${ICON.close(16)}</button>
+    </div>
+    <div class="sheet-title-block">
+      <p class="sheet-title">Escolha o modelo</p>
+      <p class="sheet-subtitle">Selecione o modelo de checklist que será aplicado nesta visita</p>
+    </div>
+
+    <div class="template-list">
+      ${TEMPLATES.map(templateCardMarkup).join('')}
+
+      <button class="new-template-card" id="new-template-btn">
+        <div class="new-template-icon">${ICON.plus(16)}</div>
+        <div class="new-template-text">
+          <div class="new-template-title-row">
+            <p class="new-template-title">Criar novo modelo</p>
+          </div>
+          <p class="new-template-desc">Você poderá montar seus próprios modelos na página do seu perfil.</p>
+        </div>
+      </button>
+
+      ${showTemplateWipNotice ? `
+        <div class="wip-notice">${ICON.info(15)} A criação de modelos personalizados ainda está sendo implementada. Em breve isso estará disponível no seu perfil.</div>
+      ` : ''}
+    </div>
+
+    <div class="sheet-actions">
+      <button class="btn-cancel" id="template-cancel-btn">Cancelar</button>
+      <button class="btn-continue${selectedTemplate ? ' enabled' : ''}" id="template-continue-btn" ${selectedTemplate ? '' : 'disabled'}>Continuar</button>
+    </div>
+  `;
+}
+
+/* Monta o markup do modal conforme a etapa atual */
+function buildSheetMarkup(){
+  const inner = sheetStep === 'template' ? buildStepTemplateMarkup() : buildStepTypeMarkup();
+  return `
     <div class="sheet-overlay" id="sheet-overlay">
       <div class="sheet-panel">
-        <div class="sheet-header">
-          <div class="sheet-handle"></div>
-          <div class="sheet-header-row">
-            <div class="sheet-title-wrap">
-              <div class="sheet-icon-box">${ICON.planIcon(26)}</div>
-              <div class="sheet-title-col">
-                <div class="sheet-title">Plano de ação</div>
-                <p class="sheet-q-sub">${q.number}. ${escapeHtml(q.text)}</p>
-              </div>
-            </div>
-            <div class="sheet-header-actions">
-              <button class="sheet-close" id="sheet-close-btn" aria-label="Fechar">${ICON.close(16)}</button>
-            </div>
-          </div>
-        </div>
-        ${backRowHtml}
-        <div class="sheet-body">${bodyHtml}</div>
-        ${footerHtml}
+        ${inner}
       </div>
     </div>
   `;
-
-  document.getElementById('sheet-overlay').onclick = (e) => { if (e.target.id === 'sheet-overlay') closePlanSheet(); };
-  document.getElementById('sheet-close-btn').onclick = closePlanSheet;
-
-  bindPlanEvents();
 }
 
-function openPlanSheet(qId){
-  activePlanSheet = qId;
-  planSheetStep = 'text';
-  planTextWarning = false;
-  render();
+/* Atualiza so a parte da UI que depende da selecao (sem re-renderizar tudo) -- etapa 1 */
+function updateSelectionUI(){
+  document.querySelectorAll('.option-card').forEach(card => {
+    card.classList.toggle('selected', card.dataset.type === selectedType);
+  });
+  const continueBtn = document.getElementById('continue-btn');
+  if (continueBtn){
+    const canContinue = selectedType !== null;
+    continueBtn.disabled = !canContinue;
+    continueBtn.classList.toggle('enabled', canContinue);
+  }
 }
 
-function closePlanSheet(){
-  if (activePlanSheet){
-    const q = findQuestion(activePlanSheet);
-    if (q && q.planState !== 'confirmed'){
-      q.planState = 'none';
-      q.plan = null;
-      q.planMissingFieldsWarning = false;
-    } else if (q && q.planState === 'confirmed' && q.plan){
-      const plan = q.plan;
-      plan.whatToFix = plan.savedWhatToFix;
-      plan.howToFix = plan.savedHowToFix;
-      plan.startDate = plan.savedStartDate;
-      plan.endDate = plan.savedEndDate;
-      plan.dateError = false;
-      q.planMissingFieldsWarning = false;
-    }
-    activePlanSheet = null;
-    render();
+function updateTemplateSelectionUI(){
+  document.querySelectorAll('.template-card').forEach(card => {
+    card.classList.toggle('selected', card.dataset.template === selectedTemplate);
+  });
+  const continueBtn = document.getElementById('template-continue-btn');
+  if (continueBtn){
+    const canContinue = selectedTemplate !== null;
+    continueBtn.disabled = !canContinue;
+    continueBtn.classList.toggle('enabled', canContinue);
+  }
+}
+
+function goToDestination(type){
+  saveState(); // guarda o modal "aberto" para quando o usuario voltar pra essa pagina
+  window.location.href = DESTINATIONS[type];
+}
+
+function applyTemplateAndContinue(templateId){
+  const template = TEMPLATES.find(t => t.id === templateId);
+  if (!template) return;
+  try{
+    localStorage.setItem(ACTIVE_TEMPLATE_KEY, JSON.stringify({ id: template.id, name: template.name, tag: template.tag }));
+  }catch(e){ /* localStorage indisponivel, ignora */ }
+  goToDestination('checklist');
+}
+
+function render(){
+  const root = document.getElementById('sheet-root');
+
+  if (!sheetOpen){ root.innerHTML = ''; return; }
+
+  root.innerHTML = buildSheetMarkup();
+
+  document.getElementById('sheet-overlay').onclick = (e) => { if (e.target.id === 'sheet-overlay') closeSheet(); };
+  document.getElementById('sheet-close-btn').onclick = closeSheet;
+
+  if (sheetStep === 'template'){
+    document.getElementById('template-back-btn').onclick = () => {
+      sheetStep = 'type';
+      selectedTemplate = null;
+      showTemplateWipNotice = false;
+      render();
+      saveState();
+    };
+
+    document.querySelectorAll('.template-card').forEach(card => {
+      card.onclick = () => {
+        // clicar de novo no item já selecionado desmarca (comportamento de toggle)
+        selectedTemplate = (selectedTemplate === card.dataset.template) ? null : card.dataset.template;
+        updateTemplateSelectionUI();
+        saveState();
+      };
+    });
+
+    document.getElementById('new-template-btn').onclick = () => {
+      showTemplateWipNotice = true;
+      render();
+    };
+
+    document.getElementById('template-cancel-btn').onclick = closeSheet;
+
+    document.getElementById('template-continue-btn').onclick = () => {
+      if (!selectedTemplate) return;
+      applyTemplateAndContinue(selectedTemplate);
+    };
+
+    updateTemplateSelectionUI();
     return;
   }
-  activePlanSheet = null;
-  render();
-}
 
-function renderModal(){
-  const root = document.getElementById('modal-root');
-  if (!deletePlanTarget){ root.innerHTML = ''; return; }
+  document.getElementById('cancel-btn').onclick = closeSheet;
 
-  root.innerHTML = `
-    <div class="modal-overlay">
-      <div class="modal-card">
-        <p class="modal-title">Excluir plano de ação?</p>
-        <p class="modal-text">O plano de ação criado para este item será excluído. Essa ação não pode ser desfeita.</p>
-        <div class="modal-actions">
-          <button id="plan-modal-cancel">Cancelar</button>
-          <button class="btn-danger" id="plan-modal-confirm">Excluir plano</button>
-        </div>
-      </div>
-    </div>
-  `;
-  document.getElementById('plan-modal-cancel').onclick = () => { deletePlanTarget = null; render(); };
-  document.getElementById('plan-modal-confirm').onclick = () => {
-    const q = findQuestion(deletePlanTarget);
-    if (q){ q.planState = 'none'; q.plan = null; q.planMissingFieldsWarning = false; }
-    deletePlanTarget = null;
-    activePlanSheet = null;
-    render();
-  };
-}
-
-function escapeHtml(str){
-  return (str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-function reportLoadingHtml(){
-  return `
-    <div class="review-overlay">
-      <div class="report-loading">
-        <div class="spinner-lg"></div>
-        <p>Gerando relatório...</p>
-      </div>
-    </div>
-  `;
-}
-
-/* ---------- tela de revisão do checklist ---------- */
-function renderReview(){
-  const root = document.getElementById('review-root');
-  if (!reviewOpen){ root.innerHTML = ''; return; }
-
-  const total = questions.length;
-  const answeredCount = questions.filter(q => q.answer !== null).length;
-  const unansweredCount = total - answeredCount;
-  const ncCount = questions.filter(q => q.answer === 'NC').length;
-  const planCount = questions.filter(q => q.planState === 'confirmed' && q.plan).length;
-  const groups = groupQuestionsByCategory(questions);
-
-  root.innerHTML = `
-    <div class="review-overlay">
-      <div class="review-header">
-        <div class="review-header-top">
-          <button class="review-back" id="review-back-btn">${ICON.arrowLeft(15)} Voltar</button>
-        </div>
-        <p class="review-title">Revisão do checklist</p>
-        <div class="review-stats">
-          <span class="review-stat">${total} ite${total === 1 ? 'm' : 'ns'}</span>
-          <span class="review-stat">${answeredCount} respondido${answeredCount === 1 ? '' : 's'}</span>
-          <span class="review-stat">${ncCount} não conforme${ncCount === 1 ? '' : 's'}</span>
-          <span class="review-stat">${planCount} plano${planCount === 1 ? '' : 's'} de ação</span>
-        </div>
-      </div>
-
-      <div class="review-body">
-        ${unansweredCount > 0 ? `
-          <div class="review-unanswered-banner">
-            <div class="banner-icon">${ICON.alert(18)}</div>
-            <div class="banner-text">
-              <p class="banner-title">${unansweredCount === 1 ? 'Atenção! 1 item ainda precisa ser respondido' : 'Atenção! ' + unansweredCount + ' itens ainda precisam ser respondidos'}</p>
-              <button class="banner-link" data-action="goto-first-unanswered">Ver itens pendentes</button>
-            </div>
-          </div>
-        ` : ''}
-
-        ${groups.map(group => `
-          ${categoryHeaderMarkup(group)}
-          ${group.items.map(q => renderReviewCard(q)).join('')}
-        `).join('')}
-      </div>
-
-      <div class="review-footer">
-        <button class="review-generate-btn" id="generate-report-btn">${ICON.download(15)} Gerar relatório</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('review-back-btn').onclick = () => { reviewOpen = false; renderReview(); };
-
-  document.querySelectorAll('.review-card').forEach(card => {
-    card.onclick = () => goToQuestionFromReview(card.dataset.q);
-  });
-
-  const bannerBtn = document.querySelector('[data-action="goto-first-unanswered"]');
-  if (bannerBtn){
-    bannerBtn.onclick = (e) => {
-      e.stopPropagation();
-      const firstUnanswered = questions.find(q => q.answer === null);
-      if (firstUnanswered) goToQuestionFromReview(firstUnanswered.id);
-    };
-  }
-
-  document.querySelectorAll('.review-card [data-action="open-plan-sheet"]').forEach(btn => {
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      reviewOpen = false;
-      openPlanSheet(btn.dataset.q);
+  document.querySelectorAll('.option-card').forEach(card => {
+    card.onclick = () => {
+      // clicar de novo no item já selecionado desmarca (comportamento de toggle)
+      selectedType = (selectedType === card.dataset.type) ? null : card.dataset.type;
+      updateSelectionUI();
+      saveState();
     };
   });
 
-  // "Gerar relatório": primeiro checa se há itens pendentes de resposta.
-  const generateBtn = document.getElementById('generate-report-btn');
-  if (generateBtn){
-    generateBtn.onclick = () => {
-      const pending = questions.filter(q => q.answer === null);
-      if (pending.length > 0){
-        pendingModalOpen = true;
-        render();
-        return;
-      }
-      startReportGeneration();
-    };
-  }
-}
-
-function renderReviewCard(q){
-  const answered = q.answer !== null;
-  const badgeHtml = !answered
-    ? `<span class="review-badge review-badge-none">Não respondido</span>`
-    : q.answer === 'C'
-      ? `<span class="review-badge review-badge-c">Conforme</span>`
-      : q.answer === 'NC'
-        ? `<span class="review-badge review-badge-nc">Não conforme</span>`
-        : `<span class="review-badge review-badge-na">Não aplicável</span>`;
-
-  const planHtml = q.answer === 'NC'
-    ? (q.planState === 'confirmed' && q.plan
-        ? `
-          <div class="plan-summary" style="margin-top:10px;">
-            <div class="plan-summary-icon">${ICON.planIcon(16)}</div>
-            <div class="plan-summary-text">
-              <p class="plan-summary-title">Plano de ação</p>
-              <p class="plan-summary-desc">${escapeHtml(q.plan.whatToFix)}</p>
-            </div>
-            <button class="plan-edit-link" data-q="${q.id}" data-action="open-plan-sheet">Editar</button>
-          </div>
-        `
-        : `<div class="review-plan-missing">Sem plano de ação criado</div>`
-      )
-    : '';
-
-  return `
-    <div class="review-card ${!answered ? 'review-card-unanswered' : ''}" data-q="${q.id}">
-      <div class="review-card-top">
-        <p class="review-q-text ${answered ? 'clamp' : ''}"><b>${q.number}.</b> ${escapeHtml(q.text)}</p>
-        ${badgeHtml}
-      </div>
-      ${q.photos.length ? `
-        <div class="review-photo-row">
-          ${q.photos.map(src => `<div class="review-photo-thumb" style="background-image:url('${src}')"></div>`).join('')}
-        </div>
-      ` : ''}
-      ${q.commentSaved ? `<p class="review-comment-text">${escapeHtml(q.commentSaved)}</p>` : ''}
-      ${planHtml}
-    </div>
-  `;
-}
-
-function goToQuestionFromReview(qId){
-  reviewOpen = false;
-  renderReview();
-  setTimeout(() => {
-    const el = document.getElementById(`q-${qId}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 50);
-}
-
-/* =====================================================================
-   MODAL DE ITENS PENDENTES
-   Aparece ao clicar "Gerar relatório" se ainda houver itens sem resposta.
-   ===================================================================== */
-function renderPendingModal(){
-  const root = document.getElementById('pending-modal-root');
-  if (!pendingModalOpen){ root.innerHTML = ''; return; }
-
-  const pending = questions.filter(q => q.answer === null);
-  if (pending.length === 0){ pendingModalOpen = false; root.innerHTML = ''; return; }
-
-  root.innerHTML = `
-    <div class="pending-overlay">
-      <div class="pending-card">
-        <p class="modal-title">${pending.length} ite${pending.length === 1 ? 'm' : 'ns'} pendente${pending.length === 1 ? '' : 's'}</p>
-        <p class="modal-text">Você ainda não respondeu todos os itens do checklist. Escolha como quer continuar antes de gerar o relatório.</p>
-        <div class="pending-list-wrap">
-          ${pending.map(q => `
-            <div class="pending-list-item"><b>${q.number}.</b> ${escapeHtml(q.text)}</div>
-          `).join('')}
-        </div>
-        <div class="pending-actions">
-          <button class="pending-na-btn" id="pending-na-btn">Marcar pendentes como Não se aplica</button>
-          <button class="pending-fill-btn" id="pending-fill-btn">${ICON.arrowLeft(14)} Voltar e preencher</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('pending-fill-btn').onclick = () => {
-    pendingModalOpen = false;
-    reviewOpen = false;
-    render();
-    setTimeout(() => {
-      const firstUnanswered = questions.find(q => q.answer === null);
-      if (firstUnanswered){
-        const el = document.getElementById(`q-${firstUnanswered.id}`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 60);
-  };
-
-  document.getElementById('pending-na-btn').onclick = () => {
-    questions.forEach(q => { if (q.answer === null) q.answer = 'NA'; });
-    startReportGeneration();
-  };
-}
-
-/* =====================================================================
-   GERAÇÃO DA PRÉVIA DO RELATÓRIO
-   ===================================================================== */
-function startReportGeneration(){
-  pendingModalOpen = false;
-  reviewOpen = false;
-  reportGenerating = true;
-  render();
-  setTimeout(() => {
-    reportGenerating = false;
-    reportPreviewOpen = true;
-    render();
-  }, 1100);
-}
-
-function computeReportData(){
-  const total = questions.length;
-  const conforme = questions.filter(q => q.answer === 'C').length;
-  const naoConforme = questions.filter(q => q.answer === 'NC').length;
-  const naoAplica = questions.filter(q => q.answer === 'NA').length;
-  const denom = total - naoAplica;
-  const conformidadePct = denom > 0 ? Math.round((conforme / denom) * 100) : 0;
-
-  const pieTotal = (conforme + naoConforme + naoAplica) || 1;
-  const pieC = Math.round((conforme / pieTotal) * 100);
-  const pieNC = Math.round((naoConforme / pieTotal) * 100);
-  const pieNA = Math.max(0, 100 - pieC - pieNC);
-
-  const groups = groupQuestionsByCategory(questions);
-  const categoryStats = groups.map(g => {
-    const gTotal = g.items.length;
-    const gC = g.items.filter(q => q.answer === 'C').length;
-    const gNA = g.items.filter(q => q.answer === 'NA').length;
-    const gDenom = gTotal - gNA;
-    const pct = gDenom > 0 ? Math.round((gC / gDenom) * 100) : 0;
-    return { category: g.category, pct };
-  });
-
-  return { total, conforme, naoConforme, naoAplica, conformidadePct, pieC, pieNC, pieNA, groups, categoryStats };
-}
-
-// gera o SVG da pizza a partir das 3 porcentagens (conforme / não conforme / não aplica)
-function buildPieSvg(pieC, pieNC, pieNA){
-  const cx = 60, cy = 60, r = 50;
-  function toXY(angleDeg){
-    const rad = angleDeg * Math.PI / 180;
-    return { x: cx + r * Math.sin(rad), y: cy - r * Math.cos(rad) };
-  }
-  function slice(startA, endA){
-    if (endA - startA <= 0.5) return '';
-    const s = toXY(startA), e = toXY(endA);
-    const largeArc = (endA - startA) > 180 ? 1 : 0;
-    return `M${cx},${cy} L${s.x.toFixed(2)},${s.y.toFixed(2)} A${r},${r} 0 ${largeArc},1 ${e.x.toFixed(2)},${e.y.toFixed(2)} Z`;
-  }
-  const a1 = pieC * 3.6;
-  const a2 = a1 + pieNC * 3.6;
-  const pC = slice(0, a1);
-  const pNC = slice(a1, a2);
-  const pNA = slice(a2, 360);
-  return `
-    <svg width="150" height="150" viewBox="0 0 120 120">
-      ${pC ? `<path d="${pC}" fill="#1D9E75"/>` : ''}
-      ${pNC ? `<path d="${pNC}" fill="#c0392b"/>` : ''}
-      ${pNA ? `<path d="${pNA}" fill="#c7ccc8"/>` : ''}
-      ${!pC && !pNC && !pNA ? `<circle cx="60" cy="60" r="50" fill="#e4e6e2"/>` : ''}
-    </svg>
-  `;
-}
-
-// re-renderiza a prévia sem jogar a rolagem de volta pro topo — como render()
-// recria o innerHTML do zero, o scrollTop se perde se não guardarmos e restaurarmos manualmente.
-function rerenderReportPreviewKeepScroll(){
-  const scrollEl = document.querySelector('#report-root .report-pages');
-  const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
-  renderReportPreview();
-  const newScrollEl = document.querySelector('#report-root .report-pages');
-  if (newScrollEl) newScrollEl.scrollTop = scrollTop;
-}
-
-/* =====================================================================
-   RELATÓRIO ESTÁTICO — gerado ao finalizar a visita, sem campos editáveis.
-   Abre numa aba nova pra ela imprimir/salvar como PDF ou compartilhar a aba.
-   ===================================================================== */
-function buildStandaloneReportHtml(){
-  const data = computeReportData();
-  const clientName = (document.querySelector('.header-client')?.textContent || 'Estabelecimento').trim();
-  const checklistName = (document.getElementById('header-meta')?.textContent || 'Checklist').trim();
-  const visitDate = todayDisplay();
-  const genDateTime = nowDisplay();
-
-  const ncItemsByCategory = data.groups
-    .map(g => ({ category: g.category, items: g.items.filter(q => q.answer === 'NC') }))
-    .filter(g => g.items.length > 0);
-
-  const statusIconMap = { C: ICON.ok24(), NC: ICON.nc24(), NA: ICON.na24() };
-  const statusClassMap = { C: 'ok', NC: 'nc', NA: 'na' };
-
-  const page1 = `
-    <div class="r-page">
-      <div class="r-topband">
-        <div>
-          <p class="r-consult-name">${escapeHtml(reportSignature.consultantName || 'Rayane Araújo')}</p>
-          <p class="r-consult-sub">Consultoria em Segurança Alimentar</p>
-        </div>
-      </div>
-      <p class="r-eyebrow">Relatório de Inspeção Técnica</p>
-      <h1 class="r-title">${escapeHtml(checklistName)}<br>${escapeHtml(clientName)}</h1>
-      <div class="r-meta-grid">
-        <div class="r-meta-item"><p class="k">Cliente</p><p class="v">${escapeHtml(clientName)}</p></div>
-        <div class="r-meta-item"><p class="k">Data da visita</p><p class="v r-num">${visitDate}</p></div>
-        <div class="r-meta-item"><p class="k">Responsável técnico</p><p class="v">${escapeHtml(reportSignature.consultantName || 'Rayane Araújo')}</p></div>
-      </div>
-      <div class="r-summary">
-        <div class="r-summary-card tot"><span class="num r-num">${data.total}</span><p class="lbl">Itens</p></div>
-        <div class="r-summary-card ok"><span class="num r-num">${data.conforme}</span><p class="lbl">Conforme</p></div>
-        <div class="r-summary-card nc"><span class="num r-num">${data.naoConforme}</span><p class="lbl">Não conf.</p></div>
-        <div class="r-summary-card pct"><span class="num r-num">${data.conformidadePct}%</span><p class="lbl">Conformid.</p></div>
-      </div>
-      <div class="r-chart-box">
-        <h4>Distribuição das respostas</h4>
-        <div class="r-pie-row">
-          ${buildPieSvg(data.pieC, data.pieNC, data.pieNA)}
-          <div class="r-pie-legend">
-            <div class="r-pie-legend-item"><span class="dot" style="background:#1D9E75;"></span> Conforme <b class="r-num">${data.pieC}%</b></div>
-            <div class="r-pie-legend-item"><span class="dot" style="background:#c0392b;"></span> Não conforme <b class="r-num">${data.pieNC}%</b></div>
-            <div class="r-pie-legend-item"><span class="dot" style="background:#c7ccc8;"></span> Não se aplica <b class="r-num">${data.pieNA}%</b></div>
-          </div>
-        </div>
-      </div>
-      <div class="r-chart-box" style="margin-bottom:0;">
-        <h4>Conformidade por tópico</h4>
-        <div class="r-bar-list">
-          ${data.categoryStats.map(c => `
-            <div class="r-bar-row">
-              <div class="r-bar-head"><p class="cat-label">${escapeHtml(c.category)}</p><span class="bar-pct r-num">${c.pct}%</span></div>
-              <div class="r-bar-track"><div class="r-bar-fill" style="width:${c.pct}%;"></div></div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-      <div class="r-footer">
-        <span class="r-footer-tag">Documento gerado em <span class="r-num">${genDateTime}</span></span>
-        <span class="r-footer-tag">gerado com <b>aptta</b></span>
-      </div>
-    </div>
-  `;
-
-  const page2 = ncItemsByCategory.length === 0 ? '' : `
-    <div class="r-page">
-      <h2 class="r-section-title">Pontos de atenção</h2>
-      <p class="r-intro">Estes são os <b class="r-num" style="color:#c0392b; font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria.</p>
-      ${ncItemsByCategory.map(g => `
-        <div class="r-category-title">${escapeHtml(g.category)}</div>
-        ${g.items.map(q => `
-          <div class="r-item">
-            <p class="r-nc-label">Item não conforme:</p>
-            <p class="r-item-text">${escapeHtml(q.text)}</p>
-            ${q.commentSaved ? `<p class="r-item-comment">${escapeHtml(q.commentSaved)}</p>` : ''}
-            ${q.photos.length ? `<div class="r-item-photos">${q.photos.map(src => `<div class="ph" style="background-image:url('${src}')"></div>`).join('')}</div>` : ''}
-            ${q.planState === 'confirmed' && q.plan ? `
-              <div class="r-plan-box">
-                <div class="r-plan-rail"></div>
-                <div class="r-plan-content">
-                  <p class="r-plan-label">Plano de ação</p>
-                  <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
-                  <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
-                  <div class="r-plan-dates-row">
-                    <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
-                    <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
-                  </div>
-                </div>
-              </div>
-            ` : ''}
-          </div>
-        `).join('')}
-      `).join('')}
-    </div>
-  `;
-
-  const page3 = `
-    <div class="r-page">
-      <h2 class="r-section-title">Checklist completo</h2>
-      <p class="r-intro">Registro completo dos itens avaliados nesta vistoria, para fins de acompanhamento e histórico.</p>
-      <div class="r-check-legend">
-        <div class="r-check-legend-item"><span class="r-check-status ok legend-size">${ICON.ok24()}</span> Conforme</div>
-        <div class="r-check-legend-item"><span class="r-check-status nc legend-size">${ICON.nc24()}</span> Não conforme</div>
-        <div class="r-check-legend-item"><span class="r-check-status na legend-size">${ICON.na24()}</span> Não se aplica</div>
-      </div>
-      ${data.groups.map(g => `
-        <div class="r-category-title">${escapeHtml(g.category)}</div>
-        ${g.items.map(q => `
-          <div class="r-check-row">
-            <p class="r-check-row-text">${escapeHtml(q.text)}</p>
-            <span class="r-check-status ${statusClassMap[q.answer] || 'na'}">${statusIconMap[q.answer] || ICON.na24()}</span>
-          </div>
-        `).join('')}
-      `).join('')}
-    </div>
-  `;
-
-  const page4 = `
-    <div class="r-page">
-      <h2 class="r-section-title">Assinaturas</h2>
-      <div class="r-sig-block" style="margin-top:0;">
-        <p class="r-sig-heading">Assinatura da consultora</p>
-        <div class="r-sig-preview">${escapeHtml(reportSignature.consultantName) || '&nbsp;'}</div>
-        <p class="r-sig-role">Consultora responsável</p>
-      </div>
-      ${reportSignature.includeClient ? `
-        <div class="r-sig-block">
-          <p class="r-sig-heading">Assinatura do responsável pelo estabelecimento</p>
-          <div class="r-sig-blank-line"></div>
-          <p class="r-sig-printed-name ${reportSignature.clientName ? '' : 'placeholder'}">${reportSignature.clientName ? escapeHtml(reportSignature.clientName) : 'Nome não informado'}</p>
-          <p class="r-sig-role">Responsável pelo estabelecimento — espaço reservado para assinatura externa</p>
-        </div>
-      ` : ''}
-      <div class="r-footer">
-        <span class="r-footer-tag">Documento gerado automaticamente em <span class="r-num">${genDateTime}</span></span>
-        <span class="r-footer-tag">Gerado com <b>aptta</b></span>
-      </div>
-    </div>
-  `;
-
-  return `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=1100">
-<title>Relatório — ${escapeHtml(clientName)}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-<style>
-  *{ box-sizing:border-box; }
-  body{ margin:0; background:#eeeeec; font-family:'Open Sans',sans-serif; color:#181b19; display:flex; flex-direction:column; align-items:center; padding:28px 12px 90px; }
-  .r-num{ font-family:'Open Sans',sans-serif; font-weight:800; font-variant-numeric:lining-nums tabular-nums; }
-  .print-btn{ position:fixed; right:20px; bottom:20px; z-index:10; display:flex; align-items:center; gap:8px; background:#0F6E56; color:#fff; border:none; cursor:pointer; font-family:'Open Sans',sans-serif; font-size:13px; font-weight:700; padding:13px 20px; border-radius:999px; }
-  @media print{
-    .print-btn{ display:none !important; }
-    body{ background:#fff; padding:0; }
-    .r-page{ box-shadow:none !important; margin:0 auto !important; padding:14px 18px !important; max-width:100% !important; page-break-after:always; }
-    @page{ size:A4; margin:9mm; }
-  }
-
-  .r-page{ width:100%; max-width:760px; background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.10); padding:36px 44px; margin-bottom:16px; position:relative; }
-  .r-topband{ display:flex; align-items:center; justify-content:space-between; }
-  .r-consult-name{ font-size:11.5px; font-weight:700; color:#181b19; margin:0; }
-  .r-consult-sub{ font-size:10px; color:#7c8480; margin:2px 0 0; }
-  .r-eyebrow{ font-size:10.5px; font-weight:700; letter-spacing:1px; color:#1D9E75; margin:24px 0 10px; }
-  .r-title{ font-family:'Playfair Display',serif; font-size:27px; font-weight:600; line-height:1.24; margin:0 0 22px; color:#181b19; }
-  .r-meta-grid{ display:flex; flex-wrap:wrap; gap:16px 28px; margin-bottom:22px; }
-  .r-meta-item .k{ font-size:10px; color:#7c8480; font-weight:600; margin:0 0 3px; }
-  .r-meta-item .v{ font-size:12px; font-weight:700; color:#181b19; margin:0; }
-  .r-summary{ display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
-  .r-summary-card{ flex:1; min-width:68px; border:1px solid #e4e6e2; border-radius:12px; padding:14px 6px; text-align:center; }
-  .r-summary-card .num{ font-size:20px; margin:0 0 3px; display:block; }
-  .r-summary-card .lbl{ font-size:9.5px; color:#7c8480; font-weight:600; }
-  .r-summary-card.tot .num{ color:#181b19; }
-  .r-summary-card.ok .num{ color:#1D9E75; }
-  .r-summary-card.nc .num{ color:#c0392b; }
-  .r-summary-card.pct{ background:#0F6E56; border-color:#0F6E56; }
-  .r-summary-card.pct .num{ color:#fff; }
-  .r-summary-card.pct .lbl{ color:rgba(255,255,255,0.75); }
-  .r-chart-box{ border:1px solid #e4e6e2; border-radius:12px; padding:16px; margin-bottom:14px; }
-  .r-chart-box h4{ font-size:11px; letter-spacing:.2px; color:#181b19; font-weight:700; margin:0 0 14px; }
-  .r-pie-row{ display:flex; flex-direction:column; align-items:center; gap:14px; }
-  .r-pie-legend{ display:flex; flex-wrap:wrap; justify-content:center; gap:7px 14px; }
-  .r-pie-legend-item{ display:flex; align-items:center; gap:6px; font-size:10.5px; color:#4d534f; font-weight:600; white-space:nowrap; }
-  .r-pie-legend-item .dot{ width:8px; height:8px; border-radius:2px; flex-shrink:0; }
-  .r-pie-legend-item b{ color:#181b19; font-weight:800; margin-left:2px; }
-  .r-bar-list{ display:flex; flex-direction:column; gap:11px; }
-  .r-bar-row{ display:flex; flex-direction:column; gap:5px; }
-  .r-bar-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
-  .r-bar-head .cat-label{ font-size:11px; font-weight:600; color:#181b19; line-height:1.25; margin:0; }
-  .r-bar-head .bar-pct{ font-size:11px; font-weight:800; color:#181b19; flex-shrink:0; }
-  .r-bar-track{ width:100%; height:6px; border-radius:3px; background:#e4e6e2; overflow:hidden; }
-  .r-bar-fill{ height:100%; border-radius:3px; background:#1D9E75; }
-  .r-footer{ margin-top:20px; padding-top:14px; border-top:1px solid #e4e6e2; display:flex; flex-direction:column; gap:4px; }
-  .r-footer-tag{ font-size:9px; color:#7c8480; letter-spacing:.3px; }
-  .r-footer-tag b{ color:#181b19; font-weight:700; }
-  .r-section-title{ font-family:'Playfair Display',serif; font-size:19px; font-weight:600; margin:0 0 18px; color:#181b19; }
-  .r-category-title{ font-family:'Playfair Display',serif; font-size:13px; font-weight:600; color:#181b19; margin:26px 0 14px; display:flex; align-items:center; gap:8px; }
-  .r-category-title:first-of-type{ margin-top:0; }
-  .r-category-title::after{ content:''; flex:1; height:1px; background:#e4e6e2; }
-  .r-intro{ font-size:12px; color:#4d534f; line-height:1.6; margin:0 0 20px; }
-  .r-item{ padding:18px 0 4px; }
-  .r-item + .r-item{ border-top:1px solid #e4e6e2; padding-top:18px; }
-  .r-item-text{ font-size:12px; line-height:1.55; margin:0; color:#181b19; font-weight:500; }
-  .r-nc-label{ font-size:9.5px; font-weight:700; color:#c0392b; text-transform:uppercase; letter-spacing:.4px; margin:0 0 5px; }
-  .r-item-comment{ font-size:11px; font-style:italic; color:#4d534f; margin:12px 0 0; padding-left:10px; border-left:2px solid #e4e6e2; }
-  .r-item-photos{ display:flex; gap:7px; margin-top:12px; flex-wrap:wrap; }
-  .r-item-photos .ph{ width:52px; height:52px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e4e6e2; flex-shrink:0; }
-  .r-plan-box{ margin-top:14px; padding-top:14px; border-top:1px solid #e4e6e2; display:flex; gap:10px; }
-  .r-plan-rail{ width:3px; border-radius:2px; background:#1D9E75; flex-shrink:0; }
-  .r-plan-content{ flex:1; min-width:0; }
-  .r-plan-label{ font-size:9.5px; font-weight:700; color:#0F6E56; text-transform:uppercase; letter-spacing:.4px; margin:0 0 9px; }
-  .r-plan-row{ font-size:11px; margin-bottom:8px; line-height:1.5; color:#4d534f; }
-  .r-plan-row:last-child{ margin-bottom:0; }
-  .r-plan-row .lbl{ font-weight:700; color:#181b19; }
-  .r-plan-dates-row{ display:flex; gap:22px; margin-top:11px; flex-wrap:wrap; }
-  .r-check-legend{ display:flex; gap:16px; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid #e4e6e2; flex-wrap:wrap; }
-  .r-check-legend-item{ display:flex; align-items:center; gap:6px; font-size:10px; color:#4d534f; font-weight:600; }
-  .r-check-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid #e4e6e2; }
-  .r-check-row:last-child{ border-bottom:none; }
-  .r-check-row-text{ font-size:11px; line-height:1.5; color:#181b19; margin:0; flex:1; }
-  .r-check-status{ width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .r-check-status.ok{ background:#1D9E75; }
-  .r-check-status.nc{ background:#c0392b; }
-  .r-check-status.na{ background:#7c8480; }
-  .r-check-status.legend-size{ width:14px; height:14px; }
-  .r-sig-block{ margin-top:16px; }
-  .r-sig-block + .r-sig-block{ margin-top:22px; padding-top:18px; border-top:1px solid #e4e6e2; }
-  .r-sig-heading{ font-size:11px; font-weight:700; color:#181b19; margin:0 0 10px; }
-  .r-sig-preview{ font-family:'Playfair Display',serif; font-style:italic; font-size:17px; color:#181b19; border-bottom:1px solid #c7ccc8; padding-bottom:5px; margin-bottom:8px; min-height:22px; }
-  .r-sig-blank-line{ height:36px; border-bottom:1px solid #c7ccc8; margin-bottom:8px; }
-  .r-sig-printed-name{ font-size:12.5px; font-weight:700; color:#181b19; margin:0 0 10px; }
-  .r-sig-printed-name.placeholder{ color:#7c8480; font-weight:600; font-style:italic; }
-  .r-sig-role{ font-size:10px; color:#7c8480; margin:0; }
-</style>
-</head>
-<body>
-  ${page1}
-  ${page2}
-  ${page3}
-  ${page4}
-  <button class="print-btn" onclick="window.print()">Salvar como PDF</button>
-  <script>
-    // abre direto no diálogo nativo de impressão/compartilhamento — ela não precisa
-    // clicar em nada antes; o botão flutuante fica só como forma de acionar de novo.
-    window.addEventListener('load', () => { setTimeout(() => { window.print(); }, 350); });
-  <\/script>
-</body>
-</html>`;
-}
-
-function renderReportPreview(){
-  const root = document.getElementById('report-root');
-  if (reportGenerating){
-    root.innerHTML = `
-      <div class="report-shell" style="align-items:center; justify-content:center;">
-        <div class="report-loading">
-          <div class="spinner-lg"></div>
-          <p>Gerando relatório...</p>
-        </div>
-      </div>
-    `;
-    return;
-  }
-  if (!reportPreviewOpen){ root.innerHTML = ''; return; }
-
-  const data = computeReportData();
-  const clientName = (document.querySelector('.header-client')?.textContent || 'Estabelecimento').trim();
-  const checklistName = (document.getElementById('header-meta')?.textContent || 'Checklist').trim();
-  const visitDate = todayDisplay();
-  const genDateTime = nowDisplay();
-
-  const ncItemsByCategory = data.groups
-    .map(g => ({ category: g.category, items: g.items.filter(q => q.answer === 'NC') }))
-    .filter(g => g.items.length > 0);
-
-  // ---------- PÁGINA 1: capa / resumo ----------
-  const page1 = `
-    <div class="r-page" id="r-page-cover">
-      <div class="r-topband">
-        <div>
-          <p class="r-consult-name">Rayane Araújo</p>
-          <p class="r-consult-sub">Consultoria em Segurança Alimentar</p>
-        </div>
-      </div>
-
-      <p class="r-eyebrow">Relatório de Inspeção Técnica</p>
-      <h1 class="r-title">${escapeHtml(checklistName)}<br>${escapeHtml(clientName)}</h1>
-
-      <div class="r-meta-grid">
-        <div class="r-meta-item"><p class="k">Cliente</p><p class="v">${escapeHtml(clientName)}</p></div>
-        <div class="r-meta-item"><p class="k">Data da visita</p><p class="v r-num">${visitDate}</p></div>
-        <div class="r-meta-item"><p class="k">Responsável técnico</p><p class="v">Rayane Araújo</p></div>
-      </div>
-
-      <div class="r-summary">
-        <div class="r-summary-card tot"><span class="num r-num">${data.total}</span><p class="lbl">Itens</p></div>
-        <div class="r-summary-card ok"><span class="num r-num">${data.conforme}</span><p class="lbl">Conforme</p></div>
-        <div class="r-summary-card nc"><span class="num r-num">${data.naoConforme}</span><p class="lbl">Não conf.</p></div>
-        <div class="r-summary-card pct"><span class="num r-num">${data.conformidadePct}%</span><p class="lbl">Conformid.</p></div>
-      </div>
-
-      <div class="r-chart-box">
-        <h4>Distribuição das respostas</h4>
-        <div class="r-pie-row">
-          ${buildPieSvg(data.pieC, data.pieNC, data.pieNA)}
-          <div class="r-pie-legend">
-            <div class="r-pie-legend-item"><span class="dot" style="background:#1D9E75;"></span> Conforme <b class="r-num">${data.pieC}%</b></div>
-            <div class="r-pie-legend-item"><span class="dot" style="background:#c0392b;"></span> Não conforme <b class="r-num">${data.pieNC}%</b></div>
-            <div class="r-pie-legend-item"><span class="dot" style="background:#c7ccc8;"></span> Não se aplica <b class="r-num">${data.pieNA}%</b></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="r-chart-box" style="margin-bottom:0;">
-        <h4>Conformidade por tópico</h4>
-        <div class="r-bar-list">
-          ${data.categoryStats.map(c => `
-            <div class="r-bar-row">
-              <div class="r-bar-head">
-                <p class="cat-label">${escapeHtml(c.category)}</p>
-                <span class="bar-pct r-num">${c.pct}%</span>
-              </div>
-              <div class="r-bar-track"><div class="r-bar-fill" style="width:${c.pct}%;"></div></div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <div class="r-footer">
-        <span class="r-footer-tag">Documento gerado em <span class="r-num">${genDateTime}</span></span>
-        <span class="r-footer-tag">gerado com <b>aptta</b></span>
-      </div>
-    </div>
-  `;
-
-  // ---------- PÁGINA 2: pontos de atenção (só se houver não conformes) ----------
-  const page2 = ncItemsByCategory.length === 0 ? '' : `
-    <div class="r-page" id="r-page-attention">
-      <h2 class="r-section-title">Pontos de atenção</h2>
-      <p class="r-intro">Estes são os <b class="r-num" style="color:#c0392b; font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria. Quando havia um plano de ação registrado, ele aparece detalhado logo abaixo.</p>
-
-      ${ncItemsByCategory.map(g => `
-        <div class="r-category-title">${escapeHtml(g.category)}</div>
-        ${g.items.map(q => `
-          <div class="r-item">
-            <p class="r-nc-label">Item não conforme:</p>
-            <p class="r-item-text">${escapeHtml(q.text)}</p>
-            ${q.commentSaved ? `<p class="r-item-comment">${escapeHtml(q.commentSaved)}</p>` : ''}
-            ${q.photos.length ? `
-              <div class="r-item-photos">
-                ${q.photos.map(src => `<div class="ph" style="background-image:url('${src}')"></div>`).join('')}
-              </div>
-            ` : ''}
-            ${q.planState === 'confirmed' && q.plan ? `
-              <div class="r-plan-box">
-                <div class="r-plan-rail"></div>
-                <div class="r-plan-content">
-                  <p class="r-plan-label">Plano de ação</p>
-                  <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
-                  <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
-                  <div class="r-plan-dates-row">
-                    <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
-                    <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
-                  </div>
-                </div>
-              </div>
-            ` : ''}
-          </div>
-        `).join('')}
-      `).join('')}
-    </div>
-  `;
-
-  // ---------- PÁGINA 3: checklist completo + assinaturas ----------
-  const statusIconMap = { C: ICON.ok24(), NC: ICON.nc24(), NA: ICON.na24() };
-  const statusClassMap = { C: 'ok', NC: 'nc', NA: 'na' };
-
-  const page3 = `
-    <div class="r-page" id="r-page-checklist">
-      <h2 class="r-section-title">Checklist completo</h2>
-      <p class="r-intro">Registro completo dos itens avaliados nesta vistoria, para fins de acompanhamento e histórico.</p>
-      <div class="r-check-legend">
-        <div class="r-check-legend-item"><span class="r-check-status ok legend-size">${ICON.ok24()}</span> Conforme</div>
-        <div class="r-check-legend-item"><span class="r-check-status nc legend-size">${ICON.nc24()}</span> Não conforme</div>
-        <div class="r-check-legend-item"><span class="r-check-status na legend-size">${ICON.na24()}</span> Não se aplica</div>
-      </div>
-
-      ${data.groups.map(g => `
-        <div class="r-category-title">${escapeHtml(g.category)}</div>
-        ${g.items.map(q => `
-          <div class="r-check-row">
-            <p class="r-check-row-text">${escapeHtml(q.text)}</p>
-            <span class="r-check-status ${statusClassMap[q.answer] || 'na'}">${statusIconMap[q.answer] || ICON.na24()}</span>
-          </div>
-        `).join('')}
-      `).join('')}
-
-      <div class="r-footer">
-        <span class="r-footer-tag">Documento gerado automaticamente em <span class="r-num">${genDateTime}</span></span>
-        <span class="r-footer-tag">Gerado com <b>aptta</b></span>
-      </div>
-    </div>
-  `;
-
-  // ---------- card de assinaturas: fora da "caixa do PDF", editável antes de finalizar ----------
-  const signatureCard = `
-    <div class="report-sig-card">
-      <p class="report-sig-card-title">Assinaturas</p>
-      <p class="report-sig-card-sub">Esta é a área de assinatura do relatório. Confira os nomes antes de finalizar a visita.</p>
-
-      <div class="r-sig-block" style="margin-top:0;">
-        <p class="r-sig-heading">Assinatura da consultora</p>
-        <div class="r-sig-preview" id="consultant-sig-preview">${escapeHtml(reportSignature.consultantName) || '&nbsp;'}</div>
-        <input type="text" class="r-sig-input" id="consultant-sig-input" value="${escapeHtml(reportSignature.consultantName)}" placeholder="Nome da consultora">
-        <p class="r-sig-role">Consultora responsável</p>
-      </div>
-
-      <div class="r-sig-block">
-        <p class="r-sig-heading">Assinatura do responsável pelo estabelecimento</p>
-        <div class="r-sig-toggle-row">
-          <button class="r-sig-toggle-btn ${!reportSignature.includeClient ? 'selected' : ''}" id="sig-toggle-no" data-val="no">Não incluir</button>
-          <button class="r-sig-toggle-btn ${reportSignature.includeClient ? 'selected' : ''}" id="sig-toggle-yes" data-val="yes">Incluir assinatura</button>
-        </div>
-        ${reportSignature.includeClient ? `
-          <p style="font-size:11px; color:#7c8480; line-height:1.5; margin:2px 0 14px;">Isto só reserva um espaço em branco no PDF, com o nome impresso abaixo, para uma assinatura feita depois fora do app (ex: ClickSign, gov.br).</p>
-          <div class="r-sig-blank-line"></div>
-          <p class="r-sig-printed-name ${reportSignature.clientName ? '' : 'placeholder'}" id="client-sig-printed-name">${reportSignature.clientName ? escapeHtml(reportSignature.clientName) : 'Nome não informado'}</p>
-          <input type="text" class="r-sig-input" id="client-sig-input" value="${escapeHtml(reportSignature.clientName)}" placeholder="Nome do responsável pelo estabelecimento">
-          <p class="r-sig-role">Responsável pelo estabelecimento</p>
-        ` : ''}
-      </div>
-    </div>
-  `;
-
-  root.innerHTML = `
-    <div class="report-shell">
-      <div class="report-topbar">
-        <div class="report-topbar-top">
-          <button class="report-back" id="report-back-btn">${ICON.arrowLeft(15)} Voltar</button>
-        </div>
-        <p class="report-topbar-title">Prévia do relatório</p>
-      </div>
-      <div class="report-pages">
-        ${page1}
-        ${page2}
-        ${page3}
-        ${signatureCard}
-      </div>
-      <div class="report-bottombar">
-        <button class="report-finalize-btn" id="report-finalize-btn">${ICON.checkBig(15)} Finalizar visita</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('report-back-btn').onclick = () => {
-    reportPreviewOpen = false;
-    reviewOpen = true;
-    render();
-  };
-
-  document.getElementById('report-finalize-btn').onclick = () => {
-    finalizeConfirmOpen = true;
-    render();
-  };
-
-  bindReportSignatureEvents();
-}
-
-/* =====================================================================
-   FINALIZAR VISITA
-   ===================================================================== */
-function renderFinalizeConfirm(){
-  const root = document.getElementById('finalize-confirm-root');
-  if (!finalizeConfirmOpen){ root.innerHTML = ''; return; }
-
-  root.innerHTML = `
-    <div class="pending-overlay">
-      <div class="pending-card">
-        <p class="modal-title">Finalizar visita?</p>
-        <p class="modal-text">Depois de finalizada, o relatório fica pronto para compartilhar com o cliente. Você ainda pode reabrir a prévia se precisar revisar algo antes disso.</p>
-        <div class="pending-actions">
-          <button class="pending-na-btn" id="finalize-confirm-btn">${ICON.checkBig(15)} Finalizar visita</button>
-          <button class="pending-fill-btn" id="finalize-cancel-btn">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('finalize-cancel-btn').onclick = () => {
-    finalizeConfirmOpen = false;
-    render();
-  };
-
-  document.getElementById('finalize-confirm-btn').onclick = () => {
-    // monta o relatório final (estático, sem campos editáveis) e abre numa aba nova —
-    // é isso que ela vai poder imprimir/salvar como PDF ou compartilhar.
-    const html = buildStandaloneReportHtml();
-    const blob = new Blob([html], { type: 'text/html' });
-    finalizedReportUrl = URL.createObjectURL(blob);
-    window.open(finalizedReportUrl, '_blank');
-
-    finalizeConfirmOpen = false;
-    reportPreviewOpen = false;
-    visitFinalized = true;
-    render();
-  };
-}
-
-function renderVisitFinalized(){
-  const root = document.getElementById('finalized-root');
-  if (!visitFinalized){ root.innerHTML = ''; return; }
-
-  root.innerHTML = `
-    <div class="finalized-shell">
-      <div class="finalized-icon">${ICON.noteCheck(32)}</div>
-      <p class="finalized-title">Visita finalizada</p>
-      <p class="finalized-text">O relatório abriu numa nova aba do navegador. Por lá você pode imprimir ou salvar como PDF.</p>
-      <div class="finalized-actions">
-        <button class="finalized-share-btn" id="finalized-reopen-btn">Abrir relatório novamente</button>
-        <button class="pending-fill-btn" id="finalized-home-btn">${ICON.arrowLeft(14)} Voltar ao início</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('finalized-reopen-btn').onclick = () => {
-    if (finalizedReportUrl){
-      window.open(finalizedReportUrl, '_blank');
-    } else {
-      const html = buildStandaloneReportHtml();
-      const blob = new Blob([html], { type: 'text/html' });
-      finalizedReportUrl = URL.createObjectURL(blob);
-      window.open(finalizedReportUrl, '_blank');
+  document.getElementById('continue-btn').onclick = () => {
+    if (!selectedType) return;
+    if (selectedType === 'checklist'){
+      // checklist exige uma etapa a mais: escolher o modelo antes de seguir
+      sheetStep = 'template';
+      showTemplateWipNotice = false;
+      render();
+      saveState();
+      return;
     }
+    goToDestination(selectedType);
   };
 
-  document.getElementById('finalized-home-btn').onclick = () => {
-    window.location.href = 'index.html';
-  };
+  updateSelectionUI();
 }
 
-function bindReportSignatureEvents(){
-  const consultInput = document.getElementById('consultant-sig-input');
-  if (consultInput){
-    consultInput.oninput = () => {
-      reportSignature.consultantName = consultInput.value;
-      const preview = document.getElementById('consultant-sig-preview');
-      if (preview) preview.textContent = consultInput.value || '\u00A0';
-    };
+function openSheet(preSelected){
+  sheetOpen = true;
+  sheetStep = 'type';
+  selectedType = preSelected || null;
+  selectedTemplate = null;
+  showTemplateWipNotice = false;
+  render();
+  saveState();
+}
+
+function closeSheet(){
+  sheetOpen = false;
+  sheetStep = 'type';
+  selectedType = null;
+  selectedTemplate = null;
+  showTemplateWipNotice = false;
+  render();
+  saveState();
+}
+
+document.getElementById('new-visit-btn').onclick = () => openSheet(null);
+
+/* ---------- restaura o modal se o usuario voltou de checklist/visita tecnica ---------- */
+(function restoreOnLoad(){
+  const saved = loadState();
+  if (saved && saved.open){
+    sheetOpen = true;
+    sheetStep = saved.step === 'template' ? 'template' : 'type';
+    selectedType = saved.selectedType || null;
+    selectedTemplate = saved.selectedTemplate || null;
+    render();
   }
-
-  const toggleNo = document.getElementById('sig-toggle-no');
-  const toggleYes = document.getElementById('sig-toggle-yes');
-  if (toggleNo) toggleNo.onclick = () => { reportSignature.includeClient = false; rerenderReportPreviewKeepScroll(); };
-  if (toggleYes) toggleYes.onclick = () => { reportSignature.includeClient = true; rerenderReportPreviewKeepScroll(); };
-
-  const clientInput = document.getElementById('client-sig-input');
-  if (clientInput){
-    clientInput.oninput = () => {
-      reportSignature.clientName = clientInput.value;
-      const printedName = document.getElementById('client-sig-printed-name');
-      if (printedName){
-        const hasName = clientInput.value.trim().length > 0;
-        printedName.textContent = hasName ? clientInput.value : 'Nome não informado';
-        printedName.classList.toggle('placeholder', !hasName);
-      }
-    };
-  }
-}
-
-/* ---------- eventos: perguntas ---------- */
-function bindQuestionEvents(){
-  document.querySelectorAll('.answer-btn').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      const val = btn.dataset.val;
-      const alreadySelected = q.answer === val;
-      q.answer = alreadySelected ? null : val;
-      render();
-    };
-  });
-
-  document.querySelectorAll('.photo-toggle-btn').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      if (q.answer === null) return;
-
-      if (q.showPhotos){
-        q.showPhotos = false;
-        render();
-        return;
-      }
-
-      if (q.photos.length === 0){
-        // ainda não tem foto: abre direto o seletor nativo (tirar foto ou escolher da galeria)
-        openPhotoPicker(q.id, true);
-        return;
-      }
-
-      q.photoDraft = q.photos.slice();
-      q.showPhotos = true;
-      render();
-    };
-  });
-
-  document.querySelectorAll('.comment-toggle-btn').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      if (q.answer === null) return;
-      if (!q.showComment && q.commentSaved) q.commentDraft = q.commentSaved;
-      q.showComment = !q.showComment;
-      render();
-    };
-  });
-
-  document.querySelectorAll('.photo-add-tile').forEach(btn => {
-    btn.onclick = () => {
-      openPhotoPicker(btn.dataset.q, false);
-    };
-  });
-  document.querySelectorAll('.remove-photo').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      q.photoDraft.splice(Number(btn.dataset.idx), 1);
-      render();
-    };
-  });
-
-  document.querySelectorAll('.photo-cancel-btn').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      q.photoDraft = q.photos.slice();
-      q.showPhotos = false;
-      render();
-    };
-  });
-  document.querySelectorAll('.photo-save-btn').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      q.photos = q.photoDraft.slice();
-      q.showPhotos = false;
-      render();
-    };
-  });
-
-  document.querySelectorAll('.comment-input').forEach(ta => {
-    ta.oninput = () => {
-      const q = findQuestion(ta.dataset.q);
-      q.commentDraft = ta.value;
-      const saveBtn = ta.closest('.comment-panel').querySelector('.comment-save-btn');
-      if (saveBtn) saveBtn.disabled = !ta.value.trim();
-    };
-  });
-
-  document.querySelectorAll('.comment-mic-btn').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      q.recording = true; render();
-      setTimeout(() => {
-        q.commentDraft = (q.commentDraft + ' Piso da câmara fria apresenta acúmulo de umidade próximo ao ralo.').trim();
-        q.recording = false;
-        render();
-      }, 1300);
-    };
-  });
-
-  document.querySelectorAll('.comment-clear-btn').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      q.commentDraft = '';
-      q.commentSaved = '';
-      q.showComment = false;
-      render();
-    };
-  });
-
-  document.querySelectorAll('.comment-save-btn').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      if (!q.commentDraft.trim()) return;
-      q.commentSaved = q.commentDraft.trim();
-      q.showComment = false;
-      render();
-    };
-  });
-
-  document.querySelectorAll('[data-action="generate-plan"]').forEach(btn => {
-    btn.onclick = () => startPlanGeneration(findQuestion(btn.dataset.q));
-  });
-  document.querySelectorAll('[data-action="open-plan-sheet"]').forEach(btn => {
-    btn.onclick = () => openPlanSheet(btn.dataset.q);
-  });
-}
-
-/* ---------- eventos: sheet do plano ---------- */
-function bindPlanEvents(){
-  document.querySelectorAll('.plan-what, .plan-how').forEach(ta => {
-    ta.oninput = () => {
-      const q = findQuestion(ta.dataset.q);
-      if (!q.plan) return;
-      const isWhat = ta.classList.contains('plan-what');
-      if (isWhat) q.plan.whatToFix = ta.value;
-      else q.plan.howToFix = ta.value;
-
-      const fieldChanged = isWhat
-        ? q.plan.whatToFix !== q.plan.aiWhatToFix
-        : q.plan.howToFix !== q.plan.aiHowToFix;
-      ta.classList.toggle('ai-suggested', !fieldChanged);
-      const badge = ta.closest('.plan-field').querySelector('.plan-ai-badge');
-      if (badge){
-        badge.classList.toggle('edited', fieldChanged);
-        badge.innerHTML = `${ICON.sparkles(11)} ${fieldChanged ? 'Editado por você' : 'Sugestão da IA'}`;
-      }
-
-      const changedFromAI = q.plan.whatToFix !== q.plan.aiWhatToFix || q.plan.howToFix !== q.plan.aiHowToFix;
-      const restoreBtn = document.getElementById(`restore-${q.id}`);
-      if (restoreBtn) restoreBtn.style.display = changedFromAI ? 'inline-flex' : 'none';
-
-      if (planTextWarning && q.plan.whatToFix.trim() && q.plan.howToFix.trim()){
-        planTextWarning = false;
-        const warningEl = ta.closest('.sheet-body').querySelector('.plan-warning');
-        if (warningEl) warningEl.remove();
-      }
-
-      updateSaveButtonState(q);
-    };
-  });
-
-  document.querySelectorAll('.plan-restore').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      if (!q.plan) return;
-      q.plan.whatToFix = q.plan.aiWhatToFix;
-      q.plan.howToFix = q.plan.aiHowToFix;
-      render();
-    };
-  });
-
-  document.querySelectorAll('.date-input').forEach(inp => {
-    inp.oninput = () => {
-      const q = findQuestion(inp.dataset.q);
-      if (!q.plan) return;
-
-      const formatted = maskDateInput(inp.value);
-      inp.value = formatted;
-      try { inp.setSelectionRange(formatted.length, formatted.length); } catch(e){}
-
-      if (inp.dataset.field === 'start') q.plan.startDate = formatted;
-      else q.plan.endDate = formatted;
-
-      const start = parseDisplayDate(q.plan.startDate);
-      const end = parseDisplayDate(q.plan.endDate);
-      const hasError = !!(start && end && end < start);
-      q.plan.dateError = hasError;
-      const warningEl = document.getElementById(`date-error-${q.id}`);
-      if (warningEl) warningEl.style.display = hasError ? 'block' : 'none';
-      if (q.planMissingFieldsWarning && q.plan.whatToFix.trim() && q.plan.howToFix.trim() && q.plan.startDate.trim() && q.plan.endDate.trim()){
-        q.planMissingFieldsWarning = false;
-      }
-
-      updateSaveButtonState(q);
-    };
-  });
-
-  document.querySelectorAll('.plan-delete').forEach(btn => {
-    btn.onclick = () => { deletePlanTarget = btn.dataset.q; render(); };
-  });
-
-  document.querySelectorAll('[data-action="delete-plan"]').forEach(btn => {
-    btn.onclick = () => { deletePlanTarget = btn.dataset.q; render(); };
-  });
-
-  document.querySelectorAll('[data-action="cancel-plan"]').forEach(btn => {
-    btn.onclick = () => closePlanSheet();
-  });
-
-  document.querySelectorAll('[data-action="next-step"]').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      if (!q.plan) return;
-      if (!q.plan.whatToFix.trim() || !q.plan.howToFix.trim()){
-        planTextWarning = true;
-        render();
-        return;
-      }
-      planTextWarning = false;
-      planSheetStep = 'dates';
-      render();
-    };
-  });
-
-  document.querySelectorAll('[data-action="prev-step"]').forEach(btn => {
-    btn.onclick = () => {
-      planSheetStep = 'text';
-      render();
-    };
-  });
-
-  document.querySelectorAll('[data-action="confirm-plan"]').forEach(btn => {
-    btn.onclick = () => {
-      const q = findQuestion(btn.dataset.q);
-      if (!q.plan) return;
-      const plan = q.plan;
-
-      const missing = !plan.whatToFix.trim() || !plan.howToFix.trim() || !plan.startDate.trim() || !plan.endDate.trim();
-      if (missing){ q.planMissingFieldsWarning = true; plan.dateError = false; render(); return; }
-
-      const startDate = parseDisplayDate(plan.startDate);
-      const endDate = parseDisplayDate(plan.endDate);
-      if (!startDate || !endDate){ q.planMissingFieldsWarning = true; plan.dateError = false; render(); return; }
-      if (endDate < startDate){ q.planMissingFieldsWarning = false; plan.dateError = true; render(); return; }
-
-      q.planMissingFieldsWarning = false;
-      plan.dateError = false;
-      plan.savedWhatToFix = plan.whatToFix;
-      plan.savedHowToFix = plan.howToFix;
-      plan.savedStartDate = plan.startDate;
-      plan.savedEndDate = plan.endDate;
-      lastUsedEndDate = plan.savedEndDate; // memoriza pra pré-preencher o próximo plano de ação
-      q.planState = 'confirmed';
-
-      activePlanSheet = null;
-      render();
-    };
-  });
-}
-
-render();
+})();
 </script>
 </body>
 </html>
