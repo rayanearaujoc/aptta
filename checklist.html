@@ -57,24 +57,29 @@
   .header{
     background:var(--card);
     color:var(--ink-900);
-    padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px;
+    padding:calc(env(safe-area-inset-top, 0px) + 10px) 16px 12px;
     flex-shrink:0;
     border-bottom:1px solid var(--line);
   }
-  .header-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .header-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
   .back{ display:flex; align-items:center; gap:4px; font-size:13px; font-weight:600; color:var(--ink-700); }
   .status{ display:flex; align-items:center; gap:5px; background:var(--green-50); padding:3px 9px 3px 7px; border-radius:100px; font-size:11px; font-weight:600; color:var(--green-800); }
   .dot{ width:5px; height:5px; border-radius:50%; background:var(--green-600); }
+  /* título+cliente e a barra de progresso agora dividem a mesma linha, lado a lado,
+     em vez do progresso ficar numa faixa própria embaixo — é isso que compacta
+     ainda mais a altura do cabeçalho */
+  .header-title-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:0; }
+  .header-title-col{ min-width:0; }
   .header-meta{ font-size:11px; color:var(--ink-500); margin:0 0 1px; font-weight:500; }
-  .header-client{ font-family:'Playfair Display',serif; font-size:16px; font-weight:600; margin:0 0 -10px; letter-spacing:-0.1px; color:var(--ink-900); }
+  .header-client{ font-family:'Playfair Display',serif; font-size:15px; font-weight:600; margin:0; letter-spacing:-0.1px; color:var(--ink-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  .progress-row{ display:flex; align-items:center; justify-content:flex-end; margin-bottom:6px; }
-  .progress-label{ font-size:11.5px; font-weight:600; color:var(--ink-500); }
-  .progress-track{ width:100%; height:5px; border-radius:100px; background:var(--line); overflow:hidden; }
+  .header-progress-col{ width:108px; flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+  .progress-label{ font-size:10px; font-weight:600; color:var(--ink-500); white-space:nowrap; }
+  .progress-track{ width:100%; height:6px; border-radius:100px; background:var(--line); overflow:hidden; }
   .progress-fill{ height:100%; border-radius:100px; background:var(--green-600); transition:width .35s ease; }
 
   /* ---------- body (scroll area) ---------- */
-  .body{ flex:1; overflow-y:auto; padding:16px 16px 24px; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; scroll-snap-type:y proximity; }
+  .body{ flex:1; overflow-y:auto; padding:16px 16px 24px; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; }
 
   /* ---------- cabeçalho de tópico/categoria ---------- */
   .category-header{
@@ -85,20 +90,20 @@
     border-top:1px solid var(--line);
     scroll-margin-top:16px;
   }
-  .category-header:first-child{ margin-top:26px; padding-top:0; border-top:none; }
+  .category-header:first-child{ margin-top:12px; padding-top:0; border-top:none; }
   .category-dot{ width:6px; height:6px; border-radius:50%; background:var(--green-600); flex-shrink:0; }
   .category-count{ margin-left:auto; font-size:11.5px; font-weight:600; color:var(--ink-500); }
 
   /* ---------- question card ---------- */
-  .q-card{ background:var(--card); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); margin-bottom:20px; padding:16px; scroll-margin-top:14px; scroll-snap-align:start; transition:box-shadow .2s ease; }
+  .q-card{ background:var(--card); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); margin-bottom:20px; padding:16px; scroll-margin-top:14px; transition:box-shadow .2s ease; }
   .q-card.answered{ box-shadow:0 1px 2px rgba(24,27,25,0.05), 0 1px 1px rgba(24,27,25,0.03); }
   .q-text{ font-size:14.5px; font-weight:500; line-height:1.5; margin:0 0 14px; color:var(--ink-900); }
   .q-text b{ font-weight:700; }
 
-  .answer-row{ display:flex; gap:8px; margin-bottom:14px; }
+  .answer-row{ display:flex; gap:12px; margin-bottom:14px; }
   .answer-btn{
     flex:1; border:none; border-radius:var(--radius-sm); background:#EFEFEF; color:var(--ink-500);
-    font-size:13px; font-weight:700; padding:12px 6px; text-align:center; transition:background .15s ease, color .15s ease;
+    font-size:13px; font-weight:700; padding:8px 6px; text-align:center; transition:background .15s ease, color .15s ease;
   }
   .answer-btn:active{ opacity:.85; }
   .answer-btn.selected.ans-c{ background:var(--green-600); color:#fff; }
@@ -306,6 +311,19 @@
   textarea.plan-input.ai-suggested{ background:var(--green-50); }
   textarea.plan-input:focus{ outline:none; border-color:var(--green-600); }
   .plan-restore{ display:inline-flex; align-items:center; gap:5px; border:none; background:transparent; color:var(--green-700); font-size:12.5px; font-weight:700; padding:0; margin:-8px 0 16px; }
+  /* ---------- seletor "quem será responsável" (etapa 2 do plano de ação) ---------- */
+  /* ---------- select "quem será responsável" (etapa 2 do plano de ação) ---------- */
+  .plan-select-wrap{ position:relative; }
+  .plan-select{
+    width:100%; appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    border:1px solid var(--line); border-radius:14px; background:#fff;
+    padding:14px 42px 14px 16px; font-family:'Open Sans',sans-serif; font-size:14px;
+    color:var(--ink-900); font-weight:500; cursor:pointer;
+  }
+  .plan-select:required:invalid{ color:var(--ink-500); }
+  .plan-select:focus{ outline:none; border-color:var(--green-600); }
+  .plan-select-chevron{ position:absolute; right:14px; top:50%; transform:translateY(-50%); pointer-events:none; color:var(--ink-700); display:flex; }
+
   .plan-dates{ display:flex; flex-direction:column; gap:12px; margin-bottom:2px; }
   .plan-date-field{ width:100%; }
   .date-input-wrap{ position:relative; width:100%; }
@@ -362,6 +380,13 @@
   #report-root .report-topbar-top{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
   #report-root .report-back{ display:flex; align-items:center; gap:4px; border:none; background:transparent; color:rgba(255,255,255,0.85); font-size:13px; font-weight:600; padding:4px 4px 4px 0; }
   #report-root .report-topbar-title{ font-family:'Playfair Display',serif; font-size:17px; font-weight:600; color:#fff; margin:0; }
+
+  /* ---- barra de escolha de páginas opcionais do relatório ---- */
+  #report-root .r-page-toggle{ position:absolute; top:16px; right:16px; display:flex; align-items:center; gap:6px; border:none; background:transparent; padding:0; cursor:pointer; z-index:2; }
+  #report-root .r-page-toggle-box{ width:20px; height:20px; border-radius:6px; border:1.5px solid #c7ccc8; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  #report-root .r-page-toggle.checked .r-page-toggle-box{ background:#1D9E75; border-color:#1D9E75; }
+  #report-root .r-page-toggle-label{ font-size:9.5px; font-weight:700; color:#4d534f; white-space:nowrap; }
+  #report-root .r-page-excluded{ opacity:.42; }
   /* min-height:0 é essencial aqui: sem isso, um filho flex:1 com overflow-y:auto não
      rola de verdade — ele simplesmente cresce além da tela, empurrando a barra de
      baixo (e a seção de assinaturas) para fora da área visível. Foi esse o bug que
@@ -506,14 +531,16 @@
       <div class="back" id="icon-back"></div>
       <div class="status"><span class="dot"></span> Online</div>
     </div>
-    <div>
-      <p class="header-meta" id="header-meta">Checklist padrão de limpeza</p>
-      <p class="header-client">Padaria Central</p>
+    <div class="header-title-row">
+      <div class="header-title-col">
+        <p class="header-meta" id="header-meta">Checklist padrão de limpeza</p>
+        <p class="header-client">Padaria Central</p>
+      </div>
+      <div class="header-progress-col">
+        <span class="progress-label" id="progress-label">0 de 0 itens</span>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
     </div>
-    <div class="progress-row">
-      <span class="progress-label" id="progress-label">0 de 0 itens</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
   </div>
 
   <div class="body" id="questions-container"></div>
@@ -548,6 +575,7 @@ function hi(paths, s){
 const ICON = {
   arrowLeft:  (s=18) => hi([["path",{d:"M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   chevronRight:(s=16)=> hi([["path",{d:"M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
+  chevronDown:(s=16)=> hi([["path",{d:"M18 9C18 9 13.5811 15 12 15C10.4188 15 6 9 6 9",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   pencil:     (s=14) => hi([
     ["path",{d:"M15.2141 5.98239L16.6158 4.58063C17.39 3.80646 18.6452 3.80646 19.4194 4.58063C20.1935 5.3548 20.1935 6.60998 19.4194 7.38415L18.0176 8.78591M15.2141 5.98239L6.98023 14.2163C5.93493 15.2616 5.41226 15.7842 5.05637 16.4211C4.70047 17.058 4.3424 18.5619 4 20C5.43809 19.6576 6.94199 19.2995 7.57889 18.9436C8.21579 18.5877 8.73844 18.0651 9.78375 17.0198L18.0176 8.78591M15.2141 5.98239L18.0176 8.78591",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
     ["path",{d:"M11 20H17",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}]
@@ -643,9 +671,35 @@ const QUESTIONS_SEED = [
   { category:'Higiene e Segurança', text:"O descarte dos resíduos atende ao disposto em legislação específica?" },
   { category:'Higiene e Segurança', text:"Os funcionários utilizam uniformes adequados, limpos e em bom estado de conservação?" },
   { category:'Higiene e Segurança', text:"Existe controle de pragas e vetores atualizado e em conformidade com a legislação vigente?" },
+
   { category:'Armazenamento e Controle', text:"Os produtos são armazenados obedecendo ao distanciamento mínimo necessário para garantir adequada ventilação, limpeza e circulação?" },
   { category:'Armazenamento e Controle', text:"Os equipamentos e utensílios utilizados para pesagem, medição e controle de temperatura são calibrados periodicamente?" },
-  { category:'Armazenamento e Controle', text:"As matérias-primas e ingredientes são armazenados seguindo o critério de validade (FIFO/FEFO)?" }
+  { category:'Armazenamento e Controle', text:"As matérias-primas e ingredientes são armazenados seguindo o critério de validade (FIFO/FEFO)?" },
+
+  { category:'Manipulação de Alimentos', text:"Os alimentos prontos para consumo são mantidos separados dos alimentos crus durante todo o preparo?" },
+  { category:'Manipulação de Alimentos', text:"As técnicas de manipulação evitam o contato direto das mãos com alimentos prontos para consumo?" },
+  { category:'Manipulação de Alimentos', text:"Os alimentos perecíveis são mantidos sob controle de temperatura adequado durante todo o processo de preparo?" },
+  { category:'Manipulação de Alimentos', text:"O descongelamento dos alimentos é realizado sob refrigeração ou em processo de cocção contínuo, sem interrupção?" },
+
+  { category:'Controle de Pragas', text:"Existe programa de controle integrado de pragas implementado e devidamente documentado?" },
+  { category:'Controle de Pragas', text:"As aberturas para o ambiente externo (portas, janelas, ralos) possuem proteção adequada contra a entrada de pragas e vetores?" },
+  { category:'Controle de Pragas', text:"Não foram constatados sinais de presença de pragas (fezes, roeduras, insetos) nas áreas de manipulação e armazenamento?" },
+
+  { category:'Documentação e Registros', text:"Os registros de controle de temperatura dos equipamentos são preenchidos regularmente e mantidos disponíveis para consulta?" },
+  { category:'Documentação e Registros', text:"Existe documentação comprobatória da capacitação dos manipuladores em boas práticas de fabricação?" },
+  { category:'Documentação e Registros', text:"Os registros de higienização de instalações e equipamentos estão atualizados e acessíveis?" },
+
+  { category:'Água e Efluentes', text:"A água utilizada no estabelecimento é proveniente de fonte potável, com potabilidade comprovada?" },
+  { category:'Água e Efluentes', text:"O sistema de esgotamento sanitário está em condições adequadas de funcionamento, sem refluxo ou vazamentos aparentes?" },
+
+  { category:'Saúde dos Manipuladores', text:"Os manipuladores de alimentos passam por exames médicos periódicos, conforme legislação vigente?" },
+  { category:'Saúde dos Manipuladores', text:"Manipuladores com lesões, feridas ou sintomas de doenças infectocontagiosas são afastados das atividades de manipulação?" },
+  { category:'Saúde dos Manipuladores', text:"Os manipuladores praticam a correta higienização das mãos antes de iniciar as atividades e após o uso de instalações sanitárias?" },
+
+  { category:'Estrutura e Edificação', text:"As instalações físicas (piso, parede, teto) estão em bom estado de conservação, livres de rachaduras, infiltrações ou umidade?" },
+  { category:'Estrutura e Edificação', text:"A iluminação e a ventilação das áreas de manipulação e armazenamento são adequadas às atividades realizadas?" },
+  { category:'Estrutura e Edificação', text:"Existe separação física ou funcional entre as áreas de preparo, armazenamento e áreas de risco de contaminação cruzada?" },
+  { category:'Estrutura e Edificação', text:"Os equipamentos e utensílios utilizados são de material apropriado, de fácil higienização e em bom estado de conservação?" }
 ];
 
 /* ---------- state ---------- */
@@ -661,6 +715,9 @@ let reviewOpen = false;
 let pendingModalOpen = false;   // modal de itens pendentes ao clicar "Gerar relatório"
 let reportGenerating = false;   // loading rápido antes de mostrar a prévia
 let reportPreviewOpen = false;  // tela de prévia do relatório
+// toggle por página — cada uma das 3 páginas do relatório pode ser incluída ou não,
+// controlado direto na própria página (não mais numa barra separada no topo)
+let reportPageToggles = { cover: true, attention: true, checklist: true };
 let reportSignature = {
   consultantName: 'Rayane Araújo', // pré-preenchido; editável
   includeClient: false,            // toggle "assinatura do cliente"
@@ -735,6 +792,18 @@ function parseDisplayDate(str){
   return date;
 }
 
+// opções do campo "quem será responsável" na etapa 2 do plano de ação
+const RESPONSIBLE_OPTIONS = [
+  { value:'consultora', label:'Eu (Consultora)' },
+  { value:'estabelecimento', label:'Responsável pelo estabelecimento' },
+  { value:'externo', label:'Profissional/empresa externa' },
+  { value:'outro', label:'Outro' }
+];
+function responsibleLabel(value){
+  const opt = RESPONSIBLE_OPTIONS.find(o => o.value === value);
+  return opt ? opt.label : '—';
+}
+
 function generateAISuggestion(){
   return {
     whatToFix: 'Reorganizar o armazenamento seguindo o padrão FIFO, separando itens por validade.',
@@ -791,6 +860,8 @@ function startPlanGeneration(q){
       aiHowToFix: suggestion.howToFix,
       savedWhatToFix: suggestion.whatToFix,
       savedHowToFix: suggestion.howToFix,
+      responsible: null,
+      savedResponsible: null,
       startDate: todayDisplay(),
       endDate: lastUsedEndDate,
       savedStartDate: todayDisplay(),
@@ -974,6 +1045,7 @@ function renderDateField(qId, plan, field){
 function planHasUnsavedChanges(plan){
   return plan.whatToFix !== plan.savedWhatToFix ||
          plan.howToFix !== plan.savedHowToFix ||
+         plan.responsible !== plan.savedResponsible ||
          plan.startDate !== plan.savedStartDate ||
          plan.endDate !== plan.savedEndDate;
 }
@@ -1053,6 +1125,16 @@ function renderPlanSheet(){
     } else {
       bodyHtml = `
         <div class="step-content" key="dates">
+          <div class="plan-field">
+            <label class="plan-label">Informe quem será responsável</label>
+            <div class="plan-select-wrap">
+              <select class="plan-select" data-q="${q.id}" ${plan.responsible ? '' : 'required'}>
+                <option value="" ${plan.responsible ? '' : 'selected'} disabled hidden>Selecione</option>
+                ${RESPONSIBLE_OPTIONS.map(opt => `<option value="${opt.value}" ${plan.responsible === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+              </select>
+              <span class="plan-select-chevron">${ICON.chevronDown(18)}</span>
+            </div>
+          </div>
           <div class="plan-dates">
             ${renderDateField(q.id, plan, 'start')}
             ${renderDateField(q.id, plan, 'end')}
@@ -1377,6 +1459,7 @@ function startReportGeneration(){
   pendingModalOpen = false;
   reviewOpen = false;
   reportGenerating = true;
+  reportPageToggles = { cover: true, attention: true, checklist: true }; // pré-selecionado a cada nova prévia
   render();
   setTimeout(() => {
     reportGenerating = false;
@@ -1409,6 +1492,17 @@ function computeReportData(){
   });
 
   return { total, conforme, naoConforme, naoAplica, conformidadePct, pieC, pieNC, pieNA, groups, categoryStats };
+}
+
+// checkbox "Incluir no PDF" que fica no canto de cada página opcional da prévia
+function pageToggleMarkup(key){
+  const checked = reportPageToggles[key];
+  return `
+    <button class="r-page-toggle ${checked ? 'checked' : ''}" data-page="${key}" aria-pressed="${checked}">
+      <span class="r-page-toggle-box">${checked ? ICON.ok24() : ''}</span>
+      <span class="r-page-toggle-label">Incluir no PDF</span>
+    </button>
+  `;
 }
 
 // gera o SVG da pizza a partir das 3 porcentagens (conforme / não conforme / não aplica)
@@ -1536,6 +1630,7 @@ function buildStandaloneReportHtml(){
                   <p class="r-plan-label">Plano de ação</p>
                   <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
                   <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
+                  <p class="r-plan-row"><span class="lbl">Responsável:</span> ${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
                   <div class="r-plan-dates-row">
                     <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
                     <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
@@ -1690,9 +1785,9 @@ function buildStandaloneReportHtml(){
 </style>
 </head>
 <body>
-  ${page1}
-  ${page2}
-  ${page3}
+  ${reportPageToggles.cover ? page1 : ''}
+  ${reportPageToggles.attention ? page2 : ''}
+  ${reportPageToggles.checklist ? page3 : ''}
   ${page4}
   <button class="print-btn" onclick="window.print()">Salvar como PDF</button>
   <script>
@@ -1731,7 +1826,8 @@ function renderReportPreview(){
 
   // ---------- PÁGINA 1: capa / resumo ----------
   const page1 = `
-    <div class="r-page" id="r-page-cover">
+    <div class="r-page ${reportPageToggles.cover ? '' : 'r-page-excluded'}" id="r-page-cover">
+      ${pageToggleMarkup('cover')}
       <div class="r-topband">
         <div>
           <p class="r-consult-name">Rayane Araújo</p>
@@ -1791,7 +1887,8 @@ function renderReportPreview(){
 
   // ---------- PÁGINA 2: pontos de atenção (só se houver não conformes) ----------
   const page2 = ncItemsByCategory.length === 0 ? '' : `
-    <div class="r-page" id="r-page-attention">
+    <div class="r-page ${reportPageToggles.attention ? '' : 'r-page-excluded'}" id="r-page-attention">
+      ${pageToggleMarkup('attention')}
       <h2 class="r-section-title">Pontos de atenção</h2>
       <p class="r-intro">Estes são os <b class="r-num" style="color:#c0392b; font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria. Quando havia um plano de ação registrado, ele aparece detalhado logo abaixo.</p>
 
@@ -1814,6 +1911,7 @@ function renderReportPreview(){
                   <p class="r-plan-label">Plano de ação</p>
                   <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
                   <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
+                  <p class="r-plan-row"><span class="lbl">Responsável:</span> ${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
                   <div class="r-plan-dates-row">
                     <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
                     <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
@@ -1832,7 +1930,8 @@ function renderReportPreview(){
   const statusClassMap = { C: 'ok', NC: 'nc', NA: 'na' };
 
   const page3 = `
-    <div class="r-page" id="r-page-checklist">
+    <div class="r-page ${reportPageToggles.checklist ? '' : 'r-page-excluded'}" id="r-page-checklist">
+      ${pageToggleMarkup('checklist')}
       <h2 class="r-section-title">Checklist completo</h2>
       <p class="r-intro">Registro completo dos itens avaliados nesta vistoria, para fins de acompanhamento e histórico.</p>
       <div class="r-check-legend">
@@ -1907,6 +2006,14 @@ function renderReportPreview(){
       </div>
     </div>
   `;
+
+  document.querySelectorAll('.r-page-toggle').forEach(btn => {
+    btn.onclick = () => {
+      const key = btn.dataset.page;
+      reportPageToggles[key] = !reportPageToggles[key];
+      rerenderReportPreviewKeepScroll();
+    };
+  });
 
   document.getElementById('report-back-btn').onclick = () => {
     reportPreviewOpen = false;
@@ -2191,6 +2298,23 @@ function bindPlanEvents(){
     };
   });
 
+  document.querySelectorAll('.plan-select').forEach(sel => {
+    sel.onchange = () => {
+      const q = findQuestion(sel.dataset.q);
+      if (!q.plan) return;
+      q.plan.responsible = sel.value;
+      sel.required = false; // já tem valor: para de aplicar o estilo de placeholder/inválido
+
+      if (q.planMissingFieldsWarning && q.plan.responsible && q.plan.whatToFix.trim() && q.plan.howToFix.trim() && q.plan.startDate.trim() && q.plan.endDate.trim()){
+        q.planMissingFieldsWarning = false;
+        const warningEl = sel.closest('.sheet-body')?.querySelector('.plan-warning');
+        if (warningEl) warningEl.remove();
+      }
+
+      updateSaveButtonState(q);
+    };
+  });
+
   document.querySelectorAll('.date-input').forEach(inp => {
     inp.oninput = () => {
       const q = findQuestion(inp.dataset.q);
@@ -2257,7 +2381,7 @@ function bindPlanEvents(){
       if (!q.plan) return;
       const plan = q.plan;
 
-      const missing = !plan.whatToFix.trim() || !plan.howToFix.trim() || !plan.startDate.trim() || !plan.endDate.trim();
+      const missing = !plan.whatToFix.trim() || !plan.howToFix.trim() || !plan.responsible || !plan.startDate.trim() || !plan.endDate.trim();
       if (missing){ q.planMissingFieldsWarning = true; plan.dateError = false; render(); return; }
 
       const startDate = parseDisplayDate(plan.startDate);
@@ -2269,6 +2393,7 @@ function bindPlanEvents(){
       plan.dateError = false;
       plan.savedWhatToFix = plan.whatToFix;
       plan.savedHowToFix = plan.howToFix;
+      plan.savedResponsible = plan.responsible;
       plan.savedStartDate = plan.startDate;
       plan.savedEndDate = plan.endDate;
       lastUsedEndDate = plan.savedEndDate; // memoriza pra pré-preencher o próximo plano de ação
