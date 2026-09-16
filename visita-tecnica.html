@@ -58,17 +58,17 @@
   .header{
     background:var(--card);
     color:var(--ink-900);
-    padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 12px;
+    padding:calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
     flex-shrink:0;
     border-bottom:1px solid var(--line);
   }
-  .header-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .header-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
   .back{ display:flex; align-items:center; gap:4px; font-size:13px; font-weight:600; color:var(--ink-700); }
   .status{ display:flex; align-items:center; gap:5px; background:var(--green-50); padding:3px 9px 3px 7px; border-radius:100px; font-size:11px; font-weight:600; color:var(--green-800); }
   .dot{ width:5px; height:5px; border-radius:50%; background:var(--green-600); }
   .header-bottom{ display:flex; align-items:baseline; justify-content:space-between;}
-  .header-meta{ font-size:11px; color:var(--ink-500); margin:0 0 -10px; font-weight:500; }
-  .header-client{ font-family:'Playfair Display',serif; font-size:16px; font-weight:600; margin-bottom:0px; letter-spacing:-0.1px; color:var(--ink-900); }
+  .header-meta{ font-size:11px; color:var(--ink-500); margin:0 0 1px; font-weight:500; }
+  .header-client{ font-family:'Playfair Display',serif; font-size:15px; font-weight:600; margin:0; letter-spacing:-0.1px; color:var(--ink-900); }
 
   /* ---------- body (scroll area) ---------- */
   .body{ flex:1; overflow-y:auto; padding:16px 16px 24px; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; }
@@ -86,23 +86,23 @@
   .icon-btn.danger:active{ color:var(--red-700); background:var(--red-50); }
 
   .topic-plan-indicator{ width:26px; height:26px; border-radius:50%; background:var(--green-700); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:2px; }
+  .topic-note-indicator{ display:flex; align-items:center; flex-shrink:0; margin-right:2px; font-size:11.5px; font-weight:700; color:#fff; background:var(--green-700); padding:4px 9px; border-radius:100px; }
 
   .topic-body{ padding:0 16px 16px; border-top:1px solid var(--line); }
 
-  .observation{ padding-top:14px;padding-bottom: 16px; scroll-margin-top:16px; }
-  .observation + .observation{ border-top:1px solid var(--line); margin-top:16px; }
-  .obs-label-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-  .obs-label{ font-size:13px; font-weight:600; color:var(--ink-900); }
-  .obs-remove{ border:none; background:transparent; color:var(--ink-500); padding:3px; cursor:pointer; display:flex; border-radius:6px; }
-  .obs-remove:active{ color:var(--red-700); background:var(--red-50); }
+  .observation{ padding-top:14px; }
 
   /* ---------- campo de texto grande ---------- */
   .field-wrap{ position:relative; }
   textarea.obs-input{
-    width:100%; min-height:190px; resize:vertical; border:1px solid var(--line); border-radius:var(--radius-md);
-    padding:16px 20px 66px; font-family:'Open Sans',sans-serif; font-size:14px; line-height:1.5; color:var(--ink-900);
+    width:100%; min-height:96px; resize:vertical; border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:14px 16px 54px; font-family:'Open Sans',sans-serif; font-size:14px; line-height:1.5; color:var(--ink-900);
     background:#ffff;
+    transition:padding-bottom .15s ease;
   }
+  /* mais respiro entre o texto e a barra de ações, só quando já tem conteúdo digitado
+     (:placeholder-shown só é verdadeiro quando o campo está vazio mostrando o placeholder) */
+  textarea.obs-input:not(:placeholder-shown){ padding-bottom:70px; }
   textarea.obs-input::placeholder{ color:var(--ink-500); }
   textarea.obs-input:focus{ outline:none; border-color:var(--green-600); background:var(--green-50); }
 
@@ -130,7 +130,7 @@
     border:1px solid var(--line); border-radius:var(--radius-md);
     background:#fff; padding:14px 16px;
     font-size:14px; font-weight:600; color:var(--ink-700);
-    margin-top:16px; text-align:left;
+    text-align:left;
   }
   .action-btn:not(:disabled):active{ border-color:var(--green-600); }
 .plan-generate-btn{
@@ -175,10 +175,9 @@
     display:flex; align-items:center; justify-content:center; border:2px solid #fff;
   }
 
-  /* ---------- loading do plano de ação (spinner + ícone de estrelinhas + texto) ---------- */
+  /* ---------- loading do plano de ação ---------- */
   .plan-loading{
     display:flex; align-items:center; gap:9px;
-    margin-top:16px;
     padding:14px 16px;
     background:#fff;
     border:1px solid var(--line);
@@ -194,10 +193,10 @@
   .plan-loading span{ font-size:13.5px; font-weight:600; color:var(--green-800); }
   @keyframes spin{ to{ transform:rotate(360deg); } }
 
-  /* ---------- chip compacto do plano (vive dentro da observação) ---------- */
+  /* ---------- chip compacto do plano ---------- */
   .plan-chip{
     display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%;
-    margin-top:16px; padding:12px 14px; border:none; border-radius:var(--radius-md);
+    padding:12px 14px; border:none; border-radius:var(--radius-md);
     background:var(--green-50); text-align:left;
   }
   .plan-chip:active{ background:var(--green-100); }
@@ -273,23 +272,30 @@
   .plan-btn.plan-delete{ display:flex; align-items:center;  border:1px solid var(--red-700); justify-content:center; gap:6px; color:var(--red-700); background:transparent;}
 .plan-btn.plan-delete:active{ color:var(--red-700); background:transparent; }
 
-  .plan-summary{ display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius-md); padding:12px 14px; margin-top:16px; }
+  .plan-summary{ display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius-md); padding:12px 14px; }
   .plan-summary-icon{ width:36px; height:36px; border-radius:10px; background:var(--green-700); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .plan-summary-text{ flex:1; min-width:0; }
   .plan-summary-title{ font-size:13.5px; font-weight:700; color:var(--ink-900); margin:0; }
   .plan-summary-desc{ font-size:12px; color:var(--ink-500); font-style:italic; margin:2px 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .plan-edit-link{ border:none; background:transparent; color:var(--green-700); font-size:13px; font-weight:700; padding:4px; flex-shrink:0; }
 
-  .plan-generate-link{ color:var(--green-700); font-weight:700; }
+  /* ---------- rodapé do tópico: plano de ação + nota geral, num bloco só ---------- */
+  .topic-footer-section{ margin-top:18px; padding-top:16px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:18px; }
 
-  .add-observation{ display:flex; align-items:center; gap:6px; margin-top:10px; padding:14px 2px 10px; border:none; background:transparent; color:var(--green-700); font-size:13.5px; font-weight:700; width:100%; }
+  /* ---------- nota geral do tópico (escala 0-10 numa barra única, sem legenda) ---------- */
+  .topic-note-label{ font-size:13px; font-weight:600; color:var(--ink-900); margin:0 0 10px; }
+  .topic-note-scale{ display:flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .topic-note-cell{ flex:1; border:none; border-right:1px solid var(--line); background:#fff; color:var(--ink-700); font-size:12px; font-weight:400; padding:10px 0; text-align:center; }
+  .topic-note-cell:last-child{ border-right:none; }
+  .topic-note-cell.selected{ background:var(--green-900); color:#fff; }
+
   .add-topic{ width:100%; padding:14px; border:1.5px dashed var(--green-600); border-radius:var(--radius-lg); background:transparent; color:var(--green-800); font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:7px; }
 
   .empty-hint{ text-align:center; color:var(--ink-500); font-size:13px; padding:40px 20px; line-height:1.6; }
 
   /* ---------- footer ---------- */
   .footer{ flex-shrink:0; padding:12px 16px calc(env(safe-area-inset-bottom, 0px) + 16px); background:var(--paper); border-top:1px solid var(--line); }
-  .review-btn{ width:100%; padding:15px; border:none; border-radius:12px; background:var(--green-900); color:#fff; font-size:15px; font-weight:700; }
+  .review-btn{ width:100%; padding:15px; border:none; border-radius:12px; background:var(--green-700); color:#fff; font-size:15px; font-weight:700; }
   .review-btn:disabled{ background:var(--ink-300); color:#fff; cursor:not-allowed; }
 
   /* ---------- modal ---------- */
@@ -319,17 +325,15 @@
   .review-unanswered-banner .banner-link{ border:none; background:transparent; color:var(--green-700); font-weight:700; font-size:12.5px; padding:0; text-decoration:underline; }
 
   .review-card{ background:var(--card); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); padding:18px; margin-bottom:18px; }
-  .review-topic-title{ font-family:'Open Sans',sans-serif; font-size:15px; font-weight:700; color:var(--ink-900); margin:0 0 14px; padding-bottom:14px; border-bottom:1px solid var(--line); }
-  .review-obs{ padding-top:14px; }
-  .review-obs:first-of-type{ padding-top:0; }
-  .review-obs + .review-obs{ border-top:1px solid var(--line); margin-top:14px; }
-  .review-obs-clickable{ cursor:pointer; }
-  .review-obs-label{ font-size:11.5px; font-weight:700; color:var(--green-700); margin:0 0 7px; }
+  .review-topic-clickable{ cursor:pointer; }
+  .review-topic-title{ font-family:'Open Sans',sans-serif; font-size:15px; font-weight:700; color:var(--ink-900); margin:0; }
+  .review-topic-title-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+  .review-topic-note{ display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; color:var(--ink-700); flex-shrink:0; white-space:nowrap; }
   .review-obs-text{ font-size:13.5px; font-weight:500; line-height:1.55; color:var(--ink-900); margin:0; }
   .review-obs-text.empty{ color:var(--ink-500); font-style:italic; font-weight:400; }
   .review-photo-row{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
   .review-photo-thumb{ width:44px; height:44px; border-radius:8px; background-size:cover; background-position:center; flex-shrink:0; }
-  .review-plan-missing{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:10px; padding:10px 12px; background:var(--green-50); border-radius:var(--radius-sm); }
+  .review-plan-missing{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; background:var(--green-50); border-radius:var(--radius-sm); }
   .review-plan-missing span{ font-size:12.5px; color:var(--ink-700); }
   .review-plan-missing button{ border:none; background:transparent; color:var(--green-700); font-size:12.5px; font-weight:700; flex-shrink:0; }
   .review-final-label{ font-size:13px; font-weight:600; color:var(--ink-900); margin:0 0 10px; }
@@ -401,7 +405,6 @@ const ICON = {
   arrowLeft:  (s=18) => hi([["path",{d:"M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   chevronDown:(s=18) => hi([["path",{d:"M18 9.00005C18 9.00005 13.5811 15 12 15C10.4188 15 6 9 6 9",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   chevronUp:  (s=18) => hi([["path",{d:"M17.9998 15C17.9998 15 13.5809 9.00001 11.9998 9C10.4187 8.99999 5.99985 15 5.99985 15",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
-  chevronLeft:(s=16) => hi([["path",{d:"M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   chevronRight:(s=16)=> hi([["path",{d:"M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   pencil:     (s=16) => hi([
     ["path",{d:"M15.2141 5.98239L16.6158 4.58063C17.39 3.80646 18.6452 3.80646 19.4194 4.58063C20.1935 5.3548 20.1935 6.60998 19.4194 7.38415L18.0176 8.78591M15.2141 5.98239L6.98023 14.2163C5.93493 15.2616 5.41226 15.7842 5.05637 16.4211C4.70047 17.058 4.3424 18.5619 4 20C5.43809 19.6576 6.94199 19.2995 7.57889 18.9436C8.21579 18.5877 8.73844 18.0651 9.78375 17.0198L18.0176 8.78591M15.2141 5.98239L18.0176 8.78591",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
@@ -417,19 +420,14 @@ const ICON = {
     ["path",{d:"M7 6.5C7 4.01472 9.01472 2 11.5 2C13.9853 2 16 4.01472 16 6.5V11.5C16 13.9853 13.9853 16 11.5 16C9.01472 16 7 13.9853 7 11.5V6.5Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
     ["path",{d:"M11.5 19H11.0828C7.57267 19 4.57706 16.4623 4 13M11.5 19H11.9172C15.4273 19 18.4229 16.4623 19 13M11.5 19V22",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]
   ], s),
-  camera:     (s=20) => hi([
-    ["path",{d:"M12.6974 3.5H11.303C10.5884 3.5 10.2311 3.5 9.91067 3.612C9.71499 3.68039 9.53113 3.77879 9.36568 3.90367C9.09474 4.10816 8.89655 4.40544 8.50018 5C8.29717 5.30453 7.99794 5.75337 7.87867 5.87871C7.58314 6.18927 7.19563 6.39666 6.77329 6.47029C6.60284 6.5 6.41985 6.5 6.05387 6.5C5.07379 6.5 4.58376 6.5 4.18307 6.61342C3.18074 6.89716 2.39734 7.68055 2.1136 8.68289C2.00018 9.08357 2.00018 9.57361 2.00018 10.5537V14.5C2.00018 17.3284 2.00018 18.7426 2.87886 19.6213C3.75754 20.5 5.17176 20.5 8.00018 20.5H16.0002C18.8286 20.5 20.2428 20.5 21.1215 19.6213C22.0002 18.7426 22.0002 17.3284 22.0002 14.5V10.5537C22.0002 9.57361 22.0002 9.08357 21.8868 8.68289C21.603 7.68055 20.8196 6.89716 19.8173 6.61342C19.4166 6.5 18.9266 6.5 17.9465 6.5C17.5805 6.5 17.3975 6.5 17.2271 6.47029C16.8047 6.39666 16.4172 6.18927 16.1217 5.87871C16.0024 5.75336 15.7032 5.30451 15.5002 5C15.1038 4.40544 14.9056 4.10816 14.6347 3.90367C14.4692 3.77879 14.2854 3.68039 14.0897 3.612C13.7693 3.5 13.412 3.5 12.6974 3.5Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M16.0002 13C16.0002 15.2091 14.2093 17 12.0002 17C9.79104 17 8.00018 15.2091 8.00018 13C8.00018 10.7909 9.79104 9 12.0002 9C14.2093 9 16.0002 10.7909 16.0002 13Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M19.1252 9.5H19.0002M19.2502 9.5C19.2502 9.63807 19.1383 9.75 19.0002 9.75C18.8621 9.75 18.7502 9.63807 18.7502 9.5C18.7502 9.36193 18.8621 9.25 19.0002 9.25C19.1383 9.25 19.2502 9.36193 19.2502 9.5Z",stroke:"currentColor",strokeLinecap:"round",strokeWidth:"1.5"}]
-  ], s),
-  plus:       (s=15) => hi([["path",{d:"M12 4V20M20 12H4",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
-  x:          (s=14) => hi([["path",{d:"M18 6L6.00081 17.9992M17.9992 18L6 6.00085",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}]], s),
-  close:      (s=16) => hi([["path",{d:"M18 6L6.00081 17.9992M17.9992 18L6 6.00085",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   image:      (s=20) => hi([
     ["path",{d:"M14 3H10C6.22876 3 4.34315 3 3.17157 4.17157C2 5.34315 2 7.22876 2 11V13C2 16.7712 2 18.6569 3.17157 19.8284C4.34315 21 6.22876 21 10 21H14C17.7712 21 19.6569 21 20.8284 19.8284C22 18.6569 22 16.7712 22 13V11C22 7.22876 22 5.34315 20.8284 4.17157C19.6569 3 17.7712 3 14 3Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
     ["circle",{cx:"8.5",cy:"8.5",r:"1.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
     ["path",{d:"M21.5 17L16.348 11.3797C16.1263 11.1377 15.8131 11 15.485 11C15.1744 11 14.8766 11.1234 14.6571 11.3429L10 16L7.83928 13.8393C7.62204 13.622 7.32741 13.5 7.02019 13.5C6.68931 13.5 6.37423 13.6415 6.15441 13.8888L2.5 18",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]
   ], s),
+  plus:       (s=15) => hi([["path",{d:"M12 4V20M20 12H4",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
+  x:          (s=14) => hi([["path",{d:"M18 6L6.00081 17.9992M17.9992 18L6 6.00085",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}]], s),
+  close:      (s=16) => hi([["path",{d:"M18 6L6.00081 17.9992M17.9992 18L6 6.00085",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   planIcon:   (s=16) => hi([
     ["path",{d:"M19 12.001V10.6578C19 9.84033 19 9.43158 18.8478 9.06404C18.6955 8.69649 18.4065 8.40746 17.8284 7.8294L13.0919 3.09286C12.593 2.59397 12.3436 2.34453 12.0345 2.19672C11.9702 2.16598 11.9044 2.1387 11.8372 2.11499C11.5141 2.00098 11.1614 2.00098 10.4558 2.00098C7.21082 2.00098 5.58831 2.00098 4.48933 2.88705C4.26731 3.06606 4.06508 3.26829 3.88607 3.49031C3 4.58928 3 6.2118 3 9.45682V14.001C3 17.7722 3 19.6578 4.17157 20.8294C5.34315 22.001 7.22876 22.001 11 22.001H13.0345M12 2.50098V3.00098C12 5.8294 12 7.24362 12.8787 8.1223C13.7574 9.00098 15.1716 9.00098 18 9.00098H18.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
     ["path",{d:"M17.5 15.001L17.7579 15.698C18.0961 16.612 18.2652 17.069 18.5986 17.4024C18.932 17.7357 19.389 17.9048 20.303 18.2431L21 18.501L20.303 18.7589C19.389 19.0971 18.932 19.2662 18.5986 19.5996C18.2652 19.933 18.0961 20.39 17.7579 21.3039L17.5 22.001L17.2421 21.3039C16.9039 20.39 16.7348 19.933 16.4014 19.5996C16.068 19.2662 15.611 19.0971 14.697 18.7589L14 18.501L14.697 18.2431C15.611 17.9048 16.068 17.7357 16.4014 17.4024C16.7348 17.069 16.9039 16.612 17.2421 15.698L17.5 15.001Z",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"1.5"}]
@@ -442,16 +440,6 @@ const ICON = {
     ["path",{d:"M16 2V6M8 2V6",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
     ["path",{d:"M13 4H11C7.22876 4 5.34315 4 4.17157 5.17157C3 6.34315 3 8.22876 3 12V14C3 17.7712 3 19.6569 4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284C21 19.6569 21 17.7712 21 14V12C21 8.22876 21 6.34315 19.8284 5.17157C18.6569 4 16.7712 4 13 4Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
     ["path",{d:"M3 10H21",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]
-  ], s),
-  helpCircle: (s=15) => hi([
-    ["circle",{cx:"12",cy:"12",r:"10",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M9.5 9.5C9.5 8.11929 10.6193 7 12 7C13.3807 7 14.5 8.11929 14.5 9.5C14.5 10.3569 14.0689 11.1131 13.4117 11.5636C12.7283 12.0319 12 12.6716 12 13.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M12.125 16.75H12M12.25 16.75C12.25 16.8881 12.1381 17 12 17C11.8619 17 11.75 16.8881 11.75 16.75C11.75 16.6119 11.8619 16.5 12 16.5C12.1381 16.5 12.25 16.6119 12.25 16.75Z",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]
-  ], s),
-  target:     (s=15) => hi([
-    ["path",{d:"M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2Z",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6Z",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"1.5"}],
-    ["path",{d:"M12 10C13.1046 10 14 10.8954 14 12C14 13.1046 13.1046 14 12 14C10.8954 14 10 13.1046 10 12C10 10.8954 10.8954 10 12 10Z",stroke:"currentColor",strokeLinejoin:"round",strokeWidth:"1.5"}]
   ], s),
   check:      (s=22) => hi([["path",{d:"M5 13L9 17L19 7",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"2"}]], s),
   fileText:   (s=18) => hi([
@@ -478,19 +466,20 @@ document.getElementById('icon-back').innerHTML = ICON.arrowLeft(15) + '<span>Vol
 document.getElementById('icon-back').style.cursor = 'pointer';
 document.getElementById('icon-back').onclick = () => { window.location.href = 'index.html'; };
 
-/* ---------- state ---------- */
+/* ---------- state ----------
+   Cada tópico tem UMA nota só (texto + fotos + gravação), não uma lista.
+   O plano de ação também é por tópico (cobre a nota inteira dele). */
 let topics = [];
-let nextTopicId = 1, nextObsId = 1;
+let nextTopicId = 1;
 let topicCounter = 0; // usado só para nomear "Tópico N", sempre incrementa
 let deleteModalTopicId = null;
-let deletePlanTarget = null;     // { topicId, obsId } | null — plano pendente de exclusão (aguardando confirmação no modal)
+let deletePlanTarget = null;     // topicId | null — plano pendente de exclusão (aguardando confirmação no modal)
 let pendingScrollTopicId = null; // topic to scroll into view after next render
-let pendingScrollObsId = null;   // observation to scroll into view after next render (sem fechar/abrir nada)
-let activePlanSheet = null;      // { topicId, obsId } | null — plano de ação aberto no bottom sheet
+let activePlanSheet = null;      // { topicId } | null — plano de ação aberto no bottom sheet
 let lastUsedEndDate = '';        // última data de conclusão confirmada — usada para pré-preencher o próximo plano de ação
 let planSheetStep = 'text';      // 'text' | 'dates'
 let planTextWarning = false;
-let pendingPhotoRef = null;      // { topicId, obsId } | null — observação aguardando fotos do seletor nativo
+let pendingPhotoTopicId = null;  // topicId | null — tópico aguardando fotos do seletor nativo
 
 /* ---------- tela de revisão / relatório ---------- */
 let currentScreen = 'main';      // 'main' | 'review' | 'preview' | 'done'
@@ -501,26 +490,14 @@ let review = {
 let pdfBlob = null;
 let pdfBlobUrl = null;
 
-/* Quantidade mínima de caracteres na observação para liberar o botão "Gerar plano de ação" */
-const MIN_OBS_CHARS_FOR_PLAN = 15;
+/* Quantidade mínima de caracteres na nota do tópico pra liberar o "Gerar plano de ação" */
+const MIN_CHARS_FOR_PLAN = 15;
 
 function findTopic(id){ return topics.find(t => t.id == id); }
-function findObs(topic, id){ return topic.observations.find(o => o.id == id); }
-function newObservation(){
-  return {
-    id: nextObsId++,
-    text:'',
-    photos:[],
-    recording:false,
-    planState: 'none', // 'none' | 'generating' | 'editing' | 'confirmed'
-    plan: null,        // { whatToFix, howToFix, aiWhatToFix, aiHowToFix, savedWhatToFix, savedHowToFix, startDate, endDate, savedStartDate, savedEndDate, dateError }
-    planMissingFieldsWarning: false
-  };
-}
 
 /* ---------- captura/seleção de foto real ---------- */
-function openPhotoPicker(topicId, obsId){
-  pendingPhotoRef = { topicId, obsId };
+function openPhotoPicker(topicId){
+  pendingPhotoTopicId = topicId;
   const input = document.getElementById('photo-file-input');
   input.value = '';
   input.click();
@@ -537,15 +514,11 @@ function readFileAsDataUrl(file){
 
 document.getElementById('photo-file-input').addEventListener('change', (e) => {
   const files = Array.from(e.target.files || []);
-  const ref = pendingPhotoRef;
-  if (!ref || files.length === 0) return;
-
-  const topic = findTopic(ref.topicId);
-  const obs = topic ? findObs(topic, ref.obsId) : null;
-  if (!obs) return;
+  const topic = findTopic(pendingPhotoTopicId);
+  if (!topic || files.length === 0) return;
 
   Promise.all(files.map(readFileAsDataUrl)).then(dataUrls => {
-    obs.photos = obs.photos.concat(dataUrls);
+    topic.photos = topic.photos.concat(dataUrls);
     render();
   });
 });
@@ -585,15 +558,15 @@ function generateAISuggestion(){
   };
 }
 
-function startPlanGeneration(topicId, obs){
-  obs.planState = 'generating';
-  activePlanSheet = { topicId: topicId, obsId: obs.id };
+function startPlanGeneration(topic){
+  topic.planState = 'generating';
+  activePlanSheet = { topicId: topic.id };
   planSheetStep = 'text';
   planTextWarning = false;
   render();
   setTimeout(() => {
     const suggestion = generateAISuggestion();
-    obs.plan = {
+    topic.plan = {
       whatToFix: suggestion.whatToFix,
       howToFix: suggestion.howToFix,
       aiWhatToFix: suggestion.whatToFix,
@@ -606,7 +579,7 @@ function startPlanGeneration(topicId, obs){
       savedEndDate: lastUsedEndDate,
       dateError: false
     };
-    obs.planState = 'editing';
+    topic.planState = 'editing';
     render();
   }, 900);
 }
@@ -628,23 +601,12 @@ function render(){
     }
   }
 
-  if (pendingScrollObsId !== null){
-    const id = pendingScrollObsId;
-    pendingScrollObsId = null;
-    const node = document.getElementById(`obs-${id}`);
-    if (node){
-      requestAnimationFrame(() => {
-        node.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    }
-  }
-
   renderPlanSheet();
   renderReviewRoot();
 }
 
-function openPlanSheet(topicId, obsId){
-  activePlanSheet = { topicId, obsId };
+function openPlanSheet(topicId){
+  activePlanSheet = { topicId };
   planSheetStep = 'text';
   planTextWarning = false;
   render();
@@ -653,20 +615,19 @@ function openPlanSheet(topicId, obsId){
 function closePlanSheet(){
   if (activePlanSheet){
     const topic = findTopic(activePlanSheet.topicId);
-    const obs = topic ? findObs(topic, activePlanSheet.obsId) : null;
-    if (obs && obs.planState !== 'confirmed'){
-      obs.planState = 'none';
-      obs.plan = null;
-      obs.planMissingFieldsWarning = false;
-    } else if (obs && obs.planState === 'confirmed' && obs.plan){
+    if (topic && topic.planState !== 'confirmed'){
+      topic.planState = 'none';
+      topic.plan = null;
+      topic.planMissingFieldsWarning = false;
+    } else if (topic && topic.planState === 'confirmed' && topic.plan){
       // descarta edições não salvas ao fechar sem salvar
-      const plan = obs.plan;
+      const plan = topic.plan;
       plan.whatToFix = plan.savedWhatToFix;
       plan.howToFix = plan.savedHowToFix;
       plan.startDate = plan.savedStartDate;
       plan.endDate = plan.savedEndDate;
       plan.dateError = false;
-      obs.planMissingFieldsWarning = false;
+      topic.planMissingFieldsWarning = false;
     }
   }
   activePlanSheet = null;
@@ -686,7 +647,7 @@ function renderTopics(){
   }
 
   el.innerHTML = topics.map(topic => {
-    const hasConfirmedPlan = topic.observations.some(o => o.planState === 'confirmed');
+    const hasConfirmedPlan = topic.planState === 'confirmed';
     return `
     <div class="topic" id="topic-${topic.id}">
       <div class="topic-summary">
@@ -697,16 +658,20 @@ function renderTopics(){
             : `<span class="topic-title-text">${escapeHtml(topic.title)}</span>`}
         </div>
         <div class="topic-summary-actions">
+          ${topic.topicNote !== null ? `<span class="topic-note-indicator" title="Nota geral do tópico">${topic.topicNote}/10</span>` : ''}
           ${hasConfirmedPlan ? `<span class="topic-plan-indicator" title="Este tópico possui um plano de ação criado">${ICON.planIcon(14)}</span>` : ''}
           <button class="icon-btn edit-title" data-topic="${topic.id}" aria-label="Editar título">${ICON.pencil(19)}</button>
-          ${topic.open ? `<button class="icon-btn danger del-topic" data-topic="${topic.id}" aria-label="Excluir tópico">${ICON.trash()}</button>` : ''}
+          <button class="icon-btn danger del-topic" data-topic="${topic.id}" aria-label="Excluir tópico">${ICON.trash()}</button>
         </div>
       </div>
 
       ${topic.open ? `
         <div class="topic-body">
-          ${topic.observations.map(obs => renderObservation(topic.id, obs)).join('')}
-          <button class="add-observation" data-topic="${topic.id}">${ICON.plus()} Adicionar observação</button>
+          ${renderTopicNoteField(topic)}
+          <div class="topic-footer-section">
+            ${renderTopicPlanArea(topic)}
+            ${renderTopicNoteSection(topic)}
+          </div>
         </div>
       ` : ''}
     </div>
@@ -718,62 +683,53 @@ function renderTopics(){
   bindTopicEvents();
 }
 
-function renderObservation(topicId, obs){
+function renderTopicNoteField(topic){
   return `
-    <div class="observation" id="obs-${obs.id}">
-      <div class="obs-label-row">
-        <span class="obs-label">Observação</span>
-        <button class="obs-remove" data-topic="${topicId}" data-obs="${obs.id}" aria-label="Excluir observação">${ICON.trash(18)}</button>
-      </div>
-
+    <div class="observation">
       <div class="field-wrap">
-        <textarea class="obs-input" placeholder="Descreva o que você observou..." data-topic="${topicId}" data-obs="${obs.id}">${escapeHtml(obs.text)}</textarea>
-
+        <textarea class="obs-input" placeholder="Escreva sua nota..." data-topic="${topic.id}">${escapeHtml(topic.text)}</textarea>
         <div class="field-actions-row">
           <div class="obs-media-actions">
-            <button class="media-btn mic-btn ${obs.recording ? 'recording' : ''}" data-topic="${topicId}" data-obs="${obs.id}" aria-label="Ditar observação">${ICON.mic(19)}</button>
-            <button class="media-btn add-images-btn" data-topic="${topicId}" data-obs="${obs.id}" aria-label="Adicionar imagens">
-              ${ICON.image(19)}${obs.photos.length > 0 ? `<span class="media-badge">${obs.photos.length}</span>` : ''}
+            <button class="media-btn mic-btn ${topic.recording ? 'recording' : ''}" data-topic="${topic.id}" aria-label="Ditar nota">${ICON.mic(19)}</button>
+            <button class="media-btn add-images-btn" data-topic="${topic.id}" aria-label="Adicionar imagens">
+              ${ICON.image(19)}${topic.photos.length > 0 ? `<span class="media-badge">${topic.photos.length}</span>` : ''}
             </button>
           </div>
         </div>
       </div>
-      ${obs.recording ? `<div class="listening"><span class="wave"></span> Ouvindo...</div>` : ''}
+      ${topic.recording ? `<div class="listening"><span class="wave"></span> Ouvindo...</div>` : ''}
 
-      ${obs.photos.length > 0 ? `
+      ${topic.photos.length > 0 ? `
         <div class="photo-row">
-          ${obs.photos.map((src, i) => `
+          ${topic.photos.map((src, i) => `
             <div class="photo-thumb" style="background-image:url('${src}');background-size:cover;background-position:center;">
-              <button class="remove-photo" data-topic="${topicId}" data-obs="${obs.id}" data-idx="${i}">${ICON.x(11)}</button>
+              <button class="remove-photo" data-topic="${topic.id}" data-idx="${i}">${ICON.x(11)}</button>
             </div>
           `).join('')}
-          <button class="photo-add-tile" data-topic="${topicId}" data-obs="${obs.id}" aria-label="Adicionar mais fotos">${ICON.plus(18)}</button>
+          <button class="photo-add-tile" data-topic="${topic.id}" aria-label="Adicionar mais fotos">${ICON.plus(18)}</button>
         </div>
       ` : ''}
-
-      ${renderPlanoArea(topicId, obs)}
     </div>
   `;
 }
 
-function renderDateField(topicId, obsId, plan, field){
-  const value = field === 'start' ? plan.startDate : plan.endDate;
-  const label = field === 'start' ? 'Data de Início' : 'Data de conclusão';
+function renderTopicNoteSection(topic){
+  const note = topic.topicNote; // null = ainda não avaliado; 0 já é uma nota válida
   return `
-    <div class="plan-date-field">
-      <label class="plan-label">${label}</label>
-      <div class="date-input-wrap">
-        <input type="text" inputmode="numeric" class="date-input" placeholder="dd/mm/aaaa" maxlength="10"
-          value="${escapeHtml(value)}" data-topic="${topicId}" data-obs="${obsId}" data-field="${field}" />
-        ${ICON.calendar(17)}
+    <div class="topic-note-body">
+      <p class="topic-note-label">Nota geral do tópico</p>
+      <div class="topic-note-scale">
+        ${[0,1,2,3,4,5,6,7,8,9,10].map(n => `
+          <button class="topic-note-cell ${note === n ? 'selected' : ''}" data-topic="${topic.id}" data-value="${n}" aria-label="Nota ${n}">${n}</button>
+        `).join('')}
       </div>
-      ${field === 'end' ? `<p class="plan-warning" id="date-error-${obsId}" style="display:${plan.dateError ? 'block' : 'none'};">A data de conclusão não pode ser anterior à data de início.</p>` : ''}
     </div>
   `;
 }
 
-function renderPlanoArea(topicId, obs){
-  if (obs.planState === 'generating'){
+/* ---------- plano de ação: agora é por tópico inteiro, não por nota ---------- */
+function renderTopicPlanArea(topic){
+  if (topic.planState === 'generating'){
     return `
       <div class="plan-loading">
         <div class="spinner"></div>
@@ -783,9 +739,9 @@ function renderPlanoArea(topicId, obs){
     `;
   }
 
-  if (obs.planState === 'editing' && obs.plan){
+  if (topic.planState === 'editing' && topic.plan){
     return `
-      <button class="plan-chip" data-topic="${topicId}" data-obs="${obs.id}" data-action="open-plan-sheet">
+      <button class="plan-chip" data-topic="${topic.id}" data-action="open-plan-sheet">
         <div class="plan-chip-left">
           <div class="plan-chip-icon">${ICON.planIcon(16)}</div>
           <div>
@@ -798,8 +754,8 @@ function renderPlanoArea(topicId, obs){
     `;
   }
 
-  if (obs.planState === 'confirmed' && obs.plan){
-    const plan = obs.plan;
+  if (topic.planState === 'confirmed' && topic.plan){
+    const plan = topic.plan;
     return `
       <div class="plan-summary">
         <div class="plan-summary-icon">${ICON.planIcon(18)}</div>
@@ -807,16 +763,32 @@ function renderPlanoArea(topicId, obs){
           <p class="plan-summary-title">Plano de Ação criado</p>
           <p class="plan-summary-desc">${escapeHtml(plan.whatToFix)}</p>
         </div>
-        <button class="plan-edit-link" data-topic="${topicId}" data-obs="${obs.id}" data-action="open-plan-sheet">Editar</button>
+        <button class="plan-edit-link" data-topic="${topic.id}" data-action="open-plan-sheet">Editar</button>
       </div>
     `;
   }
 
-  const enabled = obs.text.trim().length >= MIN_OBS_CHARS_FOR_PLAN;
+  const enabled = topic.text.trim().length >= MIN_CHARS_FOR_PLAN;
   return `
-    <button class="action-btn plan-generate-btn" id="gen-plan-${obs.id}" ${enabled ? '' : 'disabled'} data-topic="${topicId}" data-obs="${obs.id}" data-action="generate-plan">
+    <button class="action-btn plan-generate-btn" id="gen-plan-${topic.id}" ${enabled ? '' : 'disabled'} data-topic="${topic.id}" data-action="generate-plan">
       <span class="sparkle-icon-wrap">${ICON.sparkles(15)}</span> Gerar plano de ação com IA
     </button>
+  `;
+}
+
+function renderDateField(topicId, plan, field){
+  const value = field === 'start' ? plan.startDate : plan.endDate;
+  const label = field === 'start' ? 'Data de Início' : 'Data de conclusão';
+  return `
+    <div class="plan-date-field">
+      <label class="plan-label">${label}</label>
+      <div class="date-input-wrap">
+        <input type="text" inputmode="numeric" class="date-input" placeholder="dd/mm/aaaa" maxlength="10"
+          value="${escapeHtml(value)}" data-topic="${topicId}" data-field="${field}" />
+        ${ICON.calendar(17)}
+      </div>
+      ${field === 'end' ? `<p class="plan-warning" id="date-error-${topicId}" style="display:${plan.dateError ? 'block' : 'none'};">A data de conclusão não pode ser anterior à data de início.</p>` : ''}
+    </div>
   `;
 }
 
@@ -827,11 +799,11 @@ function planHasUnsavedChanges(plan){
          plan.endDate !== plan.savedEndDate;
 }
 
-function updateSaveButtonState(obs){
-  if (!obs.plan || obs.planState !== 'confirmed') return;
-  const btn = document.getElementById(`save-${obs.id}`);
+function updateSaveButtonState(topic){
+  if (!topic.plan || topic.planState !== 'confirmed') return;
+  const btn = document.getElementById(`save-${topic.id}`);
   if (!btn) return;
-  btn.disabled = !planHasUnsavedChanges(obs.plan);
+  btn.disabled = !planHasUnsavedChanges(topic.plan);
 }
 
 function renderPlanSheet(){
@@ -839,11 +811,10 @@ function renderPlanSheet(){
   if (!activePlanSheet){ root.innerHTML = ''; return; }
 
   const topic = findTopic(activePlanSheet.topicId);
-  const obs = topic ? findObs(topic, activePlanSheet.obsId) : null;
-  if (!topic || !obs){ activePlanSheet = null; root.innerHTML = ''; return; }
+  if (!topic){ activePlanSheet = null; root.innerHTML = ''; return; }
 
-  const isReady = obs.planState !== 'generating' && obs.plan;
-  const isEditingConfirmed = obs.planState === 'confirmed';
+  const isReady = topic.planState !== 'generating' && topic.plan;
+  const isEditingConfirmed = topic.planState === 'confirmed';
 
   let backRowHtml = '';
   let bodyHtml;
@@ -853,17 +824,17 @@ function renderPlanSheet(){
     bodyHtml = `
       <div class="sheet-loading">
         <div class="spinner-lg"></div>
-        <p>Gerando sugestão de plano de ação com base na sua observação...</p>
+        <p>Gerando sugestão de plano de ação com base na sua nota...</p>
       </div>
     `;
   } else {
-    const plan = obs.plan;
+    const plan = topic.plan;
     const onTextStep = planSheetStep === 'text';
 
     if (!onTextStep){
       backRowHtml = `
         <div class="sheet-back-row">
-          <button class="step-back-link" data-action="prev-step" data-topic="${topic.id}" data-obs="${obs.id}">${ICON.arrowLeft(14)} Voltar</button>
+          <button class="step-back-link" data-action="prev-step" data-topic="${topic.id}">${ICON.arrowLeft(14)} Voltar</button>
         </div>
       `;
     }
@@ -879,50 +850,50 @@ function renderPlanSheet(){
               <label class="plan-label">O que deve ser corrigido</label>
               <span class="plan-ai-badge ${whatChanged ? 'edited' : ''}">${ICON.sparkles(11)} ${whatChanged ? 'Editado por você' : 'Sugestão da IA'}</span>
             </div>
-            <textarea class="plan-input plan-what ${whatChanged ? '' : 'ai-suggested'}" data-topic="${topic.id}" data-obs="${obs.id}">${escapeHtml(plan.whatToFix)}</textarea>
+            <textarea class="plan-input plan-what ${whatChanged ? '' : 'ai-suggested'}" data-topic="${topic.id}">${escapeHtml(plan.whatToFix)}</textarea>
           </div>
           <div class="plan-field">
             <div class="plan-field-label-row">
               <label class="plan-label">Como será corrigido</label>
               <span class="plan-ai-badge ${howChanged ? 'edited' : ''}">${ICON.sparkles(11)} ${howChanged ? 'Editado por você' : 'Sugestão da IA'}</span>
             </div>
-            <textarea class="plan-input plan-how ${howChanged ? '' : 'ai-suggested'}" data-topic="${topic.id}" data-obs="${obs.id}">${escapeHtml(plan.howToFix)}</textarea>
+            <textarea class="plan-input plan-how ${howChanged ? '' : 'ai-suggested'}" data-topic="${topic.id}">${escapeHtml(plan.howToFix)}</textarea>
           </div>
-          <button class="plan-restore" id="restore-${obs.id}" style="display:${changedFromAI ? 'inline-flex' : 'none'};" data-topic="${topic.id}" data-obs="${obs.id}">${ICON.arrowLeft(12)} Restaurar sugestão da IA</button>
+          <button class="plan-restore" id="restore-${topic.id}" style="display:${changedFromAI ? 'inline-flex' : 'none'};" data-topic="${topic.id}">${ICON.arrowLeft(12)} Restaurar sugestão da IA</button>
           ${planTextWarning ? `<p class="plan-warning">Preencha os dois campos antes de continuar.</p>` : ''}
         </div>
       `;
       footerHtml = `
         <div class="sheet-footer plan-actions-row">
           ${isEditingConfirmed
-            ? `<button class="plan-btn plan-delete" data-action="delete-plan" data-topic="${topic.id}" data-obs="${obs.id}">${ICON.trash(14)} Excluir plano</button>`
-            : `<button class="plan-btn" data-action="cancel-plan" data-topic="${topic.id}" data-obs="${obs.id}">Cancelar</button>`}
-          <button class="plan-btn plan-confirm" data-action="next-step" data-topic="${topic.id}" data-obs="${obs.id}">Avançar</button>
+            ? `<button class="plan-btn plan-delete" data-action="delete-plan" data-topic="${topic.id}">${ICON.trash(14)} Excluir plano</button>`
+            : `<button class="plan-btn" data-action="cancel-plan" data-topic="${topic.id}">Cancelar</button>`}
+          <button class="plan-btn plan-confirm" data-action="next-step" data-topic="${topic.id}">Avançar</button>
         </div>
       `;
     } else {
       bodyHtml = `
         <div class="step-content" key="dates">
           <div class="plan-dates">
-            ${renderDateField(topic.id, obs.id, plan, 'start')}
-            ${renderDateField(topic.id, obs.id, plan, 'end')}
+            ${renderDateField(topic.id, plan, 'start')}
+            ${renderDateField(topic.id, plan, 'end')}
           </div>
-          ${obs.planMissingFieldsWarning ? `<p class="plan-warning">Preencha todos os campos antes de salvar.</p>` : ''}
+          ${topic.planMissingFieldsWarning ? `<p class="plan-warning">Preencha todos os campos antes de salvar.</p>` : ''}
         </div>
       `;
 
       if (isEditingConfirmed){
-        const changed = planHasUnsavedChanges(obs.plan);
+        const changed = planHasUnsavedChanges(topic.plan);
         footerHtml = `
           <div class="sheet-footer plan-actions-row">
-            <button class="plan-btn plan-delete" data-action="delete-plan" data-topic="${topic.id}" data-obs="${obs.id}">${ICON.trash(14)} Excluir plano</button>
-            <button class="plan-btn plan-confirm" id="save-${obs.id}" data-action="confirm-plan" ${changed ? '' : 'disabled'} data-topic="${topic.id}" data-obs="${obs.id}">Salvar alterações</button>
+            <button class="plan-btn plan-delete" data-action="delete-plan" data-topic="${topic.id}">${ICON.trash(14)} Excluir plano</button>
+            <button class="plan-btn plan-confirm" id="save-${topic.id}" data-action="confirm-plan" ${changed ? '' : 'disabled'} data-topic="${topic.id}">Salvar alterações</button>
           </div>
         `;
       } else {
         footerHtml = `
           <div class="sheet-footer">
-            <button class="plan-btn plan-confirm" data-action="confirm-plan" data-topic="${topic.id}" data-obs="${obs.id}">Confirmar plano de ação</button>
+            <button class="plan-btn plan-confirm" data-action="confirm-plan" data-topic="${topic.id}">Confirmar plano de ação</button>
           </div>
         `;
       }
@@ -970,7 +941,7 @@ function renderModal(){
       <div class="modal-overlay">
         <div class="modal-card">
           <p class="modal-title">Excluir tópico?</p>
-          <p class="modal-text">Todas as observações deste tópico serão excluídas.</p>
+          <p class="modal-text">A nota e o plano de ação deste tópico serão excluídos.</p>
           <div class="modal-actions">
             <button id="modal-cancel">Cancelar</button>
             <button class="btn-danger" id="modal-confirm">Excluir tópico</button>
@@ -992,7 +963,7 @@ function renderModal(){
       <div class="modal-overlay">
         <div class="modal-card">
           <p class="modal-title">Excluir plano de ação?</p>
-          <p class="modal-text">O plano de ação criado para esta observação será excluído. Essa ação não pode ser desfeita.</p>
+          <p class="modal-text">O plano de ação criado para este tópico será excluído. Essa ação não pode ser desfeita.</p>
           <div class="modal-actions">
             <button id="plan-modal-cancel">Cancelar</button>
             <button class="btn-danger" id="plan-modal-confirm">Excluir plano</button>
@@ -1002,12 +973,11 @@ function renderModal(){
     `;
     document.getElementById('plan-modal-cancel').onclick = () => { deletePlanTarget = null; render(); };
     document.getElementById('plan-modal-confirm').onclick = () => {
-      const topic = findTopic(deletePlanTarget.topicId);
-      const obs = topic ? findObs(topic, deletePlanTarget.obsId) : null;
-      if (obs){
-        obs.planState = 'none';
-        obs.plan = null;
-        obs.planMissingFieldsWarning = false;
+      const topic = findTopic(deletePlanTarget);
+      if (topic){
+        topic.planState = 'none';
+        topic.plan = null;
+        topic.planMissingFieldsWarning = false;
       }
       deletePlanTarget = null;
       activePlanSheet = null;
@@ -1033,17 +1003,18 @@ function buildReportLines(){
   lines.push('');
   topics.forEach((topic, ti) => {
     lines.push(`${ti + 1}. ${topic.title}`);
-    topic.observations.forEach((obs, oi) => {
-      lines.push(`  Observação ${oi + 1}: ${obs.text.trim() || '(sem descrição)'}`);
-      if (obs.photos.length){
-        lines.push(`    ${obs.photos.length} foto(s) anexada(s)`);
-      }
-      if (obs.planState === 'confirmed' && obs.plan){
-        lines.push(`    Plano de ação — O que corrigir: ${obs.plan.whatToFix}`);
-        lines.push(`    Como será corrigido: ${obs.plan.howToFix}`);
-        lines.push(`    Prazo: ${obs.plan.startDate} a ${obs.plan.endDate}`);
-      }
-    });
+    if (topic.topicNote !== null){
+      lines.push(`  Nota geral do tópico: ${topic.topicNote}/10`);
+    }
+    lines.push(`  Nota: ${topic.text.trim() || '(sem conteúdo)'}`);
+    if (topic.photos.length){
+      lines.push(`    ${topic.photos.length} foto(s) anexada(s)`);
+    }
+    if (topic.planState === 'confirmed' && topic.plan){
+      lines.push(`  Plano de ação — O que corrigir: ${topic.plan.whatToFix}`);
+      lines.push(`  Como será corrigido: ${topic.plan.howToFix}`);
+      lines.push(`  Prazo: ${topic.plan.startDate} a ${topic.plan.endDate}`);
+    }
     lines.push('');
   });
   if (review.finalNotes.trim()){
@@ -1107,10 +1078,9 @@ async function shareReport(){
 }
 
 function reviewScreenHtml(){
-  const totalObs = topics.reduce((s, t) => s + t.observations.length, 0);
-  const totalPlans = topics.reduce((s, t) => s + t.observations.filter(o => o.planState === 'confirmed').length, 0);
-  const totalPhotos = topics.reduce((s, t) => s + t.observations.reduce((ss, o) => ss + o.photos.length, 0), 0);
-  const emptyObsCount = topics.reduce((s, t) => s + t.observations.filter(o => !o.text.trim()).length, 0);
+  const totalPlans = topics.filter(t => t.planState === 'confirmed').length;
+  const totalPhotos = topics.reduce((s, t) => s + t.photos.length, 0);
+  const emptyCount = topics.filter(t => !t.text.trim()).length;
 
   return `
     <div class="review-overlay">
@@ -1121,26 +1091,25 @@ function reviewScreenHtml(){
         <p class="review-title">Revisão da visita técnica</p>
         <div class="review-stats">
           <span class="review-stat">${topics.length} tópico${topics.length === 1 ? '' : 's'}</span>
-          <span class="review-stat">${totalObs} observaç${totalObs === 1 ? 'ão' : 'ões'}</span>
           <span class="review-stat">${totalPlans} plano${totalPlans === 1 ? '' : 's'} de ação</span>
           <span class="review-stat">${totalPhotos} foto${totalPhotos === 1 ? '' : 's'}</span>
         </div>
       </div>
 
       <div class="review-body">
-        ${emptyObsCount > 0 ? `
+        ${emptyCount > 0 ? `
           <div class="review-unanswered-banner">
             <div class="banner-icon">${ICON.alert(18)}</div>
             <div class="banner-text">
-              <p class="banner-title">${emptyObsCount === 1 ? 'Atenção! 1 observação ainda está sem descrição' : 'Atenção! ' + emptyObsCount + ' observações ainda estão sem descrição'}</p>
-              <button class="banner-link" data-action="goto-first-empty">Ver observações pendentes</button>
+              <p class="banner-title">${emptyCount === 1 ? 'Atenção! 1 tópico ainda está sem nota' : 'Atenção! ' + emptyCount + ' tópicos ainda estão sem nota'}</p>
+              <button class="banner-link" data-action="goto-first-empty">Ver tópicos pendentes</button>
             </div>
           </div>
         ` : ''}
 
         ${topics.map(topic => renderReviewTopicCard(topic)).join('')}
 
-        <div class="review-card">
+        <div class="review-card" style="cursor:default;">
           <p class="review-final-label">Considerações finais</p>
           <textarea class="review-final-input" id="review-final-notes" placeholder="Resumo geral da visita, recomendações finais...">${escapeHtml(review.finalNotes)}</textarea>
         </div>
@@ -1154,37 +1123,31 @@ function reviewScreenHtml(){
 }
 
 function renderReviewTopicCard(topic){
-  return `
-    <div class="review-card">
-      <p class="review-topic-title">${escapeHtml(topic.title)}</p>
-      ${topic.observations.map((obs, i) => renderReviewObsBlock(topic.id, obs, i, topic.observations.length)).join('')}
-    </div>
-  `;
-}
-
-function renderReviewObsBlock(topicId, obs, index, total){
-  const hasText = obs.text.trim().length > 0;
-  const label = total > 1 ? `Observação ${index + 1}` : 'Observação';
-  const planHtml = obs.planState === 'confirmed' && obs.plan
+  const note = topic.topicNote;
+  const hasText = topic.text.trim().length > 0;
+  const planHtml = topic.planState === 'confirmed' && topic.plan
     ? `
-      <div class="plan-summary" style="margin-top:10px;">
+      <div class="plan-summary" style="margin-top:12px;">
         <div class="plan-summary-icon">${ICON.planIcon(16)}</div>
         <div class="plan-summary-text">
           <p class="plan-summary-title">Plano de ação</p>
-          <p class="plan-summary-desc">${escapeHtml(obs.plan.whatToFix)}</p>
+          <p class="plan-summary-desc">${escapeHtml(topic.plan.whatToFix)}</p>
         </div>
-        <button class="plan-edit-link" data-topic="${topicId}" data-obs="${obs.id}" data-action="open-plan-sheet">Editar</button>
+        <button class="plan-edit-link" data-topic="${topic.id}" data-action="open-plan-sheet">Editar</button>
       </div>
     `
-    : `<div class="review-plan-missing"><span>Sem plano de ação</span><button data-topic="${topicId}" data-obs="${obs.id}" data-action="goto-plan">Adicionar</button></div>`;
+    : `<div class="review-plan-missing" style="margin-top:12px;"><span>Sem plano de ação</span><button data-topic="${topic.id}" data-action="goto-plan">Adicionar</button></div>`;
 
   return `
-    <div class="review-obs review-obs-clickable" data-topic="${topicId}" data-obs="${obs.id}">
-      <p class="review-obs-label">${label}</p>
-      <p class="review-obs-text ${hasText ? '' : 'empty'}">${hasText ? escapeHtml(obs.text) : 'Sem descrição registrada'}</p>
-      ${obs.photos.length > 0 ? `
+    <div class="review-card review-topic-clickable" data-topic="${topic.id}">
+      <div class="review-topic-title-row">
+        <p class="review-topic-title">${escapeHtml(topic.title)}</p>
+        ${note !== null ? `<span class="review-topic-note">${note}/10</span>` : ''}
+      </div>
+      <p class="review-obs-text ${hasText ? '' : 'empty'}">${hasText ? escapeHtml(topic.text) : 'Nota vazia'}</p>
+      ${topic.photos.length > 0 ? `
         <div class="review-photo-row">
-          ${obs.photos.map(src => `<div class="review-photo-thumb" style="background-image:url('${src}')"></div>`).join('')}
+          ${topic.photos.map(src => `<div class="review-photo-thumb" style="background-image:url('${src}')"></div>`).join('')}
         </div>
       ` : ''}
       ${planHtml}
@@ -1269,18 +1232,16 @@ function bindReviewEvents(){
   const finalNotes = document.getElementById('review-final-notes');
   if (finalNotes) finalNotes.oninput = () => { review.finalNotes = finalNotes.value; };
 
-  document.querySelectorAll('.review-obs-clickable').forEach(block => {
-    block.onclick = () => goToObsFromReview(block.dataset.topic, block.dataset.obs);
+  document.querySelectorAll('.review-topic-clickable').forEach(card => {
+    card.onclick = () => goToTopicFromReview(card.dataset.topic);
   });
 
   const bannerBtn = document.querySelector('[data-action="goto-first-empty"]');
   if (bannerBtn){
     bannerBtn.onclick = (e) => {
       e.stopPropagation();
-      for (const topic of topics){
-        const obs = topic.observations.find(o => !o.text.trim());
-        if (obs){ goToObsFromReview(topic.id, obs.id); return; }
-      }
+      const topic = topics.find(t => !t.text.trim());
+      if (topic) goToTopicFromReview(topic.id);
     };
   }
 
@@ -1288,7 +1249,7 @@ function bindReviewEvents(){
     btn.onclick = (e) => {
       e.stopPropagation();
       currentScreen = 'main';
-      openPlanSheet(btn.dataset.topic, btn.dataset.obs);
+      openPlanSheet(btn.dataset.topic);
     };
   });
 
@@ -1298,7 +1259,7 @@ function bindReviewEvents(){
       const topic = findTopic(btn.dataset.topic);
       if (topic) topic.open = true;
       currentScreen = 'main';
-      pendingScrollObsId = btn.dataset.obs;
+      pendingScrollTopicId = btn.dataset.topic;
       render();
     };
   });
@@ -1327,13 +1288,13 @@ function bindReviewEvents(){
   if (backStartBtn) backStartBtn.onclick = () => { currentScreen = 'main'; render(); };
 }
 
-function goToObsFromReview(topicId, obsId){
+function goToTopicFromReview(topicId){
   const topic = findTopic(topicId);
   if (topic) topic.open = true;
   currentScreen = 'main';
   render();
   setTimeout(() => {
-    const el = document.getElementById(`obs-${obsId}`);
+    const el = document.getElementById(`topic-${topicId}`);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 50);
 }
@@ -1343,7 +1304,12 @@ function addTopic(){
   topics.forEach(t => { t.open = false; t.editingTitle = false; });
 
   topicCounter++;
-  const topic = { id: nextTopicId++, title:`Tópico ${topicCounter}`, open:true, editingTitle:false, observations:[newObservation()] };
+  const topic = {
+    id: nextTopicId++, title:`Tópico ${topicCounter}`, open:true, editingTitle:false,
+    text:'', photos:[], recording:false,
+    topicNote:null,
+    planState:'none', plan:null, planMissingFieldsWarning:false
+  };
   topics.push(topic);
 
   pendingScrollTopicId = topic.id;
@@ -1351,6 +1317,16 @@ function addTopic(){
 }
 
 function bindTopicEvents(){
+  document.querySelectorAll('.topic-note-cell').forEach(btn => {
+    btn.onclick = () => {
+      const topic = findTopic(btn.dataset.topic);
+      const value = Number(btn.dataset.value);
+      // clicar na nota que já estava marcada limpa a avaliação
+      topic.topicNote = topic.topicNote === value ? null : value;
+      render();
+    };
+  });
+
   document.querySelectorAll('.toggle-open').forEach(row => {
     row.onclick = (e) => {
       if (e.target.closest('.topic-title-input')) return;
@@ -1381,7 +1357,7 @@ function bindTopicEvents(){
     btn.onclick = (e) => {
       e.stopPropagation();
       const t = findTopic(btn.dataset.topic);
-      const hasContent = t.observations.some(o => o.text.trim().length > 0);
+      const hasContent = t.text.trim().length > 0;
       if (hasContent){
         deleteModalTopicId = btn.dataset.topic;
         render();
@@ -1392,43 +1368,36 @@ function bindTopicEvents(){
     };
   });
 
-  document.querySelectorAll('.obs-remove').forEach(btn => {
-    btn.onclick = () => {
-      const t = findTopic(btn.dataset.topic);
-      t.observations = t.observations.filter(o => o.id != btn.dataset.obs);
-      render();
-    };
-  });
   document.querySelectorAll('.obs-input').forEach(ta => {
     ta.oninput = () => {
-      const obs = findObs(findTopic(ta.dataset.topic), ta.dataset.obs);
-      obs.text = ta.value;
+      const topic = findTopic(ta.dataset.topic);
+      topic.text = ta.value;
       // habilita/desabilita o botão "Gerar plano de ação" sem re-renderizar tudo (perderia o foco do textarea)
-      const genBtn = document.getElementById(`gen-plan-${obs.id}`);
-      if (genBtn) genBtn.disabled = obs.text.trim().length < MIN_OBS_CHARS_FOR_PLAN;
+      const genBtn = document.getElementById(`gen-plan-${topic.id}`);
+      if (genBtn) genBtn.disabled = topic.text.trim().length < MIN_CHARS_FOR_PLAN;
     };
   });
   document.querySelectorAll('.mic-btn').forEach(btn => {
     btn.onclick = () => {
-      const obs = findObs(findTopic(btn.dataset.topic), btn.dataset.obs);
-      obs.recording = true; render();
+      const topic = findTopic(btn.dataset.topic);
+      topic.recording = true; render();
       setTimeout(() => {
-        obs.text = (obs.text + ' Piso da câmara fria apresenta acúmulo de umidade próximo ao ralo.').trim();
-        obs.recording = false;
+        topic.text = (topic.text + ' Piso da câmara fria apresenta acúmulo de umidade próximo ao ralo.').trim();
+        topic.recording = false;
         render();
       }, 1300);
     };
   });
   document.querySelectorAll('.add-images-btn').forEach(btn => {
-    btn.onclick = () => { openPhotoPicker(btn.dataset.topic, btn.dataset.obs); };
+    btn.onclick = () => { openPhotoPicker(btn.dataset.topic); };
   });
   document.querySelectorAll('.photo-add-tile').forEach(btn => {
-    btn.onclick = () => { openPhotoPicker(btn.dataset.topic, btn.dataset.obs); };
+    btn.onclick = () => { openPhotoPicker(btn.dataset.topic); };
   });
   document.querySelectorAll('.remove-photo').forEach(btn => {
     btn.onclick = () => {
-      const obs = findObs(findTopic(btn.dataset.topic), btn.dataset.obs);
-      obs.photos.splice(Number(btn.dataset.idx), 1); render();
+      const topic = findTopic(btn.dataset.topic);
+      topic.photos.splice(Number(btn.dataset.idx), 1); render();
     };
   });
 
@@ -1436,40 +1405,31 @@ function bindTopicEvents(){
   document.querySelectorAll('[data-action="generate-plan"]').forEach(btn => {
     btn.onclick = () => {
       const topic = findTopic(btn.dataset.topic);
-      const obs = findObs(topic, btn.dataset.obs);
-      if (!obs || obs.text.trim().length < MIN_OBS_CHARS_FOR_PLAN) return;
-      startPlanGeneration(btn.dataset.topic, obs);
+      if (!topic || topic.text.trim().length < MIN_CHARS_FOR_PLAN) return;
+      startPlanGeneration(topic);
     };
   });
 
-  document.querySelectorAll('.add-observation').forEach(btn => {
-    btn.onclick = () => {
-      const obs = newObservation();
-      findTopic(btn.dataset.topic).observations.push(obs);
-      pendingScrollObsId = obs.id;
-      render();
-    };
-  });
   const addTopicBtn = document.getElementById('add-topic-btn');
   if (addTopicBtn) addTopicBtn.onclick = addTopic;
 
   document.querySelectorAll('[data-action="open-plan-sheet"]').forEach(btn => {
-    btn.onclick = () => openPlanSheet(btn.dataset.topic, btn.dataset.obs);
+    btn.onclick = () => openPlanSheet(btn.dataset.topic);
   });
 }
 
 function bindPlanEvents(){
   document.querySelectorAll('.plan-what, .plan-how').forEach(ta => {
     ta.oninput = () => {
-      const obs = findObs(findTopic(ta.dataset.topic), ta.dataset.obs);
-      if (!obs.plan) return;
+      const topic = findTopic(ta.dataset.topic);
+      if (!topic.plan) return;
       const isWhat = ta.classList.contains('plan-what');
-      if (isWhat) obs.plan.whatToFix = ta.value;
-      else obs.plan.howToFix = ta.value;
+      if (isWhat) topic.plan.whatToFix = ta.value;
+      else topic.plan.howToFix = ta.value;
 
       const fieldChanged = isWhat
-        ? obs.plan.whatToFix !== obs.plan.aiWhatToFix
-        : obs.plan.howToFix !== obs.plan.aiHowToFix;
+        ? topic.plan.whatToFix !== topic.plan.aiWhatToFix
+        : topic.plan.howToFix !== topic.plan.aiHowToFix;
       ta.classList.toggle('ai-suggested', !fieldChanged);
       const badge = ta.closest('.plan-field').querySelector('.plan-ai-badge');
       if (badge){
@@ -1477,59 +1437,59 @@ function bindPlanEvents(){
         badge.innerHTML = `${ICON.sparkles(11)} ${fieldChanged ? 'Editado por você' : 'Sugestão da IA'}`;
       }
 
-      const changedFromAI = obs.plan.whatToFix !== obs.plan.aiWhatToFix || obs.plan.howToFix !== obs.plan.aiHowToFix;
-      const restoreBtn = document.getElementById(`restore-${obs.id}`);
+      const changedFromAI = topic.plan.whatToFix !== topic.plan.aiWhatToFix || topic.plan.howToFix !== topic.plan.aiHowToFix;
+      const restoreBtn = document.getElementById(`restore-${topic.id}`);
       if (restoreBtn) restoreBtn.style.display = changedFromAI ? 'inline-flex' : 'none';
 
-      if (planTextWarning && obs.plan.whatToFix.trim() && obs.plan.howToFix.trim()){
+      if (planTextWarning && topic.plan.whatToFix.trim() && topic.plan.howToFix.trim()){
         planTextWarning = false;
         const warningEl = ta.closest('.sheet-body').querySelector('.plan-warning');
         if (warningEl) warningEl.remove();
       }
 
-      updateSaveButtonState(obs);
+      updateSaveButtonState(topic);
     };
   });
 
   document.querySelectorAll('.plan-restore').forEach(btn => {
     btn.onclick = () => {
-      const obs = findObs(findTopic(btn.dataset.topic), btn.dataset.obs);
-      if (!obs.plan) return;
-      obs.plan.whatToFix = obs.plan.aiWhatToFix;
-      obs.plan.howToFix = obs.plan.aiHowToFix;
+      const topic = findTopic(btn.dataset.topic);
+      if (!topic.plan) return;
+      topic.plan.whatToFix = topic.plan.aiWhatToFix;
+      topic.plan.howToFix = topic.plan.aiHowToFix;
       render();
     };
   });
 
   document.querySelectorAll('.date-input').forEach(inp => {
     inp.oninput = () => {
-      const obs = findObs(findTopic(inp.dataset.topic), inp.dataset.obs);
-      if (!obs.plan) return;
+      const topic = findTopic(inp.dataset.topic);
+      if (!topic.plan) return;
 
       const formatted = maskDateInput(inp.value);
       inp.value = formatted;
       try { inp.setSelectionRange(formatted.length, formatted.length); } catch(e){}
 
-      if (inp.dataset.field === 'start') obs.plan.startDate = formatted;
-      else obs.plan.endDate = formatted;
+      if (inp.dataset.field === 'start') topic.plan.startDate = formatted;
+      else topic.plan.endDate = formatted;
 
-      const start = parseDisplayDate(obs.plan.startDate);
-      const end = parseDisplayDate(obs.plan.endDate);
+      const start = parseDisplayDate(topic.plan.startDate);
+      const end = parseDisplayDate(topic.plan.endDate);
       const hasError = !!(start && end && end < start);
-      obs.plan.dateError = hasError;
-      const warningEl = document.getElementById(`date-error-${obs.id}`);
+      topic.plan.dateError = hasError;
+      const warningEl = document.getElementById(`date-error-${topic.id}`);
       if (warningEl) warningEl.style.display = hasError ? 'block' : 'none';
-      if (obs.planMissingFieldsWarning && obs.plan.whatToFix.trim() && obs.plan.howToFix.trim() && obs.plan.startDate.trim() && obs.plan.endDate.trim()){
-        obs.planMissingFieldsWarning = false;
+      if (topic.planMissingFieldsWarning && topic.plan.whatToFix.trim() && topic.plan.howToFix.trim() && topic.plan.startDate.trim() && topic.plan.endDate.trim()){
+        topic.planMissingFieldsWarning = false;
       }
 
-      updateSaveButtonState(obs);
+      updateSaveButtonState(topic);
     };
   });
 
   document.querySelectorAll('[data-action="delete-plan"]').forEach(btn => {
     btn.onclick = () => {
-      deletePlanTarget = { topicId: btn.dataset.topic, obsId: btn.dataset.obs };
+      deletePlanTarget = btn.dataset.topic;
       render();
     };
   });
@@ -1540,9 +1500,9 @@ function bindPlanEvents(){
 
   document.querySelectorAll('[data-action="next-step"]').forEach(btn => {
     btn.onclick = () => {
-      const obs = findObs(findTopic(btn.dataset.topic), btn.dataset.obs);
-      if (!obs.plan) return;
-      if (!obs.plan.whatToFix.trim() || !obs.plan.howToFix.trim()){
+      const topic = findTopic(btn.dataset.topic);
+      if (!topic.plan) return;
+      if (!topic.plan.whatToFix.trim() || !topic.plan.howToFix.trim()){
         planTextWarning = true;
         render();
         return;
@@ -1562,13 +1522,13 @@ function bindPlanEvents(){
 
   document.querySelectorAll('[data-action="confirm-plan"]').forEach(btn => {
     btn.onclick = () => {
-      const obs = findObs(findTopic(btn.dataset.topic), btn.dataset.obs);
-      if (!obs.plan) return;
-      const plan = obs.plan;
+      const topic = findTopic(btn.dataset.topic);
+      if (!topic.plan) return;
+      const plan = topic.plan;
 
       const missing = !plan.whatToFix.trim() || !plan.howToFix.trim() || !plan.startDate.trim() || !plan.endDate.trim();
       if (missing){
-        obs.planMissingFieldsWarning = true;
+        topic.planMissingFieldsWarning = true;
         plan.dateError = false;
         render();
         return;
@@ -1577,26 +1537,26 @@ function bindPlanEvents(){
       const startDate = parseDisplayDate(plan.startDate);
       const endDate = parseDisplayDate(plan.endDate);
       if (!startDate || !endDate){
-        obs.planMissingFieldsWarning = true;
+        topic.planMissingFieldsWarning = true;
         plan.dateError = false;
         render();
         return;
       }
       if (endDate < startDate){
-        obs.planMissingFieldsWarning = false;
+        topic.planMissingFieldsWarning = false;
         plan.dateError = true;
         render();
         return;
       }
 
-      obs.planMissingFieldsWarning = false;
+      topic.planMissingFieldsWarning = false;
       plan.dateError = false;
       plan.savedWhatToFix = plan.whatToFix;
       plan.savedHowToFix = plan.howToFix;
       plan.savedStartDate = plan.startDate;
       plan.savedEndDate = plan.endDate;
       lastUsedEndDate = plan.savedEndDate; // memoriza pra pré-preencher o próximo plano de ação
-      obs.planState = 'confirmed';
+      topic.planState = 'confirmed';
       activePlanSheet = null; // salvo: fecha o sheet e volta pro resumo compacto
       render();
     };
