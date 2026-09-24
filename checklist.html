@@ -53,26 +53,28 @@
     overflow:hidden;
   }
 
-  /* ---------- header ---------- */
+  /* ---------- header: cabeçalho único, em overlay sobre a área rolável.
+     Esconde (desliza pra fora) ao rolar pra baixo, reaparece ao rolar pra
+     cima ou perto do topo. Por ser overlay (não um item do flexbox), quando
+     ele soma, a área de perguntas ganha aquele espaço de volta de verdade —
+     não é só um efeito visual. O preenchimento (padding-top) da área rolável
+     é ajustado via JS pra bater com a altura real do cabeçalho. ---------- */
   .header{
-    background:var(--card);
-    color:var(--ink-900);
+    position:absolute; top:0; left:0; right:0; z-index:15;
+    background:var(--card); border-bottom:1px solid var(--line);
     padding:calc(env(safe-area-inset-top, 0px) + 10px) 16px 12px;
-    flex-shrink:0;
-    border-bottom:1px solid var(--line);
+    transform:translateY(0);
+    transition:transform .25s ease;
   }
+  .header.hidden{ transform:translateY(-100%); }
   .header-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
   .back{ display:flex; align-items:center; gap:4px; font-size:13px; font-weight:600; color:var(--ink-700); }
   .status{ display:flex; align-items:center; gap:5px; background:var(--green-50); padding:3px 9px 3px 7px; border-radius:100px; font-size:11px; font-weight:600; color:var(--green-800); }
   .dot{ width:5px; height:5px; border-radius:50%; background:var(--green-600); }
-  /* título+cliente e a barra de progresso agora dividem a mesma linha, lado a lado,
-     em vez do progresso ficar numa faixa própria embaixo — é isso que compacta
-     ainda mais a altura do cabeçalho */
-  .header-title-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:0; }
+  .header-title-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; }
   .header-title-col{ min-width:0; }
   .header-meta{ font-size:11px; color:var(--ink-500); margin:0 0 1px; font-weight:500; }
   .header-client{ font-family:'Playfair Display',serif; font-size:15px; font-weight:600; margin:0; letter-spacing:-0.1px; color:var(--ink-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
   .header-progress-col{ width:108px; flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
   .progress-label{ font-size:10px; font-weight:600; color:var(--ink-500); white-space:nowrap; }
   .progress-track{ width:100%; height:6px; border-radius:100px; background:var(--line); overflow:hidden; }
@@ -526,7 +528,7 @@
 <body>
 
 <div class="app">
-  <div class="header">
+  <div class="header" id="app-header">
     <div class="header-top">
       <div class="back" id="icon-back"></div>
       <div class="status"><span class="dot"></span> Online</div>
@@ -661,6 +663,40 @@ document.getElementById('icon-back').onclick = () => { window.location.href = 'i
       document.getElementById('header-meta').textContent = template.name;
     }
   }catch(e){ /* localStorage indisponivel ou dado invalido, mantem o texto padrão */ }
+})();
+
+/* ---------- cabeçalho: esconde ao rolar pra baixo, mostra ao rolar pra cima ----------
+   O cabeçalho é um overlay (position:absolute) por cima da área rolável, não mais
+   um item do layout flex — por isso, quando ele soma (translateY), a área de
+   perguntas realmente ganha aquele espaço de volta, não é só cosmético.
+   O padding-top da área rolável é ajustado pra bater com a altura real do
+   cabeçalho (que varia por causa do safe-area-inset-top de cada aparelho). */
+(function setupHeaderAutoHide(){
+  const scrollEl = document.getElementById('questions-container');
+  const headerEl = document.getElementById('app-header');
+
+  function syncBodyPadding(){
+    scrollEl.style.paddingTop = (headerEl.offsetHeight + 16) + 'px';
+  }
+  syncBodyPadding();
+  window.addEventListener('resize', syncBodyPadding);
+
+  let lastScrollTop = 0;
+  let ticking = false;
+  scrollEl.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const st = scrollEl.scrollTop;
+      if (st > lastScrollTop && st > 40){
+        headerEl.classList.add('hidden');
+      } else if (st < lastScrollTop || st < 10){
+        headerEl.classList.remove('hidden');
+      }
+      lastScrollTop = st;
+      ticking = false;
+    });
+  }, { passive: true });
 })();
 
 /* ---------- dados de exemplo ----------
