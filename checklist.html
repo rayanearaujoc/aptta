@@ -86,13 +86,14 @@
   /* ---------- cabeçalho de tópico/categoria ---------- */
   .category-header{
     display:flex; align-items:center; gap:8px;
-    font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--ink-900);
-    margin:36px 2px 16px;
-    padding-top:22px;
-    border-top:1px solid var(--line);
+    font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:#fff;
+    margin:36px 0 16px;
+    padding:10px 12px;
+    background:var(--green-900);
+    border-radius:0;
     scroll-margin-top:16px;
   }
-  .category-header:first-child{ margin-top:12px; padding-top:0; border-top:none; }
+  .category-header:first-child{ margin-top:12px; }
   .category-dot{ width:6px; height:6px; border-radius:50%; background:var(--green-600); flex-shrink:0; }
   .category-count{ margin-left:auto; font-size:11.5px; font-weight:600; color:var(--ink-500); }
 
@@ -123,8 +124,7 @@
   .qa-btn:disabled{ color:var(--ink-300); border-color:#eee; cursor:not-allowed; }
   .qa-btn.active{ border-color:var(--green-600); background:var(--green-50); color:var(--green-800); }
   .qa-btn .qa-pencil{ color:var(--green-700); margin-left:2px; display:flex; align-items:center; }
-  .qa-btn.plan-toggle-btn.active{ border-color:var(--green-600); background:var(--green-600); color:#fff; }
-  .qa-btn.plan-toggle-btn.active .qa-pencil{ color:#fff; }
+  /* botão do plano de ação: mesmo visual neutro dos botões de foto e comentário */
 
   /* ---------- painel de fotos ---------- */
   .photo-panel{ margin-top:14px; }
@@ -211,7 +211,9 @@
 
   /* ---------- tela de revisão do checklist ---------- */
   .review-overlay{ position:absolute; inset:0; z-index:20; background:var(--paper); display:flex; flex-direction:column; }
-  .review-header{ background:var(--green-900); padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px; flex-shrink:0; }
+  /* cabeçalho da revisão: some ao rolar pra baixo, volta ao rolar pra cima (igual ao principal) */
+  .review-header{ position:absolute; top:0; left:0; right:0; z-index:5; background:var(--green-900); padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px; transform:translateY(0); transition:transform .25s ease; }
+  .review-header.hidden{ transform:translateY(-100%); }
   .review-header-top{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
   .review-back{ display:flex; align-items:center; gap:4px; border:none; background:transparent; color:rgba(255,255,255,0.85); font-size:13px; font-weight:600; padding:4px 4px 4px 0; }
   .review-title{ font-family:'Playfair Display',serif; font-size:17px; font-weight:600; color:#fff; margin:0; }
@@ -313,7 +315,6 @@
   textarea.plan-input.ai-suggested{ background:var(--green-50); }
   textarea.plan-input:focus{ outline:none; border-color:var(--green-600); }
   .plan-restore{ display:inline-flex; align-items:center; gap:5px; border:none; background:transparent; color:var(--green-700); font-size:12.5px; font-weight:700; padding:0; margin:-8px 0 16px; }
-  /* ---------- seletor "quem será responsável" (etapa 2 do plano de ação) ---------- */
   /* ---------- select "quem será responsável" (etapa 2 do plano de ação) ---------- */
   .plan-select-wrap{ position:relative; }
   .plan-select{
@@ -375,10 +376,13 @@
      ele cobriria a tela com um fundo sólido mesmo estando vazio (foi exatamente
      esse bug que deixava a tela em branco). */
   #report-root .report-shell{ position:absolute; inset:0; z-index:30; background:#eeeeec; display:flex; flex-direction:column; }
+  /* cabeçalho da prévia: some ao rolar pra baixo, volta ao rolar pra cima */
   #report-root .report-topbar{
-    flex-shrink:0; background:#0F6E56;
+    position:absolute; top:0; left:0; right:0; z-index:5; background:#0F6E56;
     padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 14px;
+    transform:translateY(0); transition:transform .25s ease;
   }
+  #report-root .report-topbar.hidden{ transform:translateY(-100%); }
   #report-root .report-topbar-top{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
   #report-root .report-back{ display:flex; align-items:center; gap:4px; border:none; background:transparent; color:rgba(255,255,255,0.85); font-size:13px; font-weight:600; padding:4px 4px 4px 0; }
   #report-root .report-topbar-title{ font-family:'Playfair Display',serif; font-size:17px; font-weight:600; color:#fff; margin:0; }
@@ -523,6 +527,26 @@
   #finalized-root .finalized-share-btn{ background:var(--green-900); color:#fff; border:none; }
   #finalized-root .pending-fill-btn{ display:flex; align-items:center; justify-content:center; gap:6px; }
 
+  /* ---------- plano de ação anterior: status pendente / concluído ---------- */
+  .pp-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;flex-shrink:0;}
+  .pp-pill.pendente{background:#FDF1DC;color:#9A5B00;}
+  .pp-pill.concluido{background:#e3f2ec;color:#0F6E56;}
+  .pp-label{font-size:12px;font-weight:600;color:#4d534f;margin:12px 0 0;}
+  .pp-status{display:flex;gap:8px;margin-top:8px;}
+  .pp-status button{flex:1;padding:10px;border-radius:9px;border:1px solid #e7e8e4;background:#fff;font-size:13px;font-weight:700;color:#4d534f;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
+  .pp-status button.on.pendente{background:#FDF1DC;border-color:#FDF1DC;color:#9A5B00;}
+  .pp-status button.on.concluido{background:#1D9E75;border-color:#1D9E75;color:#fff;}
+
+  .prevplan-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);margin:0 0 14px;overflow:hidden;}
+  .prevplan-row{width:100%;display:flex;align-items:center;gap:10px;padding:11px 12px;border:none;background:none;text-align:left;}
+  .prevplan-icon{color:var(--ink-500);display:flex;flex-shrink:0;}
+  .prevplan-text{flex:1;min-width:0;}
+  .prevplan-title{font-size:12.5px;font-weight:700;color:var(--ink-700);margin:0;}
+  .prevplan-sub{font-size:11px;color:var(--ink-500);margin:2px 0 0;}
+  .prevplan-chev{color:var(--ink-500);display:flex;flex-shrink:0;}
+  .prevplan-body{padding:0 12px 12px;border-top:1px solid #e4e6e2;}
+  .prevplan-body p{margin:10px 0 0;font-size:12px;line-height:1.5;color:var(--ink-700);}
+  .prevplan-body b{color:var(--ink-900);font-weight:600;}
 </style>
 </head>
 <body>
@@ -627,6 +651,8 @@ const ICON = {
     ["path",{d:"M12 3V16M12 16L16 11.625M12 16L8 11.625",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}],
     ["path",{d:"M21 15C21 18.7712 21 20.6569 19.8284 21.8284C18.6569 23 16.7712 23 13 23H11C7.22876 23 5.34315 23 4.17157 21.8284C3 20.6569 3 18.7712 3 15",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.8"}]
   ], s),
+  history:    (s=18) => hi([["path",{d:"M3.5 12C3.5 16.6944 7.30558 20.5 12 20.5C16.6944 20.5 20.5 16.6944 20.5 12C20.5 7.30558 16.6944 3.5 12 3.5C8.69 3.5 5.82 5.39 4.42 8.15",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],["path",{d:"M3.5 4.5V8.5H7.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}],["path",{d:"M12 8V12L14.5 14.5",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
+  chevronUp:  (s=16) => hi([["path",{d:"M18 15C18 15 13.5811 9 12 9C10.4188 9 6 15 6 15",stroke:"currentColor",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"1.5"}]], s),
   ok24:       () => `<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   nc24:       () => `<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 5L19 19M19 5L5 19" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>`,
   na24:       () => `<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 12H19" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>`,
@@ -665,23 +691,22 @@ document.getElementById('icon-back').onclick = () => { window.location.href = 'i
   }catch(e){ /* localStorage indisponivel ou dado invalido, mantem o texto padrão */ }
 })();
 
-/* ---------- cabeçalho: esconde ao rolar pra baixo, mostra ao rolar pra cima ----------
-   O cabeçalho é um overlay (position:absolute) por cima da área rolável, não mais
-   um item do layout flex — por isso, quando ele soma (translateY), a área de
-   perguntas realmente ganha aquele espaço de volta, não é só cosmético.
-   O padding-top da área rolável é ajustado pra bater com a altura real do
-   cabeçalho (que varia por causa do safe-area-inset-top de cada aparelho). */
-(function setupHeaderAutoHide(){
-  const scrollEl = document.getElementById('questions-container');
-  const headerEl = document.getElementById('app-header');
+/* ---------- esconde/mostra um cabeçalho conforme a rolagem ----------
+   Usado no cabeçalho principal e também nas telas de revisão e de prévia do
+   relatório. O cabeçalho fica em overlay (position:absolute) por cima da área
+   rolável; ao rolar pra baixo ele desliza pra fora, ao rolar pra cima (ou
+   chegar perto do topo) ele volta. O padding-top da área rolável é ajustado
+   pra bater com a altura real do cabeçalho. */
+function setupScrollAutoHide(scrollEl, headerEl, extraTop){
+  if (!scrollEl || !headerEl) return;
 
   function syncBodyPadding(){
-    scrollEl.style.paddingTop = (headerEl.offsetHeight + 16) + 'px';
+    scrollEl.style.paddingTop = (headerEl.offsetHeight + extraTop) + 'px';
   }
   syncBodyPadding();
-  window.addEventListener('resize', syncBodyPadding);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncBodyPadding);
 
-  let lastScrollTop = 0;
+  let lastScrollTop = scrollEl.scrollTop;
   let ticking = false;
   scrollEl.addEventListener('scroll', () => {
     if (ticking) return;
@@ -697,6 +722,16 @@ document.getElementById('icon-back').onclick = () => { window.location.href = 'i
       ticking = false;
     });
   }, { passive: true });
+  return syncBodyPadding;
+}
+
+(function setupHeaderAutoHide(){
+  const sync = setupScrollAutoHide(
+    document.getElementById('questions-container'),
+    document.getElementById('app-header'),
+    16
+  );
+  window.addEventListener('resize', sync);
 })();
 
 /* ---------- dados de exemplo ----------
@@ -737,6 +772,23 @@ const QUESTIONS_SEED = [
   { category:'Estrutura e Edificação', text:"Existe separação física ou funcional entre as áreas de preparo, armazenamento e áreas de risco de contaminação cruzada?" },
   { category:'Estrutura e Edificação', text:"Os equipamentos e utensílios utilizados são de material apropriado, de fácil higienização e em bom estado de conservação?" }
 ];
+
+/* =====================================================================
+   PLANOS DE AÇÃO DA APLICAÇÃO ANTERIOR DESTE CHECKLIST (SIMULAÇÃO)
+   No app real isso vem do backend: os planos criados na última vez que este
+   mesmo checklist foi aplicado neste cliente, indexados pelo número do item.
+   A consultora marca cada um como "Pendente" ou "Concluído".
+   ===================================================================== */
+const PREVIOUS_CHECKLIST = {
+  date: '01/09/2026',
+  plans: {
+    2:  { whatToFix:'Registrar e padronizar a frequência de higienização das áreas de produção.', howToFix:'Criar planilha de higienização por área e treinar a equipe no preenchimento.', responsible:'estabelecimento', startDate:'01/09/2026', endDate:'15/09/2026', status:'pendente' },
+    5:  { whatToFix:'Atualizar o contrato e os certificados do controle de pragas.', howToFix:'Contratar empresa licenciada e arquivar os certificados de aplicação.', responsible:'externo', startDate:'01/09/2026', endDate:'30/09/2026', status:'pendente' },
+    8:  { whatToFix:'Reorganizar o estoque seguindo o critério FIFO/FEFO.', howToFix:'Reetiquetar as prateleiras com a data de validade visível e revisar semanalmente.', responsible:'estabelecimento', startDate:'01/09/2026', endDate:'10/09/2026', status:'pendente' },
+    14: { whatToFix:'Instalar telas milimétricas nas janelas e ralos sifonados.', howToFix:'Orçar e instalar telas e tampas nos ralos da área de manipulação.', responsible:'externo', startDate:'01/09/2026', endDate:'20/10/2026', status:'pendente' }
+  }
+};
+const PP_STATUS_LABEL = { pendente:'Pendente', concluido:'Concluído' };
 
 /* ---------- state ---------- */
 let questions = QUESTIONS_SEED.map((item, i) => newQuestion(i + 1, item.category, item.text));
@@ -781,7 +833,10 @@ function newQuestion(number, category, text){
     recording: false,
     planState: 'none',     // 'none' | 'generating' | 'editing' | 'confirmed'
     plan: null,
-    planMissingFieldsWarning: false
+    planMissingFieldsWarning: false,
+    // plano de ação da aplicação anterior (se houver), com status pendente/concluído
+    prevPlan: PREVIOUS_CHECKLIST.plans[number] ? { ...PREVIOUS_CHECKLIST.plans[number] } : null,
+    prevPlanOpen: false
   };
 }
 
@@ -957,6 +1012,8 @@ function renderQuestionCard(q){
     <div class="q-card ${answered ? 'answered' : ''}" id="q-${q.id}">
       <p class="q-text"><b>${q.number}.</b> ${escapeHtml(q.text)}</p>
 
+      ${renderPrevPlan(q)}
+
       <div class="answer-row">
         <button class="answer-btn ans-c ${q.answer === 'C' ? 'selected' : ''}" data-q="${q.id}" data-val="C">C</button>
         <button class="answer-btn ans-nc ${q.answer === 'NC' ? 'selected' : ''}" data-q="${q.id}" data-val="NC">N/C</button>
@@ -973,7 +1030,7 @@ function renderQuestionCard(q){
           ${ICON.commentAdd(16)} <span>(${q.commentSaved ? 1 : 0})</span>${q.commentSaved ? `<span class="qa-pencil">${ICON.pencil(16)}</span>` : ''}
         </button>
         ${q.planState === 'confirmed' && q.plan ? `
-          <button class="qa-btn plan-toggle-btn active" data-q="${q.id}" data-action="open-plan-sheet" aria-label="Editar plano de ação">
+          <button class="qa-btn plan-toggle-btn" data-q="${q.id}" data-action="open-plan-sheet" aria-label="Editar plano de ação">
             ${ICON.planIcon(16)} <span class="qa-pencil">${ICON.pencil(16)}</span>
           </button>
         ` : ''}
@@ -985,6 +1042,30 @@ function renderQuestionCard(q){
       ${renderPlanoArea(q)}
     </div>
   `;
+}
+
+function renderPrevPlan(q){
+  const pp = q.prevPlan; if (!pp) return '';
+  const head = `
+    <button class="prevplan-row prevplan-toggle" data-q="${q.id}" aria-expanded="${q.prevPlanOpen}">
+      <span class="prevplan-icon">${ICON.history(18)}</span>
+      <span class="prevplan-text"><p class="prevplan-title">Plano de ação anterior</p><p class="prevplan-sub">Checklist de ${PREVIOUS_CHECKLIST.date}</p></span>
+      <span class="pp-pill ${pp.status}">${PP_STATUS_LABEL[pp.status]}</span>
+      <span class="prevplan-chev">${q.prevPlanOpen ? ICON.chevronUp(16) : ICON.chevronDown(16)}</span>
+    </button>`;
+  if (!q.prevPlanOpen) return `<div class="prevplan-card">${head}</div>`;
+  return `<div class="prevplan-card">${head}
+    <div class="prevplan-body">
+      <p><b>O que deve ser corrigido:</b> ${escapeHtml(pp.whatToFix)}</p>
+      <p><b>Como será corrigido:</b> ${escapeHtml(pp.howToFix)}</p>
+      <p><b>Responsável:</b> ${escapeHtml(responsibleLabel(pp.responsible))}</p>
+      <p><b>Prazo:</b> ${escapeHtml(pp.startDate)} a ${escapeHtml(pp.endDate)}</p>
+      <p class="pp-label">Atualize o status do plano</p>
+      <div class="pp-status" role="group" aria-label="Status do plano de ação anterior">
+        <button class="prevplan-status ${pp.status==='pendente'?'on pendente':''}" data-q="${q.id}" data-status="pendente" aria-pressed="${pp.status==='pendente'}">Pendente</button>
+        <button class="prevplan-status ${pp.status==='concluido'?'on concluido':''}" data-q="${q.id}" data-status="concluido" aria-pressed="${pp.status==='concluido'}">${ICON.check(13)} Concluído</button>
+      </div>
+    </div></div>`;
 }
 
 function renderPhotoPanel(q){
@@ -1350,6 +1431,9 @@ function renderReview(){
     </div>
   `;
 
+  // cabeçalho da revisão: some ao rolar pra baixo, volta ao rolar pra cima
+  setupScrollAutoHide(root.querySelector('.review-body'), root.querySelector('.review-header'), 16);
+
   document.getElementById('review-back-btn').onclick = () => { reviewOpen = false; renderReview(); };
 
   document.querySelectorAll('.review-card').forEach(card => {
@@ -1426,6 +1510,7 @@ function renderReviewCard(q){
         </div>
       ` : ''}
       ${q.commentSaved ? `<p class="review-comment-text">${escapeHtml(q.commentSaved)}</p>` : ''}
+      ${q.prevPlan ? `<p class="review-comment-text" style="font-style:normal;display:flex;align-items:center;gap:8px;">Plano de ação anterior <span class="pp-pill ${q.prevPlan.status}">${PP_STATUS_LABEL[q.prevPlan.status]}</span></p>` : ''}
       ${planHtml}
     </div>
   `;
@@ -1574,9 +1659,13 @@ function buildPieSvg(pieC, pieNC, pieNA){
 function rerenderReportPreviewKeepScroll(){
   const scrollEl = document.querySelector('#report-root .report-pages');
   const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
+  const wasHidden = !!document.querySelector('#report-root .report-topbar.hidden');
   renderReportPreview();
   const newScrollEl = document.querySelector('#report-root .report-pages');
   if (newScrollEl) newScrollEl.scrollTop = scrollTop;
+  // mantém o cabeçalho escondido se ele já estava escondido antes de redesenhar
+  const topbar = document.querySelector('#report-root .report-topbar');
+  if (topbar && wasHidden) topbar.classList.add('hidden');
 }
 
 /* =====================================================================
@@ -2043,6 +2132,9 @@ function renderReportPreview(){
     </div>
   `;
 
+  // cabeçalho da prévia: some ao rolar pra baixo, volta ao rolar pra cima
+  setupScrollAutoHide(root.querySelector('.report-pages'), root.querySelector('.report-topbar'), 20);
+
   document.querySelectorAll('.r-page-toggle').forEach(btn => {
     btn.onclick = () => {
       const key = btn.dataset.page;
@@ -2176,6 +2268,13 @@ function bindQuestionEvents(){
       q.answer = alreadySelected ? null : val;
       render();
     };
+  });
+
+  document.querySelectorAll('.prevplan-toggle').forEach(btn => {
+    btn.onclick = () => { const q = findQuestion(btn.dataset.q); q.prevPlanOpen = !q.prevPlanOpen; render(); };
+  });
+  document.querySelectorAll('.prevplan-status').forEach(btn => {
+    btn.onclick = () => { const q = findQuestion(btn.dataset.q); q.prevPlan.status = btn.dataset.status; q.prevPlanOpen = false; render(); };
   });
 
   document.querySelectorAll('.photo-toggle-btn').forEach(btn => {
