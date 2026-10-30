@@ -462,24 +462,22 @@
 
   #report-root .r-intro{ font-size:12px; color:#4d534f; line-height:1.6; margin:0 0 20px; }
 
-  #report-root .r-item{ padding:0; margin:0; break-inside:avoid; page-break-inside:avoid; }
-  #report-root .r-item + .r-item{ border-top:1px solid #e4e6e2; margin-top:24px; padding-top:24px; }
-  #report-root .r-item-head{ display:flex; align-items:flex-start; gap:10px; }
-  #report-root .r-item-num{ flex-shrink:0; min-width:22px; height:22px; padding:0 6px; border-radius:6px; background:#181b19; color:#fff; font-size:10.5px; display:flex; align-items:center; justify-content:center; }
-  #report-root .r-item-text{ font-size:13px; line-height:1.5; margin:0; padding-top:1px; color:#181b19; font-weight:700; }
-  #report-root .r-item-comment{ margin:14px 0 0; padding:10px 12px; background:#f6f6f4; border-radius:8px; }
-  #report-root .r-item-sub{ font-size:9.5px; font-weight:700; color:#7c8480; text-transform:uppercase; letter-spacing:.4px; margin:0 0 4px; }
-  #report-root .r-item-comment-text{ font-size:11.5px; line-height:1.55; color:#4d534f; margin:0; }
-  #report-root .r-item-photos{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:14px; }
-  #report-root .r-item-photos .ph{ width:100%; aspect-ratio:4/3; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e4e6e2; }
+  #report-root .r-item{ padding:18px 0 4px; }
+  #report-root .r-item + .r-item{ border-top:1px solid #e4e6e2; padding-top:18px; }
+  #report-root .r-item-text{ font-size:12px; line-height:1.55; margin:0; color:#181b19; font-weight:500; }
+  #report-root .r-nc-label{ font-size:9.5px; font-weight:700; color:#c0392b; text-transform:uppercase; letter-spacing:.4px; margin:0 0 5px; }
+  #report-root .r-item-comment{ font-size:11px; font-style:italic; color:#4d534f; margin:12px 0 0; padding-left:10px; border-left:2px solid #e4e6e2; }
+  #report-root .r-item-photos{ display:flex; gap:7px; margin-top:12px; flex-wrap:wrap; }
+  #report-root .r-item-photos .ph{ width:52px; height:52px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e4e6e2; flex-shrink:0; }
 
-  #report-root .r-plan-box{ margin-top:16px; padding:12px 14px; background:#f3f8f6; border-left:3px solid #1D9E75; border-radius:0 10px 10px 0; break-inside:avoid; page-break-inside:avoid; }
-  #report-root .r-plan-content{ min-width:0; }
-  #report-root .r-plan-label{ font-size:9.5px; font-weight:700; color:#0F6E56; text-transform:uppercase; letter-spacing:.4px; margin:0 0 10px; }
-  #report-root .r-plan-row{ font-size:11.5px; margin:0 0 10px; line-height:1.5; color:#181b19; }
-  #report-root .r-plan-row .lbl{ display:block; font-size:9.5px; font-weight:700; color:#7c8480; text-transform:uppercase; letter-spacing:.3px; margin-bottom:2px; }
-  #report-root .r-plan-meta{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; padding-top:10px; border-top:1px solid #dbe8e3; }
-  #report-root .r-plan-meta .r-plan-row{ margin:0; }
+  #report-root .r-plan-box{ margin-top:14px; padding-top:14px; border-top:1px solid #e4e6e2; display:flex; gap:10px; }
+  #report-root .r-plan-rail{ width:3px; border-radius:2px; background:#1D9E75; flex-shrink:0; }
+  #report-root .r-plan-content{ flex:1; min-width:0; }
+  #report-root .r-plan-label{ font-size:9.5px; font-weight:700; color:#0F6E56; text-transform:uppercase; letter-spacing:.4px; margin:0 0 9px; }
+  #report-root .r-plan-row{ font-size:11px; margin-bottom:8px; line-height:1.5; color:#4d534f; }
+  #report-root .r-plan-row:last-child{ margin-bottom:0; }
+  #report-root .r-plan-row .lbl{ font-weight:700; color:#181b19; }
+  #report-root .r-plan-dates-row{ display:flex; gap:22px; margin-top:11px; flex-wrap:wrap; }
 
   #report-root .r-check-legend{ display:flex; gap:16px; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid #e4e6e2; flex-wrap:wrap; }
   #report-root .r-check-legend-item{ display:flex; align-items:center; gap:6px; font-size:10px; color:#4d534f; font-weight:600; }
@@ -1741,28 +1739,26 @@ function buildStandaloneReportHtml(){
   const page2 = ncItemsByCategory.length === 0 ? '' : `
     <div class="r-page">
       <h2 class="r-section-title">Pontos de atenção</h2>
-      <p class="r-intro">Estes são os <b class="r-num" style="font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria.</p>
+      <p class="r-intro">Estes são os <b class="r-num" style="color:#c0392b; font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria.</p>
       ${ncItemsByCategory.map(g => `
         <div class="r-category-title">${escapeHtml(g.category)}</div>
         ${g.items.map(q => `
           <div class="r-item">
-            <div class="r-item-head">
-              <span class="r-item-num r-num">${q.number}</span>
-              <p class="r-item-text">${escapeHtml(q.text)}</p>
-            </div>
-            ${q.commentSaved ? `<div class="r-item-comment"><p class="r-item-sub">Observação</p><p class="r-item-comment-text">${escapeHtml(q.commentSaved)}</p></div>` : ''}
+            <p class="r-nc-label">Item não conforme:</p>
+            <p class="r-item-text">${escapeHtml(q.text)}</p>
+            ${q.commentSaved ? `<p class="r-item-comment">${escapeHtml(q.commentSaved)}</p>` : ''}
             ${q.photos.length ? `<div class="r-item-photos">${q.photos.map(src => `<div class="ph" style="background-image:url('${src}')"></div>`).join('')}</div>` : ''}
             ${q.planState === 'confirmed' && q.plan ? `
               <div class="r-plan-box">
                 <div class="r-plan-rail"></div>
                 <div class="r-plan-content">
                   <p class="r-plan-label">Plano de ação</p>
-                  <p class="r-plan-row"><span class="lbl">O que deve ser corrigido</span>${escapeHtml(q.plan.whatToFix)}</p>
-                  <p class="r-plan-row"><span class="lbl">Como será corrigido</span>${escapeHtml(q.plan.howToFix)}</p>
-                  <div class="r-plan-meta">
-                    <p class="r-plan-row"><span class="lbl">Responsável</span>${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
-                    <p class="r-plan-row"><span class="lbl">Início</span><span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
-                    <p class="r-plan-row"><span class="lbl">Conclusão</span><span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
+                  <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
+                  <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
+                  <p class="r-plan-row"><span class="lbl">Responsável:</span> ${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
+                  <div class="r-plan-dates-row">
+                    <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
+                    <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
                   </div>
                 </div>
               </div>
@@ -1878,24 +1874,21 @@ function buildStandaloneReportHtml(){
   .r-category-title:first-of-type{ margin-top:0; }
   .r-category-title::after{ content:''; flex:1; height:1px; background:#e4e6e2; }
   .r-intro{ font-size:12px; color:#4d534f; line-height:1.6; margin:0 0 20px; }
-  .r-item{ padding:0; margin:0; break-inside:avoid; page-break-inside:avoid; }
-  .r-item + .r-item{ border-top:1px solid #e4e6e2; margin-top:24px; padding-top:24px; }
-  .r-item-head{ display:flex; align-items:flex-start; gap:10px; }
-  .r-item-num{ flex-shrink:0; min-width:22px; height:22px; padding:0 6px; border-radius:6px; background:#181b19; color:#fff; font-size:10.5px; display:flex; align-items:center; justify-content:center; }
-  .r-item-text{ font-size:13px; line-height:1.5; margin:0; padding-top:1px; color:#181b19; font-weight:700; }
-  .r-item-comment{ margin:14px 0 0; padding:10px 12px; background:#f6f6f4; border-radius:8px; }
-  .r-item-sub{ font-size:9.5px; font-weight:700; color:#7c8480; text-transform:uppercase; letter-spacing:.4px; margin:0 0 4px; }
-  .r-item-comment-text{ font-size:11.5px; line-height:1.55; color:#4d534f; margin:0; }
-  .r-item-photos{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:14px; }
-  .r-item-photos .ph{ width:100%; aspect-ratio:4/3; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e4e6e2; }
-
-  .r-plan-box{ margin-top:16px; padding:12px 14px; background:#f3f8f6; border-left:3px solid #1D9E75; border-radius:0 10px 10px 0; break-inside:avoid; page-break-inside:avoid; }
-  .r-plan-content{ min-width:0; }
-  .r-plan-label{ font-size:9.5px; font-weight:700; color:#0F6E56; text-transform:uppercase; letter-spacing:.4px; margin:0 0 10px; }
-  .r-plan-row{ font-size:11.5px; margin:0 0 10px; line-height:1.5; color:#181b19; }
-  .r-plan-row .lbl{ display:block; font-size:9.5px; font-weight:700; color:#7c8480; text-transform:uppercase; letter-spacing:.3px; margin-bottom:2px; }
-  .r-plan-meta{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; padding-top:10px; border-top:1px solid #dbe8e3; }
-  .r-plan-meta .r-plan-row{ margin:0; }
+  .r-item{ padding:18px 0 4px; }
+  .r-item + .r-item{ border-top:1px solid #e4e6e2; padding-top:18px; }
+  .r-item-text{ font-size:12px; line-height:1.55; margin:0; color:#181b19; font-weight:500; }
+  .r-nc-label{ font-size:9.5px; font-weight:700; color:#c0392b; text-transform:uppercase; letter-spacing:.4px; margin:0 0 5px; }
+  .r-item-comment{ font-size:11px; font-style:italic; color:#4d534f; margin:12px 0 0; padding-left:10px; border-left:2px solid #e4e6e2; }
+  .r-item-photos{ display:flex; gap:7px; margin-top:12px; flex-wrap:wrap; }
+  .r-item-photos .ph{ width:52px; height:52px; border-radius:8px; background-size:cover; background-position:center; border:1px solid #e4e6e2; flex-shrink:0; }
+  .r-plan-box{ margin-top:14px; padding-top:14px; border-top:1px solid #e4e6e2; display:flex; gap:10px; }
+  .r-plan-rail{ width:3px; border-radius:2px; background:#1D9E75; flex-shrink:0; }
+  .r-plan-content{ flex:1; min-width:0; }
+  .r-plan-label{ font-size:9.5px; font-weight:700; color:#0F6E56; text-transform:uppercase; letter-spacing:.4px; margin:0 0 9px; }
+  .r-plan-row{ font-size:11px; margin-bottom:8px; line-height:1.5; color:#4d534f; }
+  .r-plan-row:last-child{ margin-bottom:0; }
+  .r-plan-row .lbl{ font-weight:700; color:#181b19; }
+  .r-plan-dates-row{ display:flex; gap:22px; margin-top:11px; flex-wrap:wrap; }
   .r-check-legend{ display:flex; gap:16px; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid #e4e6e2; flex-wrap:wrap; }
   .r-check-legend-item{ display:flex; align-items:center; gap:6px; font-size:10px; color:#4d534f; font-weight:600; }
   .r-check-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid #e4e6e2; }
@@ -2022,17 +2015,15 @@ function renderReportPreview(){
     <div class="r-page ${reportPageToggles.attention ? '' : 'r-page-excluded'}" id="r-page-attention">
       ${pageToggleMarkup('attention')}
       <h2 class="r-section-title">Pontos de atenção</h2>
-      <p class="r-intro">Estes são os <b class="r-num" style="font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria. Quando havia um plano de ação registrado, ele aparece detalhado logo abaixo.</p>
+      <p class="r-intro">Estes são os <b class="r-num" style="color:#c0392b; font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria. Quando havia um plano de ação registrado, ele aparece detalhado logo abaixo.</p>
 
       ${ncItemsByCategory.map(g => `
         <div class="r-category-title">${escapeHtml(g.category)}</div>
         ${g.items.map(q => `
           <div class="r-item">
-            <div class="r-item-head">
-              <span class="r-item-num r-num">${q.number}</span>
-              <p class="r-item-text">${escapeHtml(q.text)}</p>
-            </div>
-            ${q.commentSaved ? `<div class="r-item-comment"><p class="r-item-sub">Observação</p><p class="r-item-comment-text">${escapeHtml(q.commentSaved)}</p></div>` : ''}
+            <p class="r-nc-label">Item não conforme:</p>
+            <p class="r-item-text">${escapeHtml(q.text)}</p>
+            ${q.commentSaved ? `<p class="r-item-comment">${escapeHtml(q.commentSaved)}</p>` : ''}
             ${q.photos.length ? `
               <div class="r-item-photos">
                 ${q.photos.map(src => `<div class="ph" style="background-image:url('${src}')"></div>`).join('')}
@@ -2043,12 +2034,12 @@ function renderReportPreview(){
                 <div class="r-plan-rail"></div>
                 <div class="r-plan-content">
                   <p class="r-plan-label">Plano de ação</p>
-                  <p class="r-plan-row"><span class="lbl">O que deve ser corrigido</span>${escapeHtml(q.plan.whatToFix)}</p>
-                  <p class="r-plan-row"><span class="lbl">Como será corrigido</span>${escapeHtml(q.plan.howToFix)}</p>
-                  <div class="r-plan-meta">
-                    <p class="r-plan-row"><span class="lbl">Responsável</span>${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
-                    <p class="r-plan-row"><span class="lbl">Início</span><span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
-                    <p class="r-plan-row"><span class="lbl">Conclusão</span><span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
+                  <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
+                  <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
+                  <p class="r-plan-row"><span class="lbl">Responsável:</span> ${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
+                  <div class="r-plan-dates-row">
+                    <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
+                    <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
                   </div>
                 </div>
               </div>
