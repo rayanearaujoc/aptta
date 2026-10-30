@@ -1280,23 +1280,23 @@ const REPORT_CSS = `
   .rep .r-category-title::after{content:'';flex:1;height:1px;background:#e4e6e2;order:1;}
   .rep .r-category-title .r-cat-grade{order:2;font-family:'Open Sans',sans-serif;font-size:10px;font-weight:700;color:#fff;background:#1D9E75;border-radius:100px;padding:3px 8px;white-space:nowrap;}
   .rep .r-category-title .r-cat-grade.none{background:#e4e6e2;color:#7c8480;}
-  .rep .r-item{padding:16px 0;}
+  .rep .r-item{padding:12px 0;}
   .rep .r-item + .r-item{border-top:1px solid #efefed;}
-  .rep .r-item-text{font-size:12.5px;line-height:1.55;margin:0;font-weight:600;}
+  .rep .r-item-text{font-size:12px;line-height:1.55;margin:0;font-weight:500;}
   .rep .r-item-text::before{content:'✔ ';color:#1D9E75;}
   .rep .r-item{break-inside:avoid;page-break-inside:avoid;}
   .rep .r-item-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
-  .rep .r-item-text + .r-item-photos{margin-top:12px;}
+  .rep .r-item-text + .r-item-photos{margin-top:10px;}
   .rep .r-item-photos .ph{width:100%;aspect-ratio:4/3;border-radius:8px;background-size:cover;background-position:center;border:1px solid #e4e6e2;}
   .rep .r-plan-box,.rep .r-sig-block,.rep .r-chart-box,.rep .r-category-title{break-inside:avoid;page-break-inside:avoid;}
   .rep .r-category-title{break-after:avoid;page-break-after:avoid;}
   .rep .r-empty{font-size:11.5px;color:#7c8480;font-style:italic;margin:8px 0 0;}
-  .rep .r-plan-box{margin-top:14px;padding:12px 14px;background:#f3f8f6;border-left:3px solid #1D9E75;border-radius:0 10px 10px 0;}
-  .rep .r-plan-label{font-size:9.5px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.4px;margin:0 0 10px;}
-  .rep .r-plan-row{font-size:11.5px;margin:0 0 10px;line-height:1.5;color:#181b19;}
-  .rep .r-plan-row .lbl{display:block;font-size:9.5px;font-weight:700;color:#7c8480;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;}
-  .rep .r-plan-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-top:10px;border-top:1px solid #dbe8e3;}
-  .rep .r-plan-meta .r-plan-row{margin:0;}
+  .rep .r-plan-box{margin-top:10px;padding-top:12px;border-top:1px solid #e4e6e2;display:flex;gap:10px;}
+  .rep .r-plan-rail{width:3px;border-radius:2px;background:#1D9E75;flex-shrink:0;}
+  .rep .r-plan-label{font-size:9.5px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.4px;margin:0 0 9px;}
+  .rep .r-plan-row{font-size:11px;margin:0 0 7px;line-height:1.5;color:#4d534f;}
+  .rep .r-plan-row .lbl{font-weight:700;color:#181b19;}
+  .rep .r-plan-dates-row{display:flex;gap:22px;flex-wrap:wrap;}
   .rep .r-notes{font-size:12px;line-height:1.7;color:#181b19;margin:0;white-space:pre-wrap;}
   .rep .r-sig-block{margin-top:16px;}
   .rep .r-sig-block + .r-sig-block{margin-top:22px;padding-top:18px;border-top:1px solid #e4e6e2;}
@@ -1351,11 +1351,12 @@ function reportPages(preview){
             ${i.text?`<p class="r-item-text">${escapeHtml(i.text)}</p>`:''}
             ${i.photos.length?`<div class="r-item-photos">${i.photos.map(src=>`<div class="ph" style="background-image:url('${src}')"></div>`).join('')}</div>`:''}
           </div>`).join('') : `<p class="r-empty">Sem apontamentos neste tópico.</p>`}
-        ${t.planState==='confirmed'&&t.plan ? `<div class="r-plan-box"><div>
+        ${t.planState==='confirmed'&&t.plan ? `<div class="r-plan-box"><div class="r-plan-rail"></div><div>
             <p class="r-plan-label">Plano de ação</p>
-            <p class="r-plan-row"><span class="lbl">O que deve ser corrigido</span>${escapeHtml(t.plan.whatToFix)}</p>
-            <p class="r-plan-row"><span class="lbl">Como será corrigido</span>${escapeHtml(t.plan.howToFix)}</p>
-            <div class="r-plan-meta"><p class="r-plan-row"><span class="lbl">Responsável</span>${escapeHtml(responsibleLabel(t.plan.savedResponsible||t.plan.responsible))}</p><p class="r-plan-row"><span class="lbl">Início</span><span class="r-num">${escapeHtml(t.plan.savedStartDate||'—')}</span></p><p class="r-plan-row"><span class="lbl">Conclusão</span><span class="r-num">${escapeHtml(t.plan.savedEndDate||'—')}</span></p></div>
+            <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(t.plan.whatToFix)}</p>
+            <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(t.plan.howToFix)}</p>
+            <p class="r-plan-row"><span class="lbl">Responsável:</span> ${escapeHtml(responsibleLabel(t.plan.savedResponsible||t.plan.responsible))}</p>
+            <div class="r-plan-dates-row"><p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(t.plan.savedStartDate||'—')}</span></p><p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(t.plan.savedEndDate||'—')}</span></p></div>
           </div></div>` : ''}
       `).join('')}
     </div>`;
