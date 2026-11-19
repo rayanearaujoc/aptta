@@ -548,6 +548,8 @@
   .prevplan-body p{margin:10px 0 0;font-size:12px;line-height:1.5;color:var(--ink-700);}
   .prevplan-body b{color:var(--ink-900);font-weight:600;}
 </style>
+<link rel="stylesheet" href="css/fluxo.css">
+<script src="js/relatorio-tema.js"></script>
 </head>
 <body>
 
@@ -687,6 +689,9 @@ document.getElementById('icon-back').onclick = () => { window.location.href = 'i
     const template = JSON.parse(raw);
     if (template && template.name){
       document.getElementById('header-meta').textContent = template.name;
+    }
+    if (template && template.client){
+      document.querySelector('.header-client').textContent = template.client;
     }
   }catch(e){ /* localStorage indisponivel ou dado invalido, mantem o texto padrão */ }
 })();
@@ -1690,11 +1695,11 @@ function buildStandaloneReportHtml(){
     <div class="r-page">
       <div class="r-topband">
         <div>
-          <p class="r-consult-name">${escapeHtml(reportSignature.consultantName || 'Rayane Araújo')}</p>
+          <div class="r-clogo" aria-label="Logo da consultora">${consultantLogoMarkup()}</div><p class="r-consult-name">${escapeHtml(reportSignature.consultantName || 'Rayane Araújo')}</p>
           <p class="r-consult-sub">Consultoria em Segurança Alimentar</p>
         </div>
       </div>
-      <p class="r-eyebrow">Relatório de Inspeção Técnica</p>
+      <p class="r-eyebrow">Relatório de inspeção técnica</p>
       <h1 class="r-title">${escapeHtml(checklistName)}<br>${escapeHtml(clientName)}</h1>
       <div class="r-meta-grid">
         <div class="r-meta-item"><p class="k">Cliente</p><p class="v">${escapeHtml(clientName)}</p></div>
@@ -1738,34 +1743,8 @@ function buildStandaloneReportHtml(){
 
   const page2 = ncItemsByCategory.length === 0 ? '' : `
     <div class="r-page">
-      <h2 class="r-section-title">Pontos de atenção</h2>
-      <p class="r-intro">Estes são os <b class="r-num" style="color:#c0392b; font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria.</p>
-      ${ncItemsByCategory.map(g => `
-        <div class="r-category-title">${escapeHtml(g.category)}</div>
-        ${g.items.map(q => `
-          <div class="r-item">
-            <p class="r-nc-label">Item não conforme:</p>
-            <p class="r-item-text">${escapeHtml(q.text)}</p>
-            ${q.commentSaved ? `<p class="r-item-comment">${escapeHtml(q.commentSaved)}</p>` : ''}
-            ${q.photos.length ? `<div class="r-item-photos">${q.photos.map(src => `<div class="ph" style="background-image:url('${src}')"></div>`).join('')}</div>` : ''}
-            ${q.planState === 'confirmed' && q.plan ? `
-              <div class="r-plan-box">
-                <div class="r-plan-rail"></div>
-                <div class="r-plan-content">
-                  <p class="r-plan-label">Plano de ação</p>
-                  <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
-                  <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
-                  <p class="r-plan-row"><span class="lbl">Responsável:</span> ${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
-                  <div class="r-plan-dates-row">
-                    <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
-                    <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
-                  </div>
-                </div>
-              </div>
-            ` : ''}
-          </div>
-        `).join('')}
-      `).join('')}
+      <h2 class="r-section-title">Não conformidades e planos de ação</h2>
+      ${attentionPlansMarkup(ncItemsByCategory)}
     </div>
   `;
 
@@ -1907,6 +1886,7 @@ function buildStandaloneReportHtml(){
   .r-sig-printed-name{ font-size:12.5px; font-weight:700; color:#181b19; margin:0 0 10px; }
   .r-sig-printed-name.placeholder{ color:#7c8480; font-weight:600; font-style:italic; }
   .r-sig-role{ font-size:10px; color:#7c8480; margin:0; }
+  ${window.REPORT_THEME_CSS||''}
 </style>
 </head>
 <body>
@@ -1924,6 +1904,38 @@ function buildStandaloneReportHtml(){
 </html>`;
 }
 
+
+/* Relatório: não conformidades por tópico — cada uma com a pergunta, as fotos, a observação e o plano.
+   Fica completo sozinho, para quem entrega só essa parte ao cliente. */
+function attentionPlansMarkup(groups){
+  const total = groups.reduce((a, g) => a + g.items.length, 0);
+  return `<p class="r-intro">${total === 1 ? 'O item que ficou' : 'Os ' + total + ' itens que ficaram'} fora de conformidade nesta vistoria, com as fotos do que foi encontrado e o plano para corrigir.</p>` +
+  groups.map(g => `
+    <div class="r-category-title">${escapeHtml(g.category)}</div>
+    ${g.items.map(q => {
+      const hasPlan = q.planState === 'confirmed' && q.plan;
+      return `<div class="r-find">
+        <p class="r-find-q"><span class="r-find-tag">Não conforme</span>${escapeHtml(q.text)}</p>
+        ${q.photos.length ? `<div class="r-find-photos">${q.photos.map(src => `<div class="ph" style="background-image:url('${src}')"></div>`).join('')}</div>` : ''}
+        ${q.commentSaved ? `<p class="r-find-note"><b>Observação:</b> ${escapeHtml(q.commentSaved)}</p>` : ''}
+        ${hasPlan ? `<div class="r-plan-box"><div class="r-plan-content">
+          <p class="r-plan-label">Plano de ação</p>
+          <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
+          <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
+          <p class="r-plan-row"><span class="lbl">Responsável:</span> ${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
+          <div class="r-plan-dates-row">
+            <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
+            <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
+          </div>
+        </div></div>` : `<p class="r-find-noplan">Sem plano de ação definido para este item.</p>`}
+      </div>`;
+    }).join('')}`).join('');
+}
+function consultantLogoMarkup(){
+  let logo = ''; try{ logo = localStorage.getItem('apttaConsultoraLogo') || ''; }catch(e){}
+  const name = (reportSignature && reportSignature.consultantName) || 'Rayane Araújo';
+  return logo ? `<img src="${logo}" alt="">` : name.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
+}
 function renderReportPreview(){
   const root = document.getElementById('report-root');
   if (reportGenerating){
@@ -1955,12 +1967,12 @@ function renderReportPreview(){
       ${pageToggleMarkup('cover')}
       <div class="r-topband">
         <div>
-          <p class="r-consult-name">Rayane Araújo</p>
+          <div class="r-clogo" aria-label="Logo da consultora">${consultantLogoMarkup()}</div><p class="r-consult-name">Rayane Araújo</p>
           <p class="r-consult-sub">Consultoria em Segurança Alimentar</p>
         </div>
       </div>
 
-      <p class="r-eyebrow">Relatório de Inspeção Técnica</p>
+      <p class="r-eyebrow">Relatório de inspeção técnica</p>
       <h1 class="r-title">${escapeHtml(checklistName)}<br>${escapeHtml(clientName)}</h1>
 
       <div class="r-meta-grid">
@@ -2014,39 +2026,8 @@ function renderReportPreview(){
   const page2 = ncItemsByCategory.length === 0 ? '' : `
     <div class="r-page ${reportPageToggles.attention ? '' : 'r-page-excluded'}" id="r-page-attention">
       ${pageToggleMarkup('attention')}
-      <h2 class="r-section-title">Pontos de atenção</h2>
-      <p class="r-intro">Estes são os <b class="r-num" style="color:#c0392b; font-weight:800;">${data.naoConforme} ite${data.naoConforme === 1 ? 'm' : 'ns'}</b> que ficaram fora de conformidade nesta vistoria. Quando havia um plano de ação registrado, ele aparece detalhado logo abaixo.</p>
-
-      ${ncItemsByCategory.map(g => `
-        <div class="r-category-title">${escapeHtml(g.category)}</div>
-        ${g.items.map(q => `
-          <div class="r-item">
-            <p class="r-nc-label">Item não conforme:</p>
-            <p class="r-item-text">${escapeHtml(q.text)}</p>
-            ${q.commentSaved ? `<p class="r-item-comment">${escapeHtml(q.commentSaved)}</p>` : ''}
-            ${q.photos.length ? `
-              <div class="r-item-photos">
-                ${q.photos.map(src => `<div class="ph" style="background-image:url('${src}')"></div>`).join('')}
-              </div>
-            ` : ''}
-            ${q.planState === 'confirmed' && q.plan ? `
-              <div class="r-plan-box">
-                <div class="r-plan-rail"></div>
-                <div class="r-plan-content">
-                  <p class="r-plan-label">Plano de ação</p>
-                  <p class="r-plan-row"><span class="lbl">O que deve ser corrigido:</span> ${escapeHtml(q.plan.whatToFix)}</p>
-                  <p class="r-plan-row"><span class="lbl">Como será corrigido:</span> ${escapeHtml(q.plan.howToFix)}</p>
-                  <p class="r-plan-row"><span class="lbl">Responsável:</span> ${responsibleLabel(q.plan.savedResponsible || q.plan.responsible)}</p>
-                  <div class="r-plan-dates-row">
-                    <p class="r-plan-row"><span class="lbl">Início:</span> <span class="r-num">${escapeHtml(q.plan.savedStartDate || q.plan.startDate || '—')}</span></p>
-                    <p class="r-plan-row"><span class="lbl">Conclusão:</span> <span class="r-num">${escapeHtml(q.plan.savedEndDate || q.plan.endDate || '—')}</span></p>
-                  </div>
-                </div>
-              </div>
-            ` : ''}
-          </div>
-        `).join('')}
-      `).join('')}
+      <h2 class="r-section-title">Não conformidades e planos de ação</h2>
+      ${attentionPlansMarkup(ncItemsByCategory)}
     </div>
   `;
 
@@ -2542,5 +2523,7 @@ function bindPlanEvents(){
 
 render();
 </script>
+<script src="js/fluxo-desktop.js"></script>
+<script src="js/fluxo-ui.js"></script>
 </body>
 </html>
