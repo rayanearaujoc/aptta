@@ -41,12 +41,13 @@ const PAGE_FAB = {
   'clientes':        { label:'Novo cliente', attr:'data-novo-cliente' },
   'visitas-hist':    { label:'Nova visita',  attr:'data-nova-visita-home' },
   'visitas-modelos': { label:'Criar modelo', attr:'data-mod-new' },
+  'calendario':      { label:'Agendar visita', attr:'data-agendar' },
 };
 function setPageFab(page){
   const f = PAGE_FAB[page], el = document.getElementById('pageFab');
   app.classList.toggle('has-fab', !!f);
   if (!el || !f) return;
-  ['data-novo-cliente','data-nova-visita-home','data-mod-new'].forEach(a => el.removeAttribute(a));
+  ['data-novo-cliente','data-nova-visita-home','data-mod-new','data-agendar'].forEach(a => el.removeAttribute(a));
   el.setAttribute(f.attr, '');
   el.setAttribute('aria-label', f.label);
   el.innerHTML = `<i data-lucide="plus"></i>${f.label}`;
@@ -122,7 +123,7 @@ function renderInicio(){
     <div class="card col-4 h-quick">
       <div class="card-head"><div><div class="card-title">Ações rápidas</div><div class="card-sub">O que você mais faz no dia a dia</div></div></div>
       <div class="quick-grid">
-        <button class="quick" data-page="calendario"><span class="qi"><i data-lucide="calendar-plus"></i></span><b>Agendar visita</b></button>
+        <button class="quick" data-agendar><span class="qi"><i data-lucide="calendar-plus"></i></span><b>Agendar visita</b></button>
         <button class="quick" data-novo-cliente><span class="qi"><i data-lucide="user-plus"></i></span><b>Cadastrar cliente</b></button>
         <button class="quick" data-page="financeiro"><span class="qi"><i data-lucide="receipt"></i></span><b>Registrar cobrança</b></button>
         <button class="quick" data-page="financeiro"><span class="qi"><i data-lucide="wallet"></i></span><b>Lançar despesa</b></button>
@@ -179,7 +180,7 @@ function drawCalendario(){
         <button class="icon-btn" data-cal="1" aria-label="Próximo mês"><i data-lucide="chevron-right"></i></button>
         <div><h3>${MESES[CAL_M]} ${CAL_Y}</h3><div class="card-sub">${total} ${total === 1 ? 'visita' : 'visitas'} no mês</div></div>
       </div>
-      <div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" data-cal="hoje">Hoje</button><button class="btn btn-primary btn-sm"><i data-lucide="plus"></i>Agendar visita</button></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" data-cal="hoje">Hoje</button><button class="btn btn-primary btn-sm page-primary" data-agendar><i data-lucide="plus"></i>Agendar visita</button></div>
     </div>
     <div class="cal-week">${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(w => `<div>${w}</div>`).join('')}</div>
     <div class="cal-grid">${rows.map(c => {

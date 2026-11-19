@@ -437,6 +437,56 @@ function openNovoCliente(){
 }
 document.addEventListener('click', e => { if (e.target.closest('[data-novo-cliente]')) openNovoCliente(); });
 
+/* ===== Agendar visita ===== */
+function openAgendar(){
+  const ativos = CLIENTES.map((c, i) => ({ c, i })).filter(x => x.c.s);
+  const hoje = new Date(), iso = d => d.toISOString().slice(0, 10);
+  const f = { i: '', d: iso(new Date(hoje.getTime() + 86400000)), h: '09:00', k: 'v', obs: '' };
+  let tried = false;
+  const m = document.createElement('div');
+  m.className = 'modal';
+  const draw = () => {
+    m.innerHTML = `<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="agTitle">
+      <div class="modal-head"><div><h3 id="agTitle">Agendar visita</h3><p>A visita aparece no calendário e é sincronizada com o Google Agenda</p></div>
+        <button class="kebab" data-close aria-label="Fechar"><i data-lucide="x"></i></button></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full"><label for="agC">Cliente *</label><select id="agC" data-k="i"><option value="">Selecione o cliente</option>${ativos.map(x => `<option value="${x.i}" ${String(f.i)===String(x.i)?'selected':''}>${x.c.n}</option>`).join('')}</select>${tried && f.i === '' ? '<small class="f-err">Escolha o cliente</small>' : ''}</div>
+          <div class="field"><label for="agD">Data *</label><input id="agD" type="date" data-k="d" value="${f.d}" min="${iso(hoje)}"></div>
+          <div class="field"><label for="agH">Horário *</label><input id="agH" type="time" data-k="h" value="${f.h}" step="900"></div>
+        </div>
+        <div><div class="field-lbl">Tipo de visita</div><div class="seg">
+          <button class="${f.k==='v'?'active':''}" data-k2="v"><i data-lucide="notebook-pen"></i>Visita técnica</button>
+          <button class="${f.k==='c'?'active':''}" data-k2="c"><i data-lucide="list-checks"></i>Checklist</button>
+        </div></div>
+        <div class="field"><label for="agO">Observação</label><input id="agO" data-k="obs" value="${f.obs}" placeholder="Ex.: retorno dos planos da cozinha"></div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-ghost" data-close>Cancelar</button><button class="btn btn-primary" data-ag-save><i data-lucide="check"></i>Agendar</button></div>
+    </div>`;
+    icons();
+    m.querySelectorAll('[data-k]').forEach(el => el.addEventListener('input', () => { f[el.dataset.k] = el.value; const er = el.parentNode.querySelector('.f-err'); if (er) er.remove(); }));
+  };
+  m.addEventListener('click', e => {
+    if (e.target === m || e.target.closest('[data-close]')) return m.remove();
+    const k = e.target.closest('[data-k2]'); if (k){ f.k = k.dataset.k2; return draw(); }
+    if (e.target.closest('[data-ag-save]')){
+      tried = true;
+      if (f.i === '' || !f.d || !f.h) return draw();
+      const hh = f.h.split(':'), hora = +hh[0] + 'h' + (hh[1] !== '00' ? hh[1] : '');
+      if (typeof AGENDA !== 'undefined') AGENDA.push({ d: f.d, h: hora, i: +f.i, k: f.k });
+      AGENDA.sort((a, b) => (a.d + a.h).localeCompare(b.d + b.h));
+      m.remove();
+      const [y, mo] = f.d.split('-').map(Number);
+      CAL_Y = y; CAL_M = mo - 1; CAL_SEL = f.d;
+      go('calendario');
+      toast(`Visita agendada: ${CLIENTES[+f.i].n}, ${f.d.split('-').reverse().slice(0, 2).join('/')} às ${hora}`);
+    }
+  });
+  document.body.appendChild(m);
+  draw();
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-agendar]')) openAgendar(); });
+
 /* ===== Nova visita: tipo → modelo (checklist) ou início (visita técnica) ===== */
 const TEMPLATES = MODELOS;
 const TEMPLATE_TAG_LABEL = { padrao:'Aptta', meus:'Meus' };

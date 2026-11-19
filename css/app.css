@@ -898,3 +898,12 @@ td .vc-ava{width:34px;height:34px}
   .app.has-fab .fab-new .lucide{width:20px;height:20px}
   .app.has-fab .page-primary{display:none !important}
 }
+/* botões mais "gordinhos" no celular (mais altos, mesma largura) */
+@media (max-width:640px){
+  .btn{height:44px;font-size:13.5px}
+  .btn-sm{height:40px;font-size:12.5px}
+  .mod-bar .btn{height:48px;font-size:14px}
+  .mod-bar{padding:12px}
+}
+.field input[type=date],.field input[type=time]{font-family:inherit}
+@media (max-width:640px){ .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 32px)} }
