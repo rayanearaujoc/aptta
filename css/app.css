@@ -930,3 +930,7 @@ td .vc-ava{width:34px;height:34px}
 .profile-head.ph-color .badge::before{background:#fff}
 .profile-head.ph-color .icon-btn{background:rgba(255,255,255,.14);color:#fff;box-shadow:none}
 .profile-head.ph-color .icon-btn:hover{background:rgba(255,255,255,.24)}
+/* iOS centraliza o texto de data e hora: alinhar à esquerda como os outros campos */
+.field input[type=date],.field input[type=time]{-webkit-appearance:none;appearance:none;text-align:left;display:block;width:100%;min-height:38px;line-height:36px}
+.field input[type=date]::-webkit-date-and-time-value,.field input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
+@media (max-width:640px){ .field input[type=date],.field input[type=time]{min-height:44px;line-height:42px} }
