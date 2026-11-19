@@ -934,3 +934,16 @@ td .vc-ava{width:34px;height:34px}
 .field input[type=date],.field input[type=time]{-webkit-appearance:none;appearance:none;text-align:left;display:block;width:100%;min-height:38px;line-height:36px}
 .field input[type=date]::-webkit-date-and-time-value,.field input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
 @media (max-width:640px){ .field input[type=date],.field input[type=time]{min-height:44px;line-height:42px} }
+/* rodapé do app */
+.main{display:flex;flex-direction:column;min-height:100vh}
+.main > #content{flex:1 0 auto}
+.app-foot{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-top:32px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-muted)}
+.app-foot nav{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.app-foot a{color:var(--ink-secondary);font-weight:500}
+.app-foot a:hover{color:var(--green-700)}
+.app-foot .ver{color:var(--ink-faint)}
+@media (max-width:640px){
+  #content{padding-bottom:0}
+  .app-foot{flex-direction:column;align-items:flex-start;gap:10px;margin-top:24px;padding-bottom:88px}
+  .app-foot nav{gap:16px}
+}
