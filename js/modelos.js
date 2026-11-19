@@ -139,7 +139,7 @@ function drawEditor(){
                 <input data-opt-label="${i}" value="${escM(o.label)}" maxlength="14" aria-label="Texto da resposta ${i+1}" placeholder="Resposta">
                 <select data-opt-role="${i}" aria-label="O que essa resposta significa">${Object.entries(ROLES).map(([k, r]) => `<option value="${k}" ${o.role===k?'selected':''}>${r.label}</option>`).join('')}</select>
                 <button class="icon-del" data-opt-del="${i}" ${EDIT.options.length <= 2 ? 'disabled' : ''} aria-label="Remover resposta"><i data-lucide="x"></i></button>
-                ${o.role==='NC' ? '<small class="opt-hint"><i data-lucide="zap"></i>Gera plano de ação</small>' : ''}
+                ${o.role==='NC' ? '<small class="opt-hint"><i data-lucide="list-todo"></i>Gera plano de ação</small>' : ''}
               </div>`).join('')}</div>
             ${ncErr ? '<small class="f-err" style="display:block;margin-top:8px">Marque pelo menos uma resposta como “Não conforme”.</small>' : ''}
             ${EDIT.options.length < 5 ? '<button class="btn btn-ghost btn-sm" data-opt-add style="margin-top:10px"><i data-lucide="plus"></i>Adicionar resposta</button>' : ''}
