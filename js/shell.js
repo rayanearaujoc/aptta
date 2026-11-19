@@ -11,7 +11,7 @@ const PAGES = {
   'visitas-hist':    { title:'Histórico de visitas', icon:'history', desc:'Visitas técnicas e checklists já realizados, com os relatórios.' },
   'visitas-modelos': { title:'Modelos de checklist', render: () => renderModelos(), after: () => wireModelos() },
   'calendario':      { title:'Calendário', render: renderCalendario, after: wireCalendario },
-  'planos':          { title:'Planos de ação', icon:'list-todo', desc:'Painel dos planos de ação de todos os clientes: abertos, vencidos e concluídos.' },
+  'planos':          { title:'Planos de ação', render: () => renderPlanos() },
   'financeiro':      { title:'Financeiro', icon:'wallet', desc:'Recebimentos, despesas e cobranças em um só lugar.' },
   'cfg':             { title:'Configurações', icon:'settings', desc:'Perfil, plano, notificações e integrações da sua conta.' },
 };
@@ -53,12 +53,21 @@ function setPageFab(page){
   el.innerHTML = `<i data-lucide="plus"></i>${f.label}`;
 }
 
+let PLANS_CLIENT = null;
+function renderPlanos(){
+  const c = PLANS_CLIENT; PLANS_CLIENT = null;
+  return `${c ? `<div class="filter-note"><span>Mostrando os planos de ação de <b>${c}</b></span><button class="btn btn-ghost btn-sm" data-page="planos">Ver todos</button></div>` : ''}
+    <div class="card"><div class="placeholder"><div class="ic"><i data-lucide="list-todo"></i></div>
+    <h3>Planos de ação</h3><p>${c ? `Planos abertos, vencidos e concluídos de ${c}.` : 'Painel dos planos de ação de todos os clientes: abertos, vencidos e concluídos.'}</p></div></div>`;
+}
+
 function go(page){
   const p = PAGES[page]; if (!p) return;
   document.getElementById('pageTitle').textContent = p.title;
   app.classList.toggle('hide-topsearch', page === 'clientes' || page === 'calendario');
   app.classList.toggle('on-clientes', page === 'clientes');
   app.classList.toggle('on-inicio', page === 'inicio');
+  app.classList.remove('in-detail');
   setPageFab(page);
   content.innerHTML = p.render ? p.render() : placeholder(p);
   setActive(page);

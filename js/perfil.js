@@ -31,6 +31,7 @@ function renderProfile(){
   const c = CLIENTES[CURRENT];
   document.getElementById('pageTitle').textContent = 'Clientes';
   app.classList.remove('hide-topsearch', 'on-clientes', 'has-fab', 'on-inicio');
+  app.classList.add('in-detail');
   setActive('clientes');
   const parent = BACK_MAP[PVIEW];
   const back = parent
@@ -72,7 +73,7 @@ function tabVisitas(){
     <div class="kpis">
       <div class="card mini-kpi"><div><div class="lbl">Nota média</div><div class="val">8,6</div><div class="meta"><span class="trend-up">+0,7</span> que a anterior</div></div>${sparkline([7.2,7.9,8.1,8.6])}</div>
       <div class="card mini-kpi"><div><div class="lbl">Visitas realizadas</div><div class="val">4</div><div class="meta">desde maio</div></div>${sparkline([1,2,3,4])}</div>
-      <div class="card mini-kpi span"><div><div class="lbl">Planos de ação abertos</div><div class="val">2</div><div class="meta">de 5 criados</div></div>${donut({parts:[{value:3,color:C.green},{value:2,color:C.tint}], size:64, stroke:9})}</div>
+      <div class="card mini-kpi span is-link" data-plans-client role="link" tabindex="0" aria-label="Ver planos de ação deste cliente"><i data-lucide="arrow-up-right" class="kpi-go"></i><div><div class="lbl">Planos de ação abertos</div><div class="val">2</div><div class="meta">de 5 criados</div></div>${donut({parts:[{value:3,color:C.green},{value:2,color:C.tint}], size:64, stroke:9})}</div>
     </div>
     <div class="card perf-link" data-pview="desempenho">
       <span class="ic"><i data-lucide="trending-up"></i></span>
@@ -486,6 +487,12 @@ function openAgendar(){
   draw();
 }
 document.addEventListener('click', e => { if (e.target.closest('[data-agendar]')) openAgendar(); });
+/* card de planos do perfil: abre Planos de ação filtrado pelo cliente */
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-plans-client]')) return;
+  PLANS_CLIENT = CLIENTES[CURRENT].n;
+  go('planos');
+});
 
 /* ===== Nova visita: tipo → modelo (checklist) ou início (visita técnica) ===== */
 const TEMPLATES = MODELOS;

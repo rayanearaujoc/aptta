@@ -907,3 +907,13 @@ td .vc-ava{width:34px;height:34px}
 }
 .field input[type=date],.field input[type=time]{font-family:inherit}
 @media (max-width:640px){ .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 32px)} }
+/* perfil do cliente no celular: tela de detalhe, sem o menu superior; só o Voltar fixo no topo */
+@media (max-width:640px){
+  .app.in-detail .topbar{display:none}
+  .app.in-detail #content > .v-gap > div:first-child{position:sticky;top:0;z-index:20;margin:0 -16px;padding:14px 16px 10px;background:var(--canvas)}
+  .app.in-detail .back{font-size:14px;height:32px}
+  .app.in-detail #content{padding-top:0}
+}
+.filter-note{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;padding:10px 10px 10px 16px;border-radius:12px;background:var(--green-50);color:var(--green-700);font-size:13px}
+.filter-note b{font-weight:700}
+.kpis .mini-kpi > svg.kpi-go{display:block !important}
