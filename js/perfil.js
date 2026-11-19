@@ -30,7 +30,7 @@ content.addEventListener('click', e => {
 function renderProfile(){
   const c = CLIENTES[CURRENT];
   document.getElementById('pageTitle').textContent = 'Clientes';
-  app.classList.remove('hide-topsearch', 'on-clientes');
+  app.classList.remove('hide-topsearch', 'on-clientes', 'has-fab', 'on-inicio');
   setActive('clientes');
   const parent = BACK_MAP[PVIEW];
   const back = parent

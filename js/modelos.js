@@ -52,7 +52,7 @@ function renderModelos(){
         <button data-t="padrao" class="${MOD_TAB==='padrao'?'active':''}">Padrão Aptta<span class="n">${padrao}</span></button>
       </div>
       <span class="spacer"></span>
-      <button class="btn btn-primary" data-mod-new><i data-lucide="plus"></i>Criar modelo</button>
+      <button class="btn btn-primary page-primary" data-mod-new><i data-lucide="plus"></i>Criar modelo</button>
     </div>
     <div id="modList">${modelList()}</div>`;
 }
@@ -111,6 +111,7 @@ function defaultSectionsFor(m){
 }
 function drawEditor(){
   document.getElementById('pageTitle').textContent = 'Modelos de checklist';
+  app.classList.remove('has-fab');
   const c = modelCount(EDIT), hasNC = EDIT.options.some(o => o.role === 'NC');
   const nameErr = EDIT_ERR && !EDIT.name.trim(), itemsErr = EDIT_ERR && c.i === 0, ncErr = EDIT_ERR && !hasNC;
   content.innerHTML = `

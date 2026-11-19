@@ -17,7 +17,8 @@ const PAGES = {
 };
 
 function placeholder(p){
-  return `<div class="card"><div class="placeholder">
+  const action = p.title === 'Histórico de visitas' ? `<div class="toolbar"><span class="spacer"></span><button class="btn btn-primary page-primary" data-nova-visita-home><i data-lucide="plus"></i>Nova visita</button></div>` : '';
+  return `${action}<div class="card"><div class="placeholder">
     <div class="ic"><i data-lucide="${p.icon}"></i></div>
     <h3>${p.title}</h3><p>${p.desc}</p></div></div>`;
 }
@@ -35,11 +36,29 @@ function setActive(page){
   }
 }
 
+/* ação principal de cada página: no celular vira botão flutuante */
+const PAGE_FAB = {
+  'clientes':        { label:'Novo cliente', attr:'data-novo-cliente' },
+  'visitas-hist':    { label:'Nova visita',  attr:'data-nova-visita-home' },
+  'visitas-modelos': { label:'Criar modelo', attr:'data-mod-new' },
+};
+function setPageFab(page){
+  const f = PAGE_FAB[page], el = document.getElementById('pageFab');
+  app.classList.toggle('has-fab', !!f);
+  if (!el || !f) return;
+  ['data-novo-cliente','data-nova-visita-home','data-mod-new'].forEach(a => el.removeAttribute(a));
+  el.setAttribute(f.attr, '');
+  el.setAttribute('aria-label', f.label);
+  el.innerHTML = `<i data-lucide="plus"></i>${f.label}`;
+}
+
 function go(page){
   const p = PAGES[page]; if (!p) return;
   document.getElementById('pageTitle').textContent = p.title;
   app.classList.toggle('hide-topsearch', page === 'clientes' || page === 'calendario');
   app.classList.toggle('on-clientes', page === 'clientes');
+  app.classList.toggle('on-inicio', page === 'inicio');
+  setPageFab(page);
   content.innerHTML = p.render ? p.render() : placeholder(p);
   setActive(page);
   app.classList.remove('nav-open');
@@ -221,7 +240,7 @@ function renderClientes(){
         <button data-v="list" class="${VIEW==='list'?'active':''}" aria-label="Ver em lista"><i data-lucide="list"></i></button>
         <button data-v="grid" class="${VIEW==='grid'?'active':''}" aria-label="Ver em cartões"><i data-lucide="layout-grid"></i></button>
       </div>
-      <button class="btn btn-primary cli-new" data-novo-cliente><i data-lucide="plus"></i>Novo cliente</button>
+      <button class="btn btn-primary cli-new page-primary" data-novo-cliente><i data-lucide="plus"></i>Novo cliente</button>
     </div>
     <div id="cliList"></div>`;
 }
