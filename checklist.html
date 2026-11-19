@@ -564,10 +564,6 @@
         <p class="header-meta" id="header-meta">Checklist padrão de limpeza</p>
         <p class="header-client">Padaria Central</p>
       </div>
-      <div class="header-progress-col">
-        <span class="progress-label" id="progress-label">0 de 0 itens</span>
-        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-      </div>
     </div>
   </div>
 
@@ -797,6 +793,22 @@ const PP_STATUS_LABEL = { pendente:'Pendente', concluido:'Concluído' };
 
 /* ---------- state ---------- */
 let questions = QUESTIONS_SEED.map((item, i) => newQuestion(i + 1, item.category, item.text));
+/* opções de resposta do modelo: cada uma tem um papel (C = conforme, NC = não conforme e gera plano, NA = não se aplica) */
+let ANSWER_OPTIONS = [{ label:'C', role:'C' }, { label:'N/C', role:'NC' }, { label:'N/A', role:'NA' }];
+(function loadTemplateItems(){
+  try{
+    const t = JSON.parse(localStorage.getItem('checklistTemplateAtivo') || 'null');
+    if (!t) return;
+    if (Array.isArray(t.options) && t.options.length >= 2) ANSWER_OPTIONS = t.options;
+    if (Array.isArray(t.sections) && t.sections.some(sec => sec.items && sec.items.length)){
+      let n = 0;
+      questions = [];
+      t.sections.forEach(sec => (sec.items || []).forEach(text => { if (String(text).trim()) questions.push(newQuestion(++n, sec.name || 'Sem seção', String(text).trim())); }));
+      /* modelo próprio: os planos anteriores de exemplo pertencem ao modelo padrão, não a este */
+      questions.forEach(q => { q.prevPlan = null; });
+    }
+  }catch(e){}
+})();
 let deletePlanTarget = null;   // questionId | null
 let activePlanSheet = null;    // questionId | null
 let lastUsedEndDate = '';      // última data de conclusão confirmada — usada para pré-preencher o próximo plano de ação
@@ -990,8 +1002,8 @@ function renderProgress(){
   const total = questions.length;
   const answered = questions.filter(q => q.answer !== null).length;
   const pct = total === 0 ? 0 : Math.round((answered / total) * 100);
-  document.getElementById('progress-label').textContent = `${answered} de ${total} itens`;
-  document.getElementById('progress-fill').style.width = pct + '%';
+  const pl = document.getElementById('progress-label'); if (pl) pl.textContent = `${answered} de ${total} itens`;
+  const pf = document.getElementById('progress-fill'); if (pf) pf.style.width = pct + '%';
 }
 
 function renderQuestions(){
@@ -1020,9 +1032,8 @@ function renderQuestionCard(q){
       ${renderPrevPlan(q)}
 
       <div class="answer-row">
-        <button class="answer-btn ans-c ${q.answer === 'C' ? 'selected' : ''}" data-q="${q.id}" data-val="C">C</button>
-        <button class="answer-btn ans-nc ${q.answer === 'NC' ? 'selected' : ''}" data-q="${q.id}" data-val="NC">N/C</button>
-        <button class="answer-btn ans-na ${q.answer === 'NA' ? 'selected' : ''}" data-q="${q.id}" data-val="NA">N/A</button>
+        ${ANSWER_OPTIONS.map((o, i) => { const on = q.answer === o.role && (q.opt == null ? ANSWER_OPTIONS.findIndex(x => x.role === o.role) === i : q.opt === i);
+          return `<button class="answer-btn ans-${o.role.toLowerCase()} ${on ? 'selected' : ''}" data-q="${q.id}" data-val="${o.role}" data-opt="${i}">${escapeHtml(o.label)}</button>`; }).join('')}
       </div>
 
       <div class="qa-divider"></div>
@@ -2244,9 +2255,10 @@ function bindQuestionEvents(){
   document.querySelectorAll('.answer-btn').forEach(btn => {
     btn.onclick = () => {
       const q = findQuestion(btn.dataset.q);
-      const val = btn.dataset.val;
-      const alreadySelected = q.answer === val;
+      const val = btn.dataset.val, opt = +btn.dataset.opt;
+      const alreadySelected = q.answer === val && (q.opt == null || q.opt === opt);
       q.answer = alreadySelected ? null : val;
+      q.opt = alreadySelected ? null : opt;
       render();
     };
   });

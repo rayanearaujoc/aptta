@@ -9,7 +9,7 @@ const PAGES = {
   'inicio':          { title:'Início', render: renderInicio },
   'clientes':        { title:'Clientes', render: renderClientes, after: wireClientes },
   'visitas-hist':    { title:'Histórico de visitas', icon:'history', desc:'Visitas técnicas e checklists já realizados, com os relatórios.' },
-  'visitas-modelos': { title:'Modelos de checklist', icon:'list-checks', desc:'Crie e edite os modelos usados nas visitas.' },
+  'visitas-modelos': { title:'Modelos de checklist', render: () => renderModelos(), after: () => wireModelos() },
   'calendario':      { title:'Calendário', render: renderCalendario, after: wireCalendario },
   'planos':          { title:'Planos de ação', icon:'list-todo', desc:'Painel dos planos de ação de todos os clientes: abertos, vencidos e concluídos.' },
   'financeiro':      { title:'Financeiro', icon:'wallet', desc:'Recebimentos, despesas e cobranças em um só lugar.' },

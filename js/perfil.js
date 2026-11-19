@@ -438,12 +438,7 @@ function openNovoCliente(){
 document.addEventListener('click', e => { if (e.target.closest('[data-novo-cliente]')) openNovoCliente(); });
 
 /* ===== Nova visita: tipo → modelo (checklist) ou início (visita técnica) ===== */
-const TEMPLATES = [
-  { id:'padrao-limpeza',   tag:'padrao', name:'Checklist Padrão de Limpeza', desc:'Modelo padrão do sistema para avaliação de limpeza e organização das áreas de produção.' },
-  { id:'padrao-auditoria', tag:'padrao', name:'Checklist Padrão de Auditoria de Qualidade', desc:'Modelo padrão do sistema para verificação dos requisitos de qualidade e conformidade sanitária.' },
-  { id:'meu-5s',           tag:'meus',   name:'Checklist Auditoria 5S', desc:'Modelo criado por você para avaliação dos princípios de organização 5S.' },
-  { id:'meu-acaiteria',    tag:'meus',   name:'Checklist Diagnóstico Açaiteria', desc:'Modelo criado por você para diagnóstico completo de unidades de açaiteria.' }
-];
+const TEMPLATES = MODELOS;
 const TEMPLATE_TAG_LABEL = { padrao:'Aptta', meus:'Meus' };
 /* visitas técnicas anteriores (simulação; no app real vem do backend) */
 const PREVIOUS_VISITS = {
@@ -520,7 +515,7 @@ function openNovaVisita(fromHome){
           <span class="radio"></span></button>`).join('')}
         <button class="nv-opt new" data-new-tpl>
           <span class="ic dashed"><i data-lucide="plus"></i></span>
-          <span class="txt"><b>Criar novo modelo</b><small>Você poderá montar seus próprios modelos na página do seu perfil.</small></span></button>
+          <span class="txt"><b>Criar novo modelo</b><small>Monte um modelo com as suas seções, itens e respostas.</small></span></button>
         ${wip ? `<div class="nv-note"><i data-lucide="info"></i>A criação de modelos personalizados ainda está sendo implementada. Em breve isso estará disponível no seu perfil.</div>` : ''}
       </div></div>`;
     } else {
@@ -560,7 +555,7 @@ function openNovaVisita(fromHome){
     const cl = e.target.closest('[data-client]'); if (cl){ cIdx = +cl.dataset.client; client = CLIENTES[cIdx].n; last = PREVIOUS_VISITS[client] || null; return draw(); }
     const t = e.target.closest('[data-type]'); if (t){ type = t.dataset.type; return draw(); }
     const tp = e.target.closest('[data-tpl]'); if (tp){ tpl = tpl === tp.dataset.tpl ? null : tp.dataset.tpl; return draw(); }
-    if (e.target.closest('[data-new-tpl]')){ wip = true; return draw(); }
+    if (e.target.closest('[data-new-tpl]')){ m.remove(); return openEditor(null); }
     const st = e.target.closest('[data-start]'); if (st){ start = st.dataset.start; return draw(); }
     const go = e.target.closest('[data-nv-go]');
     if (go && !go.disabled){
@@ -572,7 +567,7 @@ function openNovaVisita(fromHome){
       }
       if (step === 'template'){
         const t = TEMPLATES.find(x => x.id === tpl);
-        try{ localStorage.setItem('checklistTemplateAtivo', JSON.stringify({ id:t.id, name:t.name, tag:t.tag, client })); }catch(err){}
+        try{ localStorage.setItem('checklistTemplateAtivo', JSON.stringify({ id:t.id, name:t.name, tag:t.tag, client, options:t.options, sections:t.sections })); }catch(err){}
         return leave('checklist.html');
       }
       return startVisit(start);
