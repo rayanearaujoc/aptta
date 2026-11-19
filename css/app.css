@@ -1000,3 +1000,15 @@ td .vc-ava{width:34px;height:34px}
 .app.in-detail .topbar{display:none !important}
 .app.in-detail #content > .v-gap > div:first-child{position:sticky;top:0;z-index:20;padding:20px 0 12px;background:var(--canvas)}
 @media (max-width:640px){ .app.in-detail #content > .v-gap > div:first-child{margin:0 -16px;padding:14px 16px 10px} }
+/* ajuste: botões um pouco maiores e espaços menores no computador */
+@media (min-width:961px){
+  .btn{height:40px;font-size:13px;padding:0 20px}
+  .btn-sm{height:34px;font-size:12px;padding:0 16px}
+  .btn .lucide{width:16px;height:16px}
+  .v-gap{gap:18px}
+  .dash,.stack,.kpis,.client-grid,.mod-grid,.evo-grid,.mini-row{gap:20px}
+  .card{padding:22px}
+  .card-head{margin-bottom:16px}
+  .app.in-detail #content > .v-gap > div:first-child{padding:14px 0 6px}
+  .tabs{margin-top:2px}
+}
