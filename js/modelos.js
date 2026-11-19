@@ -112,6 +112,7 @@ function defaultSectionsFor(m){
 function drawEditor(){
   document.getElementById('pageTitle').textContent = 'Modelos de checklist';
   app.classList.remove('has-fab');
+  app.classList.add('in-detail');
   const c = modelCount(EDIT), hasNC = EDIT.options.some(o => o.role === 'NC');
   const nameErr = EDIT_ERR && !EDIT.name.trim(), itemsErr = EDIT_ERR && c.i === 0, ncErr = EDIT_ERR && !hasNC;
   content.innerHTML = `
