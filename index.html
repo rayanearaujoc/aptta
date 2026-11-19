@@ -2,7 +2,18 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* iOS: evita o zoom automático ao tocar num campo de texto, sem mudar o tamanho das fontes.
+   No iOS o "maximum-scale=1" só bloqueia esse zoom do foco; o zoom com dois dedos continua funcionando.
+   Fora do iOS nada muda, para não atrapalhar quem precisa ampliar a tela. */
+(function(){
+  var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (!ios) return;
+  var m = document.querySelector('meta[name="viewport"]');
+  if (m) m.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover');
+})();
+</script>
 <title>Aptta — Consultoria Alimentar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -83,6 +94,7 @@
     </div>
     <div class="chat-foot"><input type="text" placeholder="Escreva sua mensagem..." /><button class="send" aria-label="Enviar"><i data-lucide="send-horizontal"></i></button></div>
   </div>
+  <button class="fab-new" data-novo-cliente aria-label="Novo cliente"><i data-lucide="plus"></i>Novo cliente</button>
   <button class="fab" id="fab" aria-label="Abrir assistente">
     <i data-lucide="sparkles" class="open-ic"></i><i data-lucide="x" class="close-ic"></i>
   </button>

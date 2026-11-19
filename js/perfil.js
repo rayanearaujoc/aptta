@@ -30,7 +30,7 @@ content.addEventListener('click', e => {
 function renderProfile(){
   const c = CLIENTES[CURRENT];
   document.getElementById('pageTitle').textContent = 'Clientes';
-  app.classList.remove('hide-topsearch');
+  app.classList.remove('hide-topsearch', 'on-clientes');
   setActive('clientes');
   const parent = BACK_MAP[PVIEW];
   const back = parent
@@ -240,7 +240,7 @@ function cfgDados(c){
     <div class="nc-photo" style="margin-bottom:18px">
       <label class="nc-ava" for="cfgLogo" title="Trocar logomarca">${c.logo ? `<img src="${c.logo}" alt="">` : initials(c.n)}<span class="nc-cam"><i data-lucide="camera"></i></span></label>
       <input id="cfgLogo" type="file" accept="image/*" hidden>
-      <div><b>Logomarca do estabelecimento</b><small>Aparece no perfil, nos cards e nos relatórios.</small>
+      <div><b>Logomarca do estabelecimento</b>
         <div class="nc-photo-actions"><label for="cfgLogo" class="btn btn-outline btn-sm"><i data-lucide="upload"></i>${c.logo ? 'Trocar imagem' : 'Enviar imagem'}</label>
         ${c.logo ? `<button class="btn btn-ghost btn-sm" data-cfg-rmlogo>Remover</button>` : ''}</div></div>
     </div>
@@ -354,7 +354,7 @@ function openNovoCliente(){
           <label class="nc-ava" for="ncLogo" title="Adicionar logomarca">${f.logo ? `<img src="${f.logo}" alt="">` : (f.n.trim() ? initials(f.n) : '<i data-lucide="store"></i>')}
             <span class="nc-cam"><i data-lucide="camera"></i></span></label>
           <input id="ncLogo" type="file" accept="image/*" hidden>
-          <div><b>Logomarca do estabelecimento</b><small>Opcional. Aparece no perfil, nos cards e nos relatórios.</small>
+          <div><b>Logomarca do estabelecimento</b>
             <div class="nc-photo-actions"><label for="ncLogo" class="btn btn-outline btn-sm"><i data-lucide="upload"></i>${f.logo ? 'Trocar imagem' : 'Enviar imagem'}</label>
             ${f.logo ? `<button class="btn btn-ghost btn-sm" data-rmlogo>Remover</button>` : ''}</div></div>
         </div>

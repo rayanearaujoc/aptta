@@ -39,6 +39,7 @@ function go(page){
   const p = PAGES[page]; if (!p) return;
   document.getElementById('pageTitle').textContent = p.title;
   app.classList.toggle('hide-topsearch', page === 'clientes' || page === 'calendario');
+  app.classList.toggle('on-clientes', page === 'clientes');
   content.innerHTML = p.render ? p.render() : placeholder(p);
   setActive(page);
   app.classList.remove('nav-open');
@@ -220,7 +221,7 @@ function renderClientes(){
         <button data-v="list" class="${VIEW==='list'?'active':''}" aria-label="Ver em lista"><i data-lucide="list"></i></button>
         <button data-v="grid" class="${VIEW==='grid'?'active':''}" aria-label="Ver em cartões"><i data-lucide="layout-grid"></i></button>
       </div>
-      <button class="btn btn-primary" data-novo-cliente><i data-lucide="plus"></i>Novo cliente</button>
+      <button class="btn btn-primary cli-new" data-novo-cliente><i data-lucide="plus"></i>Novo cliente</button>
     </div>
     <div id="cliList"></div>`;
 }
@@ -254,7 +255,8 @@ function drawClients(){
     icons(); return;
   }
   const status = c => `<span class="badge ${c.s?'on':'off'}">${c.s?'Ativo':'Inativo'}</span>`;
-  if (VIEW === 'grid'){
+  /* no celular usa sempre o cartão compacto (logo, nome, tipo e seta) */
+  if (VIEW === 'grid' || window.innerWidth <= 640){
     box.innerHTML = `<div class="client-grid">${list.map(c => `
       <div class="client-card" data-idx="${c.i}">
         <div class="cc-top">
