@@ -52,7 +52,7 @@ function renderProfile(){
   content.innerHTML = `<div class="v-gap">
     <div>${back}</div>
     ${PVIEW === 'desempenho' ? '' : `${c.ov ? `<div class="alert"><i data-lucide="triangle-alert"></i>Este cliente tem um plano de ação vencido.</div>` : ''}
-    <div class="card profile-head">
+    <div class="card profile-head ph-color">${MARK('mark','#fff')}
       <div class="ph-left">
         <div class="cc-ava">${clientFace(c)}<span class="st ${c.s?'':'off'}"></span></div>
         <div><div class="ph-name"><h2>${c.n}</h2><span class="badge ${c.s?'on':'off'}">${c.s?'Ativo':'Inativo'}</span></div>

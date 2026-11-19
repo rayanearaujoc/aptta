@@ -917,3 +917,16 @@ td .vc-ava{width:34px;height:34px}
 .filter-note{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;padding:10px 10px 10px 16px;border-radius:12px;background:var(--green-50);color:var(--green-700);font-size:13px}
 .filter-note b{font-weight:700}
 .kpis .mini-kpi > svg.kpi-go{display:block !important}
+/* perfil do cliente: cabeçalho em degradê verde (versão com cor) */
+.profile-head.ph-color{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--green-500) 0%,var(--green-700) 100%);color:#fff;border:0}
+.profile-head.ph-color .mark{position:absolute;right:70px;bottom:-34px;width:120px;height:120px;opacity:.08;pointer-events:none}
+.profile-head.ph-color .ph-left,.profile-head.ph-color .icon-btn{position:relative}
+.profile-head.ph-color .ph-name h2{color:#fff}
+.profile-head.ph-color .ph-type{color:rgba(255,255,255,.82)}
+.profile-head.ph-color .cc-ava{background:#fff !important;color:var(--green-700) !important}
+.profile-head.ph-color .cc-ava .st{border-color:var(--green-700)}
+.profile-head.ph-color .cc-ava .st:not(.off){background:#5FD3A8}
+.profile-head.ph-color .badge{background:rgba(255,255,255,.16);color:#fff}
+.profile-head.ph-color .badge::before{background:#fff}
+.profile-head.ph-color .icon-btn{background:rgba(255,255,255,.14);color:#fff;box-shadow:none}
+.profile-head.ph-color .icon-btn:hover{background:rgba(255,255,255,.24)}
