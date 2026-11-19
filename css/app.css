@@ -589,8 +589,7 @@ td .vc-ava{width:34px;height:34px}
 .nv-clients::-webkit-scrollbar{display:none}
 
 /* verde escuro nos ícones de destaque (menos branco) */
-.perf-link .ic{background:var(--green-700) !important;color:#fff !important}
-.perf-link .ic .lucide{color:#fff}
+.perf-link .ic{background:var(--green-50) !important;color:var(--green-700) !important}
 .nv-opt .ic{background:var(--green-50);color:var(--green-700)}
 .nv-opt.on .ic{background:var(--green-700);color:#fff}
 .nv-opt .ic.dashed{background:transparent;color:var(--green-700);border:1.5px dashed var(--green-100)}
