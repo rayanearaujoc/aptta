@@ -202,7 +202,7 @@ function wireCalendario(){
 }
 
 /* ================= CLIENTES ================= */
-let FILTER = 'ativos', QUERY = '', VIEW = 'grid', PAGE = 1;
+let FILTER = 'ativos', QUERY = '', VIEW = 'list', PAGE = 1;
 const PER_PAGE = 8;
 
 function renderClientes(){
